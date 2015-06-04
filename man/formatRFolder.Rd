@@ -8,9 +8,11 @@ formatRFolder(path = ".", recursive = TRUE, ...)
 }
 \arguments{
 \item{path}{Path to the folder containing the files to format. Only files with the .R
-extension will be formatted}
+extension will be formatted.}
 
 \item{recursive}{Include all subfolders?}
+
+\item{...}{Parameters to be passed on the the formatRFile function}
 }
 \description{
 Format all R files in a folder

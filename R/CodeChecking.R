@@ -16,29 +16,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#' Check R file for code errors
+#'
+#' @details
+#' This function uses the lintr package to check the code.
+#'
+#' @param file   The R file to check
+#'
 #' @export
 ohdsiLintrFile <- function(file) {
-  lintr::lint(file, linters = list(assignment_linter = assignment_linter,
-                                   object_snake_case_linter = object_snake_case_linter,
-                                   commas_linter = commas_linter,
-                                   infix_spaces_linter = infix_spaces_linter,
-                                   no_tab_linter = no_tab_linter,
-                                   object_usage_linter = object_usage_linter,
-                                   object_multiple_dots_linter = object_multiple_dots_linter,
-                                   object_length_linter = object_length_linter,
-                                   open_curly_linter = open_curly_linter,
-                                   single_quotes_linter = single_quotes_linter,
-                                   spaces_inside_linter = spaces_inside_linter,
-                                   trailing_blank_lines_linter = trailing_blank_lines_linter,
-                                   trailing_whitespace_linter = trailing_whitespace_linter))
+  lintr::lint(file, linters = list(assignment_linter = lintr::assignment_linter,
+                                   object_snake_case_linter = lintr::object_snake_case_linter,
+                                   commas_linter = lintr::commas_linter,
+                                   infix_spaces_linter = lintr::infix_spaces_linter,
+                                   no_tab_linter = lintr::no_tab_linter,
+                                   object_usage_linter = lintr::object_usage_linter,
+                                   object_multiple_dots_linter = lintr::object_multiple_dots_linter,
+                                   object_length_linter = lintr::object_length_linter,
+                                   open_curly_linter = lintr::open_curly_linter,
+                                   single_quotes_linter = lintr::single_quotes_linter,
+                                   spaces_inside_linter = lintr::spaces_inside_linter,
+                                   trailing_blank_lines_linter = lintr::trailing_blank_lines_linter,
+                                   trailing_whitespace_linter = lintr::trailing_whitespace_linter))
 }
 
+#' Check all R files in a folder
+#'
+#' @details
+#' This function uses the lintr package to check the code.
+#'
+#' @param path        Path to the folder containing the files to check. Only files with the .R
+#'                    extension will be checked.
+#' @param recursive   Include all subfolders?
+#'
 #' @export
 ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
   for (f in flist) {
-    message("Auto code formatting ", f)
-    .formatRFile(f)
+    message("Checking code in ", f)
+    ohdsiLintrFile(f)
   }
 }
 
@@ -57,6 +73,16 @@ ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
   return(var)
 }
 
+#' Check all code in a package
+#'
+#' @details
+#' This function uses the codetools package to check the code from problems. Heuristics are used to
+#' elimite false positives due to non-standard evaluation.
+#'
+#' @param package                   The name of the package to check.
+#' @param ignoreHiddenFunctions     Ignore functions for which the definition cannot be retrieved?
+#' @param suppressBindingKeywords   A set of keywords that are indicative of non-standard evaluation.
+#'
 #' @export
 checkUsagePackage <- function(package,
                               ignoreHiddenFunctions = TRUE,
@@ -77,7 +103,7 @@ checkUsagePackage <- function(package,
                                                        suppressPartialMatchArgs = FALSE))
   if (length(notes) == 0) {
     writeLines("No problems found")
-    return()
+    return(notes)
   }
   newNotes <- c()
   for (i in 1:length(notes)) {
@@ -111,11 +137,11 @@ checkUsagePackage <- function(package,
     } else if (regexpr("assigned but may not be used", notes[i]) != -1) {
       funcDef <- .getFunctionDefinitionFromMem(notes[i])
       if (is.null(funcDef)) {
-        if (ignoreHiddenFunctions)
-          warning(paste("Ignoring problem in hidden function '",
-                        func,
-                        "'",
-                        sep = "")) else newNotes <- c(newNotes, notes[i])
+        if (ignoreHiddenFunctions) {
+          warning(paste("Ignoring problem in hidden function '", notes[i], "'", sep = ""))
+        } else {
+          newNotes <- c(newNotes, notes[i])
+        }
       } else {
         variableName <- .getVariableName(notes[i])
         text <- funcDef[grep(paste("(^|[^$])", variableName, sep = ""), funcDef)]
@@ -132,7 +158,7 @@ checkUsagePackage <- function(package,
       if (is.null(funcDef)) {
         if (ignoreHiddenFunctions)
           warning(paste("Ignoring problem in hidden function '",
-                        func,
+                        notes[i],
                         "'",
                         sep = "")) else newNotes <- c(newNotes, notes[i])
       } else {
@@ -145,4 +171,5 @@ checkUsagePackage <- function(package,
   }
   if (length(newNotes) == 0)
     writeLines("No problems found") else writeLines(newNotes)
+  return(newNotes)
 }

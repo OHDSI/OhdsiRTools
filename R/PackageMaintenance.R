@@ -16,10 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+.formatAndCheckCode <- function() {
+  OhdsiRTools::formatRFolder()
+  OhdsiRTools::checkUsagePackage("OhdsiRTools")
+  OhdsiRTools::ohdsiLintrFolder()
+}
+
 .createManualAndVignettes <- function() {
-
-
-
   shell("rm extras/OhdsiRTools.pdf")
   shell("R CMD Rd2pdf ./ --output=extras/OhdsiRTools.pdf")
 }

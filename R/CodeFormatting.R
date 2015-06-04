@@ -245,7 +245,7 @@
   # Perform wrapping
   maxParamLength <- 0
   for (i in 1:length(text)) {
-    keyword <- regexpr("^@param\\s+[a-zA-Z0-9]+", text[i])
+    keyword <- regexpr("^@param\\s+[a-zA-Z0-9.]+", text[i])
     if (attr(keyword, "match.length") > maxParamLength)
       maxParamLength <- attr(keyword, "match.length")
   }
@@ -269,8 +269,8 @@
       if (regexpr("^@param", text[i]) == -1) {
         newText <- c(newText, strwrap(text[i], width = width.cutoff))
       } else {
-        param <- regexpr("^@param\\s+[a-zA-Z0-9]+", text[i])
-        definition <- regexpr("^@param\\s+[a-zA-Z0-9]+\\s+", text[i])
+        param <- regexpr("^@param\\s+[a-zA-Z0-9.]+", text[i])
+        definition <- regexpr("^@param\\s+[a-zA-Z0-9.]+\\s+", text[i])
         part1 <- substr(text[i], 1, attr(param, "match.length"))
         part2 <- substr(text[i], attr(definition, "match.length") + 1, nchar(text[i]))
         part2Wrapped <- strwrap(part2, width = width.cutoff - maxParamLength - 2)
@@ -339,6 +339,11 @@
   text <- .trimTrailingWhiteSpace(text)
 }
 
+#' Format an R file
+#'
+#' @param file    The path to the file.
+#' @param width   @param width.cutoff Number of characters that each line should be limited to.
+#'
 #' @export
 formatRFile <- function(file, width.cutoff = 100) {
   # Note: Github code window width is 130 characters, but 100 fits better on my laptop
@@ -358,8 +363,9 @@ formatRFile <- function(file, width.cutoff = 100) {
 #' Format all R files in a folder
 #'
 #' @param path        Path to the folder containing the files to format. Only files with the .R
-#'                    extension will be formatted
+#'                    extension will be formatted.
 #' @param recursive   Include all subfolders?
+#' @param ...         Parameters to be passed on the the formatRFile function
 #'
 #' @export
 formatRFolder <- function(path = ".", recursive = TRUE, ...) {
