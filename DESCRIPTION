@@ -1,0 +1,17 @@
+Package: OhdsiRTools
+Type: Package
+Title: An R package with tools for maintaining the other OHDSI R packages
+Version: 0.0.1
+Date: 2015-06-04
+Author: Martijn J. Schuemie [aut, cre],
+  Marc A. Suchard [aut],
+Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
+Description: Need to add
+License: Apache License 2.0
+Depends:
+    R (>= 3.1.0),
+Imports:
+	lintr,
+	codetools,
+	formatR
+NeedsCompilation: no
