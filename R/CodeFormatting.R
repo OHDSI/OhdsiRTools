@@ -342,7 +342,7 @@
 #' Format an R file
 #'
 #' @param file    The path to the file.
-#' @param width   @param width.cutoff Number of characters that each line should be limited to.
+#' @param width.cutoff Number of characters that each line should be limited to.
 #'
 #' @export
 formatRFile <- function(file, width.cutoff = 100) {

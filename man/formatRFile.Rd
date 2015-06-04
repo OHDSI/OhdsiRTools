@@ -10,8 +10,6 @@ formatRFile(file, width.cutoff = 100)
 \item{file}{The path to the file.}
 
 \item{width.cutoff}{Number of characters that each line should be limited to.}
-
-\item{width}{}
 }
 \description{
 Format an R file
