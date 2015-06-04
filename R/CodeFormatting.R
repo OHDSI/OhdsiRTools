@@ -40,49 +40,49 @@
           quote <- FALSE
           start <- 1
           for (j in indent:nchar(fullLine)) {
-            char <- substr(fullLine, j, j)
-            if (char == "\"") {
-              quote <- !quote
-            } else if (!quote) {
-              if (char == "(") {
-                depth <- depth + 1
-              } else if (char == ")") {
-                if (depth == 0)
-                  break
-                depth <- depth - 1
-              } else if (depth == 0 & char == separator) {
-                part <- substr(fullLine, start, j)
-                if (start != 1) {
-                  part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
-                }
-                newX <- c(newX, part)
-                start <- j + 1
-              }
+          char <- substr(fullLine, j, j)
+          if (char == "\"") {
+            quote <- !quote
+          } else if (!quote) {
+            if (char == "(") {
+            depth <- depth + 1
+            } else if (char == ")") {
+            if (depth == 0)
+              break
+            depth <- depth - 1
+            } else if (depth == 0 & char == separator) {
+            part <- substr(fullLine, start, j)
+            if (start != 1) {
+              part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
             }
+            newX <- c(newX, part)
+            start <- j + 1
+            }
+          }
           }
           part <- substr(fullLine, start, nchar(fullLine))
           if (start != 1) {
-            part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
+          part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
           }
           newX <- c(newX, part)
           maxLength <- 0
           for (x in newX) if (nchar(x) > maxLength)
-            maxLength <- nchar(x)
+          maxLength <- nchar(x)
           lines <- length(newX)
           better <- FALSE
           if (maxLength <= width.cutoff && minLength > width.cutoff) {
-            better <- TRUE
+          better <- TRUE
           } else if (maxLength <= width.cutoff && minLength <= width.cutoff) {
-            if (lines < minLines)
-              better <- TRUE
+          if (lines < minLines)
+            better <- TRUE
           } else {
-            if (maxLength < minLength)
-              better <- TRUE
+          if (maxLength < minLength)
+            better <- TRUE
           }
           if (better) {
-            bestSolution <- newX
-            minLength <- maxLength
-            minLines <- lines
+          bestSolution <- newX
+          minLength <- maxLength
+          minLines <- lines
           }
         }
       }
@@ -178,15 +178,15 @@
         } else if (substr(text[i], j, j) == "}") {
           level <- level - 1
           if (level == -1) {
-            snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, j - 1))
-            newText <- c(newText, .myTidy(snippet, width.cutoff), "}")
-            snippet <- c(substr(text[i], j + 1, nchar(text[i])))
-            if (gsub("\\s", "", snippet[1]) == "")
-              snippet <- c()
-            inDontRun <- FALSE
-            start <- i + 1
-            level <- 0
-            break
+          snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, j - 1))
+          newText <- c(newText, .myTidy(snippet, width.cutoff), "}")
+          snippet <- c(substr(text[i], j + 1, nchar(text[i])))
+          if (gsub("\\s", "", snippet[1]) == "")
+            snippet <- c()
+          inDontRun <- FALSE
+          start <- i + 1
+          level <- 0
+          break
           }
         }
       }
@@ -323,6 +323,11 @@
   return(newText)
 }
 
+.trimTrailingWhiteSpace <- function(text) {
+  text <- sub("\\s+$", "", text)
+  return(text)
+}
+
 .myTidy <- function(text, width.cutoff) {
   text <- gsub("\\t", "", text)  # Remove all tabs
   text <- capture.output(formatR::tidy_source(text = text,
@@ -331,6 +336,7 @@
                                               indent = 2))
   text <- .reWrapLines(text, width.cutoff = width.cutoff)
   text <- .roxygenTidy(text, width.cutoff = width.cutoff)
+  text <- .trimTrailingWhiteSpace(text)
 }
 
 #' @export
@@ -350,15 +356,16 @@ formatRFile <- function(file, width.cutoff = 100) {
 }
 
 #' Format all R files in a folder
-#' 
-#' @param path  Path to the folder containing the files to format. Only files with the .R extension will be formatted
+#'
+#' @param path        Path to the folder containing the files to format. Only files with the .R
+#'                    extension will be formatted
 #' @param recursive   Include all subfolders?
-#' 
+#'
 #' @export
 formatRFolder <- function(path = ".", recursive = TRUE, ...) {
   flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
   for (f in flist) {
     message("Auto code formatting ", f)
-    .formatRFile(f)
+    formatRFile(f)
   }
 }

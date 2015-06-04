@@ -17,40 +17,38 @@
 # limitations under the License.
 
 #' @export
-ohdsiLintrFile <- function(file){
+ohdsiLintrFile <- function(file) {
   lintr::lint(file, linters = list(assignment_linter = assignment_linter,
-                                                       object_snake_case_linter = object_snake_case_linter,
-                                                       commas_linter = commas_linter,
-                                                       infix_spaces_linter = infix_spaces_linter,
-                                                       no_tab_linter = no_tab_linter,
-                                                       object_usage_linter = object_usage_linter,
-                                                       object_multiple_dots_linter = object_multiple_dots_linter,
-                                                       object_length_linter = object_length_linter,
-                                                       open_curly_linter = open_curly_linter,
-                                                       single_quotes_linter = single_quotes_linter,
-                                                       spaces_inside_linter = spaces_inside_linter,
-                                                       trailing_blank_lines_linter = trailing_blank_lines_linter,
-                                                       trailing_whitespace_linter = trailing_whitespace_linter))
+                                   object_snake_case_linter = object_snake_case_linter,
+                                   commas_linter = commas_linter,
+                                   infix_spaces_linter = infix_spaces_linter,
+                                   no_tab_linter = no_tab_linter,
+                                   object_usage_linter = object_usage_linter,
+                                   object_multiple_dots_linter = object_multiple_dots_linter,
+                                   object_length_linter = object_length_linter,
+                                   open_curly_linter = open_curly_linter,
+                                   single_quotes_linter = single_quotes_linter,
+                                   spaces_inside_linter = spaces_inside_linter,
+                                   trailing_blank_lines_linter = trailing_blank_lines_linter,
+                                   trailing_whitespace_linter = trailing_whitespace_linter))
 }
 
 #' @export
-ohdsiLintrFolder <- function(path = ".", recursive = TRUE){
-flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
+ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
+  flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
   for (f in flist) {
     message("Auto code formatting ", f)
     .formatRFile(f)
   }
 }
 
-.getFunctionDefinitionFromMem <- function(note){
-  funcPos <- regexpr("^.*: ",note)
+.getFunctionDefinitionFromMem <- function(note) {
+  funcPos <- regexpr("^.*: ", note)
   func <- substr(note, funcPos, funcPos + attr(funcPos, "match.length") - 3)
-  func <- gsub("\\s","", func)
-  funcDef <- capture.output(getFunction(func,mustFind=FALSE))
+  func <- gsub("\\s", "", func)
+  funcDef <- capture.output(getFunction(func, mustFind = FALSE))
   if (funcDef[1] == "NULL")
-    return(NULL)
-  else
-    return (funcDef)
+    return(NULL) else return(funcDef)
 }
 
 .getVariableName <- function(note) {
@@ -61,8 +59,11 @@ flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = r
 
 #' @export
 checkUsagePackage <- function(package,
-                                 ignoreHiddenFunctions = TRUE,
-                                 suppressBindingKeywords = c("ggplot2", "ffwhich", "subset.ffdf", "glm")) {
+                              ignoreHiddenFunctions = TRUE,
+                              suppressBindingKeywords = c("ggplot2",
+                                                          "ffwhich",
+                                                          "subset.ffdf",
+                                                          "glm")) {
   require(package, character.only = TRUE)
   notes <- capture.output(codetools::checkUsagePackage(package,
                                                        suppressLocal = FALSE,
@@ -84,7 +85,7 @@ checkUsagePackage <- function(package,
       filePos <- regexpr(" \\(.*\\.R:", notes[i])
       if (filePos != -1) {
         # Option 1: use file name and line number to get offending text:
-        file <- substr(notes[i],filePos + 2, filePos + attr(filePos, "match.length") - 2)
+        file <- substr(notes[i], filePos + 2, filePos + attr(filePos, "match.length") - 2)
         linePos <- regexpr("\\.R:.*\\)", notes[i])
         line <- substr(notes[i], linePos + 3, linePos + attr(linePos, "match.length") - 2)
         line <- strsplit(line, "-")[[1]]
@@ -111,16 +112,17 @@ checkUsagePackage <- function(package,
       funcDef <- .getFunctionDefinitionFromMem(notes[i])
       if (is.null(funcDef)) {
         if (ignoreHiddenFunctions)
-          warning(paste("Ignoring problem in hidden function '",func,"'",sep=""))
-        else
-          newNotes <- c(newNotes, notes[i])
+          warning(paste("Ignoring problem in hidden function '",
+                        func,
+                        "'",
+                        sep = "")) else newNotes <- c(newNotes, notes[i])
       } else {
         variableName <- .getVariableName(notes[i])
         text <- funcDef[grep(paste("(^|[^$])", variableName, sep = ""), funcDef)]
         hasKeyword <- FALSE
         for (keyword in suppressBindingKeywords) {
           if (length(grep(keyword, text)) != 0)
-            hasKeyword <- TRUE
+          hasKeyword <- TRUE
         }
         if (!hasKeyword)
           newNotes <- c(newNotes, notes[i])
@@ -129,11 +131,12 @@ checkUsagePackage <- function(package,
       funcDef <- .getFunctionDefinitionFromMem(notes[i])
       if (is.null(funcDef)) {
         if (ignoreHiddenFunctions)
-          warning(paste("Ignoring problem in hidden function '",func,"'",sep=""))
-        else
-          newNotes <- c(newNotes, notes[i])
+          warning(paste("Ignoring problem in hidden function '",
+                        func,
+                        "'",
+                        sep = "")) else newNotes <- c(newNotes, notes[i])
       } else {
-        if (length(grep("UseMethod\\(",funcDef)) == 0)
+        if (length(grep("UseMethod\\(", funcDef)) == 0)
           newNotes <- c(newNotes, notes[i])
       }
     } else {
@@ -143,4 +146,3 @@ checkUsagePackage <- function(package,
   if (length(newNotes) == 0)
     writeLines("No problems found") else writeLines(newNotes)
 }
-

@@ -7,7 +7,8 @@
 formatRFolder(path = ".", recursive = TRUE, ...)
 }
 \arguments{
-\item{path}{Path to the folder containing the files to format. Only files with the .R extension will be formatted}
+\item{path}{Path to the folder containing the files to format. Only files with the .R
+extension will be formatted}
 
 \item{recursive}{Include all subfolders?}
 }
