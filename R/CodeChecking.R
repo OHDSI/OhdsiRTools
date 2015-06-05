@@ -25,19 +25,20 @@
 #'
 #' @export
 ohdsiLintrFile <- function(file) {
-  lintr::lint(file, linters = list(assignment_linter = lintr::assignment_linter,
-                                   object_snake_case_linter = lintr::object_snake_case_linter,
-                                   commas_linter = lintr::commas_linter,
-                                   infix_spaces_linter = lintr::infix_spaces_linter,
-                                   no_tab_linter = lintr::no_tab_linter,
-                                   object_usage_linter = lintr::object_usage_linter,
-                                   object_multiple_dots_linter = lintr::object_multiple_dots_linter,
-                                   object_length_linter = lintr::object_length_linter,
-                                   open_curly_linter = lintr::open_curly_linter,
-                                   single_quotes_linter = lintr::single_quotes_linter,
-                                   spaces_inside_linter = lintr::spaces_inside_linter,
-                                   trailing_blank_lines_linter = lintr::trailing_blank_lines_linter,
-                                   trailing_whitespace_linter = lintr::trailing_whitespace_linter))
+  lints <- lintr::lint(file, linters = list(assignment_linter = lintr::assignment_linter,
+                                            object_snake_case_linter = lintr::object_snake_case_linter,
+                                            commas_linter = lintr::commas_linter,
+                                            infix_spaces_linter = lintr::infix_spaces_linter,
+                                            no_tab_linter = lintr::no_tab_linter,
+                                            object_usage_linter = lintr::object_usage_linter,
+                                            object_multiple_dots_linter = lintr::object_multiple_dots_linter,
+                                            object_length_linter = lintr::object_length_linter,
+                                            open_curly_linter = lintr::open_curly_linter,
+                                            single_quotes_linter = lintr::single_quotes_linter,
+                                            spaces_inside_linter = lintr::spaces_inside_linter,
+                                            trailing_blank_lines_linter = lintr::trailing_blank_lines_linter,
+                                            trailing_whitespace_linter = lintr::trailing_whitespace_linter))
+  return(lints)
 }
 
 #' Check all R files in a folder
@@ -52,10 +53,12 @@ ohdsiLintrFile <- function(file) {
 #' @export
 ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
+  lints <- list()
   for (f in flist) {
     message("Checking code in ", f)
-    ohdsiLintrFile(f)
+    lints <- append(lints, ohdsiLintrFile(f))
   }
+  return(lints)
 }
 
 .getFunctionDefinitionFromMem <- function(note) {
@@ -102,7 +105,6 @@ checkUsagePackage <- function(package,
                                                        suppressUndefined = FALSE,
                                                        suppressPartialMatchArgs = FALSE))
   if (length(notes) == 0) {
-    writeLines("No problems found")
     return(notes)
   }
   newNotes <- c()
@@ -169,7 +171,5 @@ checkUsagePackage <- function(package,
       newNotes <- c(newNotes, notes[i])
     }
   }
-  if (length(newNotes) == 0)
-    writeLines("No problems found") else writeLines(newNotes)
   return(newNotes)
 }
