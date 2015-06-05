@@ -269,8 +269,8 @@
       if (regexpr("^@param", text[i]) == -1) {
         newText <- c(newText, strwrap(text[i], width = width.cutoff))
       } else {
-        param <- regexpr("^@param\\s+[a-zA-Z0-9.]+", text[i])
-        definition <- regexpr("^@param\\s+[a-zA-Z0-9.]+\\s+", text[i])
+        param <- regexpr("^@param\\s+[a-zA-Z0-9._]+", text[i])
+        definition <- regexpr("^@param\\s+[a-zA-Z0-9._]+\\s+", text[i])
         part1 <- substr(text[i], 1, attr(param, "match.length"))
         part2 <- substr(text[i], attr(definition, "match.length") + 1, nchar(text[i]))
         part2Wrapped <- strwrap(part2, width = width.cutoff - maxParamLength - 2)
@@ -341,8 +341,8 @@
 
 #' Format an R file
 #'
-#' @param file    The path to the file.
-#' @param width.cutoff Number of characters that each line should be limited to.
+#' @param file           The path to the file.
+#' @param width.cutoff   Number of characters that each line should be limited to.
 #'
 #' @export
 formatRFile <- function(file, width.cutoff = 100) {
