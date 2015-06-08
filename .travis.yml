@@ -2,6 +2,9 @@ language: r
 
 warnings_are_errors: true
 
+apt_packages:
+    - libcurl4-openssl-dev
+
 sudo: required
 
 notifications:
