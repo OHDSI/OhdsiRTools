@@ -162,7 +162,7 @@
     if (!inDontRun && regexpr("\\\\dontrun *\\{", text[i]) != -1) {
       if (i > start) {
         dontrun <- regexpr("\\\\dontrun *\\{", text[i])
-        snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, dontrun[[1]]))
+        snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, dontrun[[1]] - 1))
         newText <- c(newText, .myTidy(snippet, width.cutoff))
         snippet <- c(substr(text[i], dontrun[[1]] + attr(dontrun, "match.length"), nchar(text[i])))
         if (gsub("\\s", "", snippet[1]) == "")
