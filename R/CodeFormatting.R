@@ -162,13 +162,15 @@
     if (!inDontRun && regexpr("\\\\dontrun *\\{", text[i]) != -1) {
       if (i > start) {
         dontrun <- regexpr("\\\\dontrun *\\{", text[i])
-        snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, dontrun[[1]] - 1))
+        snippet <- c(snippet, text[start:(i - 1)])
+        if (dontrun[[1]] > 1)
+          snippet <- c(snippet, substr(text[i], 1, dontrun[[1]] - 1))
         newText <- c(newText, .myTidy(snippet, width.cutoff))
         snippet <- c(substr(text[i], dontrun[[1]] + attr(dontrun, "match.length"), nchar(text[i])))
         if (gsub("\\s", "", snippet[1]) == "")
           snippet <- c()
       }
-      newText <- c(newText, "\\dontrun {")
+      newText <- c(newText, "\\dontrun{")
       start <- i + 1
       inDontRun <- TRUE
     } else if (inDontRun) {
@@ -178,7 +180,9 @@
         } else if (substr(text[i], j, j) == "}") {
           level <- level - 1
           if (level == -1) {
-          snippet <- c(snippet, text[start:(i - 1)], substr(text[i], 1, j - 1))
+          snippet <- c(snippet, text[start:(i - 1)])
+          if (j > 2)
+            snippet <- c(snippet, substr(text[i], 1, j - 1))
           newText <- c(newText, .myTidy(snippet, width.cutoff), "}")
           snippet <- c(substr(text[i], j + 1, nchar(text[i])))
           if (gsub("\\s", "", snippet[1]) == "")
@@ -221,8 +225,8 @@
     if (regexpr("^@examples", chunk) != -1) {
       examples <- TRUE
     }
-
-    line <- paste(line, chunk, " ", sep = "")
+    if (chunk != "")
+      line <- paste(line, chunk, " ", sep = "")
   }
   newText <- c(newText, line)
   text <- newText
@@ -235,7 +239,8 @@
                                              text[i]) == -1)) {
       keyword <- regexpr("^@[a-zA-Z0-9]*", text[i])
       newText <- c(newText, substr(text[i], 1, attr(keyword, "match.length")))
-      newText <- c(newText, substr(text[i], attr(keyword, "match.length") + 2, nchar(text[i])))
+      if (attr(keyword, "match.length") + 2 < nchar(text[i]))
+        newText <- c(newText, substr(text[i], attr(keyword, "match.length") + 2, nchar(text[i])))
     } else {
       newText <- c(newText, text[i])
     }
@@ -260,7 +265,7 @@
         examples <- FALSE
         if (length(example) != 0) {
           example <- .tidyExample(example, width.cutoff = width.cutoff - 3)
-          newText <- c(newText, example, " ")
+          newText <- c(newText, example)
         }
         example <- c()
       }
@@ -330,10 +335,13 @@
 
 .myTidy <- function(text, width.cutoff) {
   text <- gsub("\\t", "", text)  # Remove all tabs
-  text <- capture.output(formatR::tidy_source(text = text,
-                                              width.cutoff = width.cutoff,
-                                              arrow = TRUE,
-                                              indent = 2))
+  formatROutput <- capture.output(formatR::tidy_source(text = text,
+                                                       width.cutoff = width.cutoff,
+                                                       arrow = TRUE,
+                                                       indent = 2,
+                                                       output = TRUE))
+  if (length(grep("^\\$text.tidy$", formatROutput)) == 0)
+    text <- formatROutput
   text <- .reWrapLines(text, width.cutoff = width.cutoff)
   text <- .roxygenTidy(text, width.cutoff = width.cutoff)
   text <- .trimTrailingWhiteSpace(text)
@@ -367,6 +375,10 @@ formatRFile <- function(file, width.cutoff = 100) {
 #' @param recursive   Include all subfolders?
 #' @param ...         Parameters to be passed on the the formatRFile function
 #'
+#' @examples
+#' \dontrun{
+#' formatRFolder()
+#' }
 #' @export
 formatRFolder <- function(path = ".", recursive = TRUE, ...) {
   flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)

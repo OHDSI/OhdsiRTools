@@ -17,4 +17,9 @@ extension will be formatted.}
 \description{
 Format all R files in a folder
 }
+\examples{
+\dontrun{
+formatRFolder()
+}
+}
 
