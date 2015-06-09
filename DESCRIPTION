@@ -1,12 +1,12 @@
 Package: OhdsiRTools
 Type: Package
-Title: An R package with tools for maintaining the other OHDSI R packages
+Title: Tools for Maintaining OHDSI R Packages
 Version: 0.0.1
 Date: 2015-06-04
 Author: Martijn J. Schuemie [aut, cre],
   Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
-Description: Need to add
+Description: Format and check syntax of R code and packages following the OHDSI R style guidelines.
 License: Apache License 2.0
 Depends:
     R (>= 3.1.0),
