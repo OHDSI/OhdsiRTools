@@ -333,15 +333,42 @@
   return(text)
 }
 
-.myTidy <- function(text, width.cutoff) {
-  text <- gsub("\\t", "", text)  # Remove all tabs
+.formatRblock <- function(text, width.cutoff) {
   formatROutput <- capture.output(formatR::tidy_source(text = text,
                                                        width.cutoff = width.cutoff,
                                                        arrow = TRUE,
                                                        indent = 2,
                                                        output = TRUE))
-  if (length(grep("^\\$text.tidy$", formatROutput)) == 0)
-    text <- formatROutput
+  if (length(grep("^\\$text.tidy$", formatROutput)) == 0) {
+    return(formatROutput)
+  } else {
+    return(text)
+  }
+}
+
+.applyFormatR <- function(text, width.cutoff) {
+  # Skip all roxygen lines, apply formatR to the rest. Reason: formatR changes the Roxygen blocks,
+  # replacing double quotes with single quotes
+  newText <- c()
+  start <- 1
+  for (i in 1:length(text)) {
+    if (regexpr("^ *#'", text[i]) != -1) {
+      if (i > start) {
+        newText <- c(newText, .formatRblock(text[start:(i - 1)], width.cutoff))
+      }
+      newText <- c(newText, text[i])
+      start <- i + 1
+    }
+  }
+  if (length(text) >= start) {
+    newText <- c(newText, .formatRblock(text[start:length(text)], width.cutoff))
+  }
+  return(newText)
+}
+
+.myTidy <- function(text, width.cutoff) {
+  text <- gsub("\\t", "", text)  # Remove all tabs
+  text <- .applyFormatR(text, width.cutoff = width.cutoff)
   text <- .reWrapLines(text, width.cutoff = width.cutoff)
   text <- .roxygenTidy(text, width.cutoff = width.cutoff)
   text <- .trimTrailingWhiteSpace(text)
