@@ -26,9 +26,7 @@
 #' @export
 ohdsiLintrFile <- function(file) {
   lints <- lintr::lint(file, linters = list(assignment_linter = lintr::assignment_linter,
-                                            object_snake_case_linter = lintr::object_snake_case_linter,
                                             commas_linter = lintr::commas_linter,
-                                            infix_spaces_linter = lintr::infix_spaces_linter,
                                             no_tab_linter = lintr::no_tab_linter,
                                             object_usage_linter = lintr::object_usage_linter,
                                             object_multiple_dots_linter = lintr::object_multiple_dots_linter,
@@ -38,7 +36,11 @@ ohdsiLintrFile <- function(file) {
                                             spaces_inside_linter = lintr::spaces_inside_linter,
                                             trailing_blank_lines_linter = lintr::trailing_blank_lines_linter,
                                             trailing_whitespace_linter = lintr::trailing_whitespace_linter))
-  return(lints)
+
+  # Not using object_snake_case_linter because cannot control naming of third-party functions (e.g.
+  # test_that) Not using infix_spaces_linter because formatR removes spaces around / and ^ operators
+
+  invisible(lints)
 }
 
 #' Check all R files in a folder
@@ -58,7 +60,12 @@ ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
     message("Checking code in ", f)
     lints <- append(lints, ohdsiLintrFile(f))
   }
-  return(lints)
+  if (length(lints) == 0) {
+    writeLines("No problems found")
+  } else {
+    print(lints)
+  }
+  invisible(lints)
 }
 
 .getFunctionDefinitionFromMem <- function(note) {
