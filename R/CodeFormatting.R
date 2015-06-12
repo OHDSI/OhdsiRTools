@@ -196,7 +196,7 @@
       }
     }
   }
-  if (length(text) > start) {
+  if (length(text) >= start) {
     snippet <- c(snippet, text[start:length(text)])
   }
   if (length(snippet) != 0) {
@@ -292,6 +292,10 @@
         examples <- TRUE
       }
     }
+  }
+  if (length(example) != 0) {
+    example <- .tidyExample(example, width.cutoff = width.cutoff - 3)
+    newText <- c(newText, example)
   }
   text <- paste("#'", newText)
   return(text)
