@@ -205,6 +205,65 @@
   return(newText)
 }
 
+.wrapRoxygenLine <- function(line, width.cutoff) {
+  newText <- c()
+  start <- 1
+  i <- 1
+  level <- 0
+  itemize <- FALSE
+  while (i <= nchar(line)) {
+    if (!itemize && substr(line, i, i + nchar("\\itemize{") - 1) == "\\itemize{") {
+      if (i > start) {
+        newText <- c(newText, strwrap(substr(line, start, i - 1), width.cutoff))
+      }
+      newText <- c(newText, "\\itemize{")
+      start <- i + nchar("\\itemize{")
+      # start = start + regexpr('[^ ]', substr(line,start, nchar(line))) - 1
+      i <- start
+      level <- 0
+      itemize <- TRUE
+    }
+    if (itemize) {
+      if (substr(line, i, i + nchar("\\item") - 1) == "\\item") {
+        if (i > start && regexpr("[^ ]", substr(line, start, i - 1)) != -1) {
+          text <- strwrap(substr(line, start, i - 1), width.cutoff - nchar("  \\item"))
+          text[1] <- paste("  \\item", text[1])
+          if (length(text) > 1) {
+          text[2:length(text)] <- paste(paste(rep(" ", nchar("  \\item")), collapse = ""),
+                                        text[2:length(text)])
+          }
+          newText <- c(newText, text)
+        }
+        start <- i + nchar("\\item")
+        i <- start
+      }
+      if (substr(line, i, i) == "{") {
+        level <- level + 1
+      }
+      if (substr(line, i, i) == "}") {
+        level <- level - 1
+        if (level == -1) {
+          text <- strwrap(substr(line, start, i - 1), width.cutoff - nchar("  \\item"))
+          text[1] <- paste("  \\item", text[1])
+          if (length(text) > 1) {
+          text[2:length(text)] <- paste(paste(rep(" ", nchar("  \\item")), collapse = ""),
+                                        text[2:length(text)])
+          }
+          newText <- c(newText, text)
+          newText <- c(newText, "}")
+          start <- i + 1
+          itemize <- FALSE
+        }
+      }
+    }
+    i <- i + 1
+  }
+  if (i >= start) {
+    newText <- c(newText, strwrap(substr(line, start, i - 1), width.cutoff))
+  }
+  return(newText)
+}
+
 .tidyRoxygenBlock <- function(text, width.cutoff) {
   # Remove #' and unwrap lines:
   newText <- c()
@@ -272,13 +331,13 @@
     }
     if (!examples) {
       if (regexpr("^@param", text[i]) == -1) {
-        newText <- c(newText, strwrap(text[i], width = width.cutoff))
+        newText <- c(newText, .wrapRoxygenLine(text[i], width = width.cutoff))
       } else {
         param <- regexpr("^@param\\s+[a-zA-Z0-9._]+", text[i])
         definition <- regexpr("^@param\\s+[a-zA-Z0-9._]+\\s+", text[i])
         part1 <- substr(text[i], 1, attr(param, "match.length"))
         part2 <- substr(text[i], attr(definition, "match.length") + 1, nchar(text[i]))
-        part2Wrapped <- strwrap(part2, width = width.cutoff - maxParamLength - 2)
+        part2Wrapped <- .wrapRoxygenLine(part2, width = width.cutoff - maxParamLength - 2)
         line1 <- paste(part1, paste(rep(" ", 3 + maxParamLength - attr(param, "match.length")),
                                     collapse = ""), part2Wrapped[1], sep = "")
         newText <- c(newText, line1)
