@@ -65,10 +65,10 @@ createArgFunction <- function(functionName,
   parameterHelp <- XML::xpathApply(XML::htmlParse(html),
                                    "//table[@summary=\"R argblock\"]//tr//td",
                                    XML::xmlValue)
+  parameterHelp <- iconv(unlist(parameterHelp), from = "UTF-8", to = "ASCII")
   argInfo$help <- NULL
   for (i in 1:(length(parameterHelp)/2)) {
-    argInfo$help[argInfo$name == parameterHelp[[i * 2 - 1]]] <- gsub("\n", "", parameterHelp[[i *
-      2]])
+    argInfo$help[argInfo$name == parameterHelp[i * 2 - 1]] <- gsub("\n", "", parameterHelp[i * 2])
   }
 
   if (length(rCode) != 0) {
