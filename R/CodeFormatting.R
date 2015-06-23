@@ -331,13 +331,13 @@
     }
     if (!examples) {
       if (regexpr("^@param", text[i]) == -1) {
-        newText <- c(newText, .wrapRoxygenLine(text[i], width = width.cutoff))
+        newText <- c(newText, .wrapRoxygenLine(text[i], width.cutoff = width.cutoff))
       } else {
         param <- regexpr("^@param\\s+[a-zA-Z0-9._]+", text[i])
         definition <- regexpr("^@param\\s+[a-zA-Z0-9._]+\\s+", text[i])
         part1 <- substr(text[i], 1, attr(param, "match.length"))
         part2 <- substr(text[i], attr(definition, "match.length") + 1, nchar(text[i]))
-        part2Wrapped <- .wrapRoxygenLine(part2, width = width.cutoff - maxParamLength - 2)
+        part2Wrapped <- .wrapRoxygenLine(part2, width.cutoff = width.cutoff - maxParamLength - 2)
         line1 <- paste(part1, paste(rep(" ", 3 + maxParamLength - attr(param, "match.length")),
                                     collapse = ""), part2Wrapped[1], sep = "")
         newText <- c(newText, line1)
@@ -437,15 +437,16 @@
   text <- .trimTrailingWhiteSpace(text)
 }
 
-#' Format an R file
+#' Format R code
 #'
-#' @param file           The path to the file.
+#' @param text           A character vector with the R code to be formatted.
 #' @param width.cutoff   Number of characters that each line should be limited to.
 #'
+#' @return
+#' A character vector with formatted R code.
+#'
 #' @export
-formatRFile <- function(file, width.cutoff = 100) {
-  # Note: Github code window width is 130 characters, but 100 fits better on my laptop
-  text <- readLines(file)
+formatRText <- function(text, width.cutoff = 100) {
   startOfBody <- .findStartOfBody(text)
   if (startOfBody == 1) {
     header <- c()
@@ -455,6 +456,19 @@ formatRFile <- function(file, width.cutoff = 100) {
   body <- text[startOfBody:length(text)]
   body <- .myTidy(body, width.cutoff = width.cutoff)
   text <- c(header, body)
+  return(text)
+}
+
+#' Format an R file
+#'
+#' @param file           The path to the file.
+#' @param width.cutoff   Number of characters that each line should be limited to.
+#'
+#' @export
+formatRFile <- function(file, width.cutoff = 100) {
+  # Note: Github code window width is 130 characters, but 100 fits better on my laptop
+  text <- readLines(file)
+  text <- formatRText(text, width.cutoff)
   writeLines(text, con = file)
 }
 
