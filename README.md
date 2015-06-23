@@ -3,12 +3,15 @@ OhdsiRTools
 
 Introduction
 ============
-An R package with tools for maintaining the other OHDSI R packages
+An R package with tools to be used in the other OHDSI R packages
 
 Features
 ========
 - Auto code formatting
 - Auto checking of R code
+- Functions for parallel computation
+- Functions used for automating analyses
+- Functions for circumventing the need for data.frames when working with ffdf objects
 
 Examples
 ===========
@@ -51,6 +54,9 @@ Development
 OhdsiRTools is being developed in R Studio.
 
 ###Development status
+[![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
+[![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
+
 Under development. Do not use.
 
 # Acknowledgements
