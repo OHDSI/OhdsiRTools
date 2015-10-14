@@ -16,7 +16,7 @@ Imports:
 	formatR,
 	snow,
   ff,
-  rjson,
+  RJSONIO,
   RCurl,
   XML
 Suggests:

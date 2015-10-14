@@ -8,21 +8,20 @@ insertCirceDefinitionInPackage(definitionId, name = NULL,
   baseUrl = "http://hixbeta.jnj.com:8081/WebAPI")
 }
 \arguments{
+\item{definitionId}{The number indicating which Circe definition to fetch.}
+
 \item{name}{The name that will be used for the json and SQL files. If not provided, the
 name in Circe will be used, but this may not lead to valid file names.}
 
 \item{baseUrl}{The base URL for the WebApi instance.}
-
-\item{defintionId}{The number indicating which Circe definition to fetch.}
 }
 \description{
 Load a Circe definition and insert it into this package
 }
 \details{
-Load a Circe definition from a WebApi instance and insert it into this package. This will
-fetch the json object and store it in the 'inst/circe' folder, and fetch the template SQL
-and store it in the 'inst/sql/sql_server' folder. Both folders will be created if they
-don't exist.
+Load a Circe definition from a WebApi instance and insert it into this package. This will fetch the
+json object and store it in the 'inst/circe' folder, and fetch the template SQL and store it in the
+'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
 }
 \examples{
 \dontrun{

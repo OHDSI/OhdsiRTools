@@ -196,21 +196,21 @@ matchInList <- function(x, toMatch) {
 }
 
 #' Convert arguments used in call to a list
-#' 
-#' @details 
+#'
+#' @details
 #' Takes the argument values (both default and user-specified) and store them in a list.
-#' 
-#' @param matchCall    The result of \code{match.call()}.
-#' @param resultClass  The class of the resulting object.
-#' 
-#' @return 
+#'
+#' @param matchCall     The result of \code{match.call()}.
+#' @param resultClass   The class of the resulting object.
+#'
+#' @return
 #' An object of the class specified in \code{resultClass}.
-#' 
-#' @examples 
-#' myFun <- function(x = 1, y = 2){
+#'
+#' @examples
+#' myFun <- function(x = 1, y = 2) {
 #'   return(convertArgsToList(match.call()))
 #' }
-#' 
+#'
 #' @export
 convertArgsToList <- function(matchCall, resultClass = "list") {
   # First: get default values:

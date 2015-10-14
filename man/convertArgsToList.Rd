@@ -21,7 +21,7 @@ Convert arguments used in call to a list
 Takes the argument values (both default and user-specified) and store them in a list.
 }
 \examples{
-myFun <- function(x = 1, y = 2){
+myFun <- function(x = 1, y = 2) {
   return(convertArgsToList(match.call()))
 }
 }
