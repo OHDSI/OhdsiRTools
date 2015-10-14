@@ -59,7 +59,7 @@ insertCirceDefinitionInPackage <- function(definitionId,
 
   ### Fetch SQL by posting JSON object ###
   parsedExpression <- RJSONIO::fromJSON(parsedJson$expression)
-  jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression))
+  jsonBody <- .toJson(list(expression = parsedExpression))
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
   url <- paste(baseUrl, "cohortdefinition", "sql", sep = "/")
 
@@ -73,4 +73,63 @@ insertCirceDefinitionInPackage <- function(definitionId,
   fileConn <- file(file.path("inst/sql/sql_server", paste(name, "sql", sep = ".")))
   writeLines(sql, fileConn)
   close(fileConn)
+}
+
+
+.toJson <- function (x) {
+  if (is.factor(x) == TRUE) {
+    tmp_names <- names(x)
+    x = as.character(x)
+    names(x) <- tmp_names
+  }
+  if (!is.vector(x) && !is.null(x) && !is.list(x)) {
+    x <- as.list(x)
+    warning("JSON only supports vectors and lists - But I'll try anyways")
+  }
+  if (is.null(x)) 
+    return("null")
+  if (is.null(names(x)) == FALSE) {
+    x <- as.list(x)
+  }
+  if (is.list(x) && !is.null(names(x))) {
+    if (any(duplicated(names(x)))) 
+      stop("A JSON list must have unique names")
+    str = "{"
+    first_elem = TRUE
+    for (n in names(x)) {
+      if (first_elem) 
+        first_elem = FALSE
+      else str = paste(str, ",", sep = "")
+      str = paste(str, deparse(n), ":", .toJson(x[[n]]), sep = "")
+    }
+    str = paste(str, "}", sep = "")
+    return(str)
+  }
+  if (length(x) != 1 || is.list(x)) {
+    if (!is.null(names(x))) 
+      return(.toJson(as.list(x)))
+    str = "["
+    first_elem = TRUE
+    for (val in x) {
+      if (first_elem) 
+        first_elem = FALSE
+      else str = paste(str, ",", sep = "")
+      str = paste(str, .toJson(val), sep = "")
+    }
+    str = paste(str, "]", sep = "")
+    return(str)
+  }
+  if (is.nan(x)) 
+    return("\"NaN\"")
+  if (is.na(x)) 
+    return("\"NA\"")
+  if (is.infinite(x)) 
+    return(ifelse(x == Inf, "\"Inf\"", "\"-Inf\""))
+  if (is.logical(x)) 
+    return(ifelse(x, "true", "false"))
+  if (is.character(x)) 
+    return(gsub("\\/", "\\\\/", deparse(x)))
+  if (is.numeric(x)) 
+    return(as.character(x))
+  stop("shouldnt make it here - unhandled type not caught")
 }
