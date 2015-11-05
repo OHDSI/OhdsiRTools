@@ -16,58 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Check R file for code errors
-#'
-#' @details
-#' This function uses the lintr package to check the code.
-#'
-#' @param file   The R file to check
-#'
-#' @export
-ohdsiLintrFile <- function(file) {
-  lints <- lintr::lint(file, linters = list(assignment_linter = lintr::assignment_linter,
-                                            commas_linter = lintr::commas_linter,
-                                            no_tab_linter = lintr::no_tab_linter,
-                                            object_usage_linter = lintr::object_usage_linter,
-                                            object_multiple_dots_linter = lintr::object_multiple_dots_linter,
-                                            object_length_linter = lintr::object_length_linter,
-                                            open_curly_linter = lintr::open_curly_linter,
-                                            single_quotes_linter = lintr::single_quotes_linter,
-                                            spaces_inside_linter = lintr::spaces_inside_linter,
-                                            trailing_blank_lines_linter = lintr::trailing_blank_lines_linter,
-                                            trailing_whitespace_linter = lintr::trailing_whitespace_linter))
-
-  # Not using object_snake_case_linter because cannot control naming of third-party functions (e.g.
-  # test_that) Not using infix_spaces_linter because formatR removes spaces around / and ^ operators
-
-  invisible(lints)
-}
-
-#' Check all R files in a folder
-#'
-#' @details
-#' This function uses the lintr package to check the code.
-#'
-#' @param path        Path to the folder containing the files to check. Only files with the .R
-#'                    extension will be checked.
-#' @param recursive   Include all subfolders?
-#'
-#' @export
-ohdsiLintrFolder <- function(path = ".", recursive = TRUE) {
-  flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
-  lints <- list()
-  for (f in flist) {
-    message("Checking code in ", f)
-    lints <- append(lints, ohdsiLintrFile(f))
-  }
-  if (length(lints) == 0) {
-    writeLines("No problems found")
-  } else {
-    print(lints)
-  }
-  invisible(lints)
-}
-
 .getFunctionDefinitionFromMem <- function(note) {
   funcPos <- regexpr("^.*: ", note)
   func <- substr(note, funcPos, funcPos + attr(funcPos, "match.length") - 3)

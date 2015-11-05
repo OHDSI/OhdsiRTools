@@ -23,10 +23,10 @@
 #' json object and store it in the 'inst/circe' folder, and fetch the template SQL and store it in the
 #' 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
 #'
-#' @param definitionId  The number indicating which Circe definition to fetch.
-#' @param name          The name that will be used for the json and SQL files. If not provided, the
-#'                      name in Circe will be used, but this may not lead to valid file names.
-#' @param baseUrl       The base URL for the WebApi instance.
+#' @param definitionId   The number indicating which Circe definition to fetch.
+#' @param name           The name that will be used for the json and SQL files. If not provided, the
+#'                       name in Circe will be used, but this may not lead to valid file names.
+#' @param baseUrl        The base URL for the WebApi instance.
 #'
 #' @examples
 #' \dontrun{

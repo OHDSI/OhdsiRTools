@@ -11,11 +11,21 @@ Features
 - Auto checking of R code
 - Functions for parallel computation
 - Functions used for automating analyses
-- Functions for circumventing the need for data.frames when working with ffdf objects
+- Functions for retrieving JSON and SQL objects from [CIRCE](https://github.com/OHDSI/Circe)
 
 Examples
 ===========
-todo
+
+```r
+# Auto-format all R files in a package:
+formatRFolder()
+
+# Identify problems in R code in a package:
+checkUsagePackage("OhdsiRTools")
+
+# Insert CIRCE JSON and SQL into a study package:
+insertCirceDefinitionInPackage(123, "MyocardialInfarction")
+```
 
 Technology
 ============
@@ -57,7 +67,7 @@ OhdsiRTools is being developed in R Studio.
 [![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
 [![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
 
-Under development. Do not use.
+Ready for use
 
 # Acknowledgements
 - This project is supported in part through the National Science Foundation grant IIS 1251151.
