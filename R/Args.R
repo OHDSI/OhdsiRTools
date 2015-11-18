@@ -219,7 +219,7 @@ convertArgsToList <- function(matchCall, resultClass = "list") {
     result[[name]] <- get(name, envir = parent.frame(n = 1))
   }
   # Second: overwrite defaults with actual values:
-  values <- lapply(as.list(matchCall)[-1], function(x) eval(x, envir = sys.frame(-3)))
+  values <- lapply(as.list(matchCall)[-1], function(x) eval(x, envir = sys.frame(-4)))
   for (name in names(values)) {
     if (name %in% names(result))
       result[[name]] <- values[[name]]
