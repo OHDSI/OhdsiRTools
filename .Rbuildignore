@@ -3,4 +3,4 @@
 .gitattributes
 extras
 .travis.yml
-deploy.sh
+deploy_container.sh
