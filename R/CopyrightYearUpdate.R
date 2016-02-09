@@ -17,13 +17,12 @@
 # limitations under the License.
 
 
-#' Update the copyright year in an R file
+#' Update the copyright year in a R or SQL file
 #'
 #' @param file           The path to the file.
-#' @param width.cutoff   Number of characters that each line should be limited to.
 #'
 #' @export
-updateCopyrightYearFile <- function(file, width.cutoff = 100) {
+updateCopyrightYearFile <- function(file) {
   text <- readLines(file)
   lineNr <- grep("Copyright 20[0-9][0-9]", text)
   if (length(lineNr) > 0) {
@@ -33,9 +32,9 @@ updateCopyrightYearFile <- function(file, width.cutoff = 100) {
   writeLines(text, con = file)
 }
 
-#' Update the copyright year in all R files in a folder
+#' Update the copyright year in all R and SQL files in a folder
 #'
-#' @param path                Path to the folder containing the files to update. Only files with the .R
+#' @param path                Path to the folder containing the files to update. Only files with the .R and .SQL
 #'                            extension will be updated.
 #' @param recursive           Include all subfolders?
 #'
@@ -45,7 +44,7 @@ updateCopyrightYearFile <- function(file, width.cutoff = 100) {
 #' }
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
-  flist <- list.files(path, pattern = "\\.[Rr]$", full.names = TRUE, recursive = recursive)
+  flist <- list.files(path, pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$", full.names = TRUE, recursive = recursive)
   for (f in flist) {
     message("Checking copyright year in ", f)
     updateCopyrightYearFile(f)

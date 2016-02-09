@@ -2,16 +2,14 @@
 % Please edit documentation in R/CopyrightYearUpdate.R
 \name{updateCopyrightYearFile}
 \alias{updateCopyrightYearFile}
-\title{Update the copyright year in an R file}
+\title{Update the copyright year in a R or SQL file}
 \usage{
-updateCopyrightYearFile(file, width.cutoff = 100)
+updateCopyrightYearFile(file)
 }
 \arguments{
 \item{file}{The path to the file.}
-
-\item{width.cutoff}{Number of characters that each line should be limited to.}
 }
 \description{
-Update the copyright year in an R file
+Update the copyright year in a R or SQL file
 }
 
