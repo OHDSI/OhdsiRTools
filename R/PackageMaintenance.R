@@ -1,6 +1,6 @@
 # @file PackageMaintentance.R
 #
-# Copyright 2015 Observational Health Data Sciences and Informatics
+# Copyright 2016 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -19,6 +19,7 @@
 .formatAndCheckCode <- function() {
   OhdsiRTools::formatRFolder()
   OhdsiRTools::checkUsagePackage("OhdsiRTools")
+  OhdsiRTools::updateCopyrightYearFolder()
 }
 
 .createManualAndVignettes <- function() {

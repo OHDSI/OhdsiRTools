@@ -4,19 +4,21 @@ Title: Tools for Maintaining OHDSI R Packages
 Version: 1.0.1
 Date: 2015-11-05
 Author: Martijn J. Schuemie [aut, cre],
-  Marc A. Suchard [aut],
+    Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
-Description: Format and check syntax of R code and packages following the OHDSI R style guidelines. Support for parallel computation.
+Description: Format and check syntax of R code and packages following the OHDSI
+    R style guidelines. Support for parallel computation.
 License: Apache License 2.0
 Depends:
-  R (>= 3.1.0)
+    R (>= 3.1.0)
 Imports:
-	codetools,
-	formatR,
-	snow,
-  RJSONIO,
-  RCurl,
-  XML
+    codetools,
+    formatR,
+    snow,
+    RJSONIO,
+    RCurl,
+    XML
 Suggests:
-  testthat
+    testthat
 NeedsCompilation: no
+RoxygenNote: 5.0.1
