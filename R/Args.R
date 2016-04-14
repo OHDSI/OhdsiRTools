@@ -113,7 +113,18 @@ createArgFunction <- function(functionName,
 
     rCode <- c(rCode, paste(start, argInfo$name[i], end, sep = ""))
   }
-  rCode <- c(rCode, "  analysis <- OhdsiRTools::convertArgsToList(match.call(), \"args\")")
+  rCode <- c(rCode, "  # First: get default values:")
+  rCode <- c(rCode, "  analysis <- list()")
+  rCode <- c(rCode, paste0("  for (name in names(formals(",createFunArgsName,"))) {"))
+  rCode <- c(rCode, "    analysis[[name]] <- get(name)")
+  rCode <- c(rCode, "  }")
+  rCode <- c(rCode, "  # Second: overwrite defaults with actual values:")
+  rCode <- c(rCode, "  values <- lapply(as.list(match.call())[-1], function(x) eval(x, envir = sys.frame(-3)))")
+  rCode <- c(rCode, "  for (name in names(values)) {")
+  rCode <- c(rCode, "    if (name %in% names(analysis))")
+  rCode <- c(rCode, "      analysis[[name]] <- values[[name]]")
+  rCode <- c(rCode, "  }")
+  rCode <- c(rCode, "  class(analysis) <- \"args\"")
   rCode <- c(rCode, "  return(analysis)")
   rCode <- c(rCode, "}")
   return(rCode)
@@ -194,37 +205,3 @@ matchInList <- function(x, toMatch) {
   }
   return(result)
 }
-
-#' Convert arguments used in call to a list
-#'
-#' @details
-#' Takes the argument values (both default and user-specified) and store them in a list.
-#'
-#' @param matchCall     The result of \code{match.call()}.
-#' @param resultClass   The class of the resulting object.
-#'
-#' @return
-#' An object of the class specified in \code{resultClass}.
-#'
-#' @examples
-#' myFun <- function(x = 1, y = 2) {
-#'   return(convertArgsToList(match.call()))
-#' }
-#'
-#' @export
-convertArgsToList <- function(matchCall, resultClass = "list") {
-  # First: get default values:
-  result <- list()
-  for (name in names(formals(as.character(matchCall[[1]])))) {
-    result[[name]] <- get(name, envir = parent.frame(n = 1))
-  }
-  # Second: overwrite defaults with actual values:
-  values <- lapply(as.list(matchCall)[-1], function(x) eval(x, envir = sys.frame(-4)))
-  for (name in names(values)) {
-    if (name %in% names(result))
-      result[[name]] <- values[[name]]
-  }
-  class(result) <- resultClass
-  return(result)
-}
-

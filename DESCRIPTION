@@ -1,7 +1,7 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools for Maintaining OHDSI R Packages
-Version: 1.0.1
+Version: 1.1.0
 Date: 2015-11-05
 Author: Martijn J. Schuemie [aut, cre],
     Marc A. Suchard [aut],
