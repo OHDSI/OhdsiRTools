@@ -44,7 +44,7 @@ updateCopyrightYearFile <- function(file) {
 #' }
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
-  flist <- list.files(path, pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$", full.names = TRUE, recursive = recursive)
+  flist <- list.files(path, pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$", full.names = TRUE, recursive = recursive)
   for (f in flist) {
     message("Checking copyright year in ", f)
     updateCopyrightYearFile(f)
