@@ -25,6 +25,7 @@
 #' @param functionName   The name of the function for which we want to create an args function.
 #' @param excludeArgs    Exclude these arguments from appearing in the args function.
 #' @param includeArgs    Include these arguments in the args function.
+#' @param addArgs        Add these arguments to the args functions. Defined as a list with format name = default.
 #' @param rCode          A character vector representing the R code where the new function should be
 #'                       appended to.
 #' @param newName        The name of the new function. If not specified, the new name will be
@@ -32,11 +33,15 @@
 #'
 #' @return
 #' A character vector with the R code including the new function.
+#' 
+#' @examples 
+#' createArgFunction("read.csv", addArgs = list(exposureId = "exposureId"))
 #'
 #' @export
 createArgFunction <- function(functionName,
                               excludeArgs = c(),
                               includeArgs = NULL,
+                              addArgs = list(),
                               rCode = c(),
                               newName) {
   args <- formals(functionName)
@@ -44,6 +49,7 @@ createArgFunction <- function(functionName,
     args <- args[names(args) %in% includeArgs]
   }
   args <- args[!(names(args) %in% excludeArgs)]
+  args <- append(args, addArgs)
   toChar <- function(x) {
     if (is.null(x)) {
       "NULL"
@@ -66,7 +72,7 @@ createArgFunction <- function(functionName,
                                    "//table[@summary=\"R argblock\"]//tr//td",
                                    XML::xmlValue)
   parameterHelp <- iconv(unlist(parameterHelp), from = "UTF-8", to = "ASCII")
-  argInfo$help <- NULL
+  argInfo$help <- ""
   for (i in 1:(length(parameterHelp)/2)) {
     argInfo$help[argInfo$name == parameterHelp[i * 2 - 1]] <- gsub("\n", "", parameterHelp[i * 2])
   }
@@ -203,5 +209,40 @@ matchInList <- function(x, toMatch) {
       result[[length(result) + 1]] <- x[[i]]
     }
   }
+  return(result)
+}
+
+#' Deprecated: Convert arguments used in call to a list
+#'
+#' @details
+#' Takes the argument values (both default and user-specified) and store them in a list. 
+#' 
+#' This function is deprecated because it fails when used in a function that is called using ::.
+#'
+#' @param matchCall     The result of \code{match.call()}.
+#' @param resultClass   The class of the resulting object.
+#'
+#' @return
+#' An object of the class specified in \code{resultClass}.
+#'
+#' @examples
+#' myFun <- function(x = 1, y = 2) {
+#'   return(convertArgsToList(match.call()))
+#' }
+#'
+#' @export
+convertArgsToList <- function(matchCall, resultClass = "list") {
+  # First: get default values:
+  result <- list()
+  for (name in names(formals(as.character(matchCall[[1]])))) {
+    result[[name]] <- get(name, envir = parent.frame(n = 1))
+  }
+  # Second: overwrite defaults with actual values:
+  values <- lapply(as.list(matchCall)[-1], function(x) eval(x, envir = sys.frame(-4)))
+  for (name in names(values)) {
+    if (name %in% names(result))
+      result[[name]] <- values[[name]]
+  }
+  class(result) <- resultClass
   return(result)
 }

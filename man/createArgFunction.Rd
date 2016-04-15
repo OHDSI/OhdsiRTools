@@ -5,7 +5,7 @@
 \title{Create an argument function}
 \usage{
 createArgFunction(functionName, excludeArgs = c(), includeArgs = NULL,
-  rCode = c(), newName)
+  addArgs = list(), rCode = c(), newName)
 }
 \arguments{
 \item{functionName}{The name of the function for which we want to create an args function.}
@@ -13,6 +13,8 @@ createArgFunction(functionName, excludeArgs = c(), includeArgs = NULL,
 \item{excludeArgs}{Exclude these arguments from appearing in the args function.}
 
 \item{includeArgs}{Include these arguments in the args function.}
+
+\item{addArgs}{Add these arguments to the args functions. Defined as a list with format name = default.}
 
 \item{rCode}{A character vector representing the R code where the new function should be
 appended to.}
@@ -29,5 +31,9 @@ Create an argument function
 \details{
 This function can be used to create a function that has (almost) the same interface as the
 specified function, and the output of this function will be a list of argument values.
+}
+\examples{
+createArgFunction("read.csv", addArgs = list(exposureId = "exposureId"))
+
 }
 

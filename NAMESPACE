@@ -3,6 +3,7 @@
 export(checkUsagePackage)
 export(clusterApply)
 export(clusterRequire)
+export(convertArgsToList)
 export(createArgFunction)
 export(excludeFromList)
 export(formatRFile)
