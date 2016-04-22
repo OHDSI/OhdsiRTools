@@ -246,3 +246,76 @@ convertArgsToList <- function(matchCall, resultClass = "list") {
   class(result) <- resultClass
   return(result)
 }
+
+convertAttrToMember <- function(object){
+  if (is.list(object)){
+    if (length(object) > 0) {
+      for (i in 1:length(object)) {
+        if (!is.null(object[[i]])){
+          object[[i]] <- convertAttrToMember(object[[i]])
+        }
+      }
+    }
+    a <- names(attributes(object))
+    a <- a[a != "names"]
+    if (length(a) > 0) {
+      object[paste("attr",a, sep = "_")] <- attributes(object)[a]
+    }
+  }
+  return(object)
+}
+
+convertMemberToAttr <-  function(object){
+  if (is.list(object)){
+    if (length(object) > 0) {
+      for (i in 1:length(object)) {
+        if (!is.null(object[[i]])){
+          object[[i]] <- convertMemberToAttr(object[[i]])
+        }
+      }
+      attrNames <- names(object)[grep("^attr_", names(object))]
+      cleanNames <- gsub("^attr_", "", attrNames)
+      if (any(cleanNames == "class")){
+        class(object) <- object$attr_class
+        object$attr_class <- NULL
+        attrNames <- attrNames[attrNames != "attr_class"]
+        cleanNames <- cleanNames[cleanNames != "class"]
+      }
+      attributes(object)[cleanNames] <- object[attrNames]
+      object[attrNames] <- NULL
+    }
+  }
+  return(object)
+}
+
+#' Save a settings object as JSON file
+#' 
+#' @details 
+#' Save a setting object as a JSON file, using pretty formatting and preserving object classes and attributes.
+#' 
+#' @param object    R object to be saved.
+#' @param fileName  File name where the object should be saved.
+#' 
+#' @export
+saveSettingsToJson <- function(object, fileName){
+  object <- convertAttrToMember(object)
+  json <- jsonlite::toJSON(object, pretty = TRUE, force = TRUE, null = "null", auto_unbox = TRUE)
+  write(json, fileName)
+}
+
+#' Load a settings object from a JSON file
+#' 
+#' @details 
+#' Load a settings object from a JSON file, restoring object classes and attributes.
+#' 
+#' @param fileName  Name of the JSON file to load.
+#' 
+#' @return 
+#' An R object as specified by the JSON.
+#' 
+#' @export
+loadSettingsFromJson <- function(fileName) {
+  object <- jsonlite::fromJSON(fileName, simplifyVector = TRUE, simplifyDataFrame = FALSE)
+  object <- convertMemberToAttr(object)
+  return(object)
+}
