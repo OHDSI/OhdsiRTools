@@ -30,16 +30,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' # This will create 'inst/circe/MyocardialInfarction.json' and
-#' # 'inst/sql/sql_server/MyocardialInfarction.sql':
+#' # This will create 'inst/circe/Angioedema.json' and
+#' # 'inst/sql/sql_server/Angioedema.sql':
 #'
-#' insertCirceDefinitionInPackage(280, "MyocardialInfarction")
+#' insertCirceDefinitionInPackage(2132, "Angioedema")
 #' }
 #'
 #' @export
 insertCirceDefinitionInPackage <- function(definitionId,
                                            name = NULL,
-                                           baseUrl = "http://hixbeta.jnj.com:8081/WebAPI") {
+                                           baseUrl = "http://hix.jnj.com:8080/WebAPI") {
 
   ### Fetch JSON object ###
   url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
