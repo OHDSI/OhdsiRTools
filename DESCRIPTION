@@ -1,8 +1,8 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools for Maintaining OHDSI R Packages
-Version: 1.1.1
-Date: 2015-11-05
+Version: 1.1.2
+Date: 2016-12-23
 Author: Martijn J. Schuemie [aut, cre],
     Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
@@ -18,7 +18,9 @@ Imports:
     RJSONIO,
     RCurl,
     XML,
-    jsonlite
+    jsonlite,
+    methods,
+    utils
 Suggests:
     testthat
 NeedsCompilation: no

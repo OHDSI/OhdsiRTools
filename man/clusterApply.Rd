@@ -12,7 +12,8 @@ clusterApply(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE,
 
 \item{x}{The list on which the function will be applied.}
 
-\item{fun}{The function to apply.}
+\item{fun}{The function to apply. Note that the context in which the function is 
+specifies matters (see details).}
 
 \item{...}{Additional parameters for the function.}
 
@@ -36,5 +37,11 @@ Apply a function to a list using the cluster
 The function will be executed on each element of x in the threads of the cluster. If there are more
 elements than threads, the elements will be queued. The progress bar will show the number of
 elements that have been completed.
+
+It can sometimes be important to realize that the context in which a function is created is also
+transmitted to the worker node. If a function is defined inside another function, and that outer 
+function is called with a large argument, that argument will be transmitted to the worker node
+each time the function is executed. It can therefore make sense to define the function to be called
+at the package level rather than inside a function, to save overhead.
 }
 

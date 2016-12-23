@@ -86,16 +86,33 @@ stopCluster <- function(cluster) {
   }
 }
 
+setFfMem <- function(values) {
+  options(ffmaxbytes = values[1])
+  options(ffbatchbytes = values[2])
+  return(c(getOption("ffmaxbytes"), getOption("ffbatchbytes")))
+}
+
+setFfDir <- function(fftempdir) {
+  options(fftempdir = fftempdir)
+}
+
 #' Apply a function to a list using the cluster
 #'
 #' @details
 #' The function will be executed on each element of x in the threads of the cluster. If there are more
 #' elements than threads, the elements will be queued. The progress bar will show the number of
 #' elements that have been completed.
+#' 
+#' It can sometimes be important to realize that the context in which a function is created is also
+#' transmitted to the worker node. If a function is defined inside another function, and that outer 
+#' function is called with a large argument, that argument will be transmitted to the worker node
+#' each time the function is executed. It can therefore make sense to define the function to be called
+#' at the package level rather than inside a function, to save overhead.
 #'
 #' @param cluster          The cluster of threads to run the function.
 #' @param x                The list on which the function will be applied.
-#' @param fun              The function to apply.
+#' @param fun              The function to apply. Note that the context in which the function is 
+#'                         specifies matters (see details).
 #' @param ...              Additional parameters for the function.
 #' @param stopOnError      Stop when one of the threads reports an error? If FALSE, all errors will be
 #'                         reported at the end.
@@ -121,11 +138,6 @@ clusterApply <- function(cluster,
   } else {
     if (divideFfMemory) {
       values <- .computeFfMemPerCluster(length(cluster))
-      setFfMem <- function(values) {
-        options(ffmaxbytes = values[1])
-        options(ffbatchbytes = values[2])
-        return(c(getOption("ffmaxbytes"), getOption("ffbatchbytes")))
-      }
       for (i in 1:length(cluster)) {
         snow::sendCall(cluster[[i]], setFfMem, list(values = values))
       }
@@ -135,9 +147,6 @@ clusterApply <- function(cluster,
       }
     }
     if (setFfTempDir) {
-      setFfDir <- function(fftempdir) {
-        options(fftempdir = fftempdir)
-      }
       for (i in 1:length(cluster)) {
         snow::sendCall(cluster[[i]], setFfDir, list(fftempdir = options("fftempdir")$fftempdir))
       }
@@ -146,15 +155,16 @@ clusterApply <- function(cluster,
       }
     }
 
-    argfun <- function(i) c(list(x[[i]]), list(...))
     n <- length(x)
     p <- length(cluster)
     if (n > 0 && p > 0) {
       if (progressBar)
         pb <- txtProgressBar(style = 3)
 
-      submit <- function(node, job) snow::sendCall(cluster[[node]], fun, argfun(job), tag = job)
-      for (i in 1:min(n, p)) submit(i, i)
+      for (i in 1:min(n, p))  {
+        snow::sendCall(cluster[[i]], fun, c(list(x[[i]]), list(...)), tag = i) 
+      }
+
       val <- vector("list", n)
       errors <- c(paste("Error(s) when calling function ",
                         substitute(fun, parent.frame(1)),
@@ -176,8 +186,9 @@ clusterApply <- function(cluster,
         if (progressBar)
           setTxtProgressBar(pb, i/n)
         j <- i + min(n, p)
-        if (j <= n)
-          submit(d$node, j)
+        if (j <= n) {
+          snow::sendCall(cluster[[d$node]], fun, c(list(x[[j]]), list(...)), tag = j) 
+        }
         val[d$tag] <- list(d$value)
       }
       if (progressBar)

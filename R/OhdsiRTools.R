@@ -20,4 +20,6 @@
 #'
 #' @docType package
 #' @name OhdsiRTools
+#' @importFrom methods getFunction
+#' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar
 NULL
