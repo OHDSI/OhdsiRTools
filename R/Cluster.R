@@ -179,7 +179,7 @@ clusterApply <- function(cluster,
         d <- snow::recvOneResult(cluster)
         if (inherits(d$value, "try-error")) {
           val[d$tag] <- NULL
-          errors <- c(errors, formatError(d$value, argfun(d$tag)))
+          errors <- c(errors, formatError(d$value, c(list(x[[i]]), list(...))))
           if (stopOnError)
           stop(paste(errors, collapse = ""), call. = FALSE)
         }
