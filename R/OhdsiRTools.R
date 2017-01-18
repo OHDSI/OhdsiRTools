@@ -1,6 +1,6 @@
 # @file OhdsiRTools.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -21,5 +21,6 @@
 #' @docType package
 #' @name OhdsiRTools
 #' @importFrom methods getFunction
-#' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar
+#' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar installed.packages packageDescription sessionInfo
+#' @importFrom stats aggregate
 NULL

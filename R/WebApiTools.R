@@ -1,6 +1,6 @@
 # @file WebApiTools.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 # 
@@ -30,8 +30,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # This will create 'inst/circe/Angioedema.json' and
-#' # 'inst/sql/sql_server/Angioedema.sql':
+#' # This will create 'inst/circe/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 #'
 #' insertCirceDefinitionInPackage(2132, "Angioedema")
 #' }

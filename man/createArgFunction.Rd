@@ -14,7 +14,8 @@ createArgFunction(functionName, excludeArgs = c(), includeArgs = NULL,
 
 \item{includeArgs}{Include these arguments in the args function.}
 
-\item{addArgs}{Add these arguments to the args functions. Defined as a list with format name = default.}
+\item{addArgs}{Add these arguments to the args functions. Defined as a list with format name
+= default.}
 
 \item{rCode}{A character vector representing the R code where the new function should be
 appended to.}

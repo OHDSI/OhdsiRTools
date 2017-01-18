@@ -7,8 +7,8 @@
 updateCopyrightYearFolder(path = ".", recursive = TRUE)
 }
 \arguments{
-\item{path}{Path to the folder containing the files to update. Only files with the .R and .SQL
-extension will be updated.}
+\item{path}{Path to the folder containing the files to update. Only files with the .R and
+.SQL extension will be updated.}
 
 \item{recursive}{Include all subfolders?}
 }

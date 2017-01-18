@@ -1,6 +1,6 @@
 # @file OhdsiRTools.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -19,7 +19,7 @@
 
 #' Update the copyright year in a R or SQL file
 #'
-#' @param file           The path to the file.
+#' @param file   The path to the file.
 #'
 #' @export
 updateCopyrightYearFile <- function(file) {
@@ -34,9 +34,9 @@ updateCopyrightYearFile <- function(file) {
 
 #' Update the copyright year in all R and SQL files in a folder
 #'
-#' @param path                Path to the folder containing the files to update. Only files with the .R and .SQL
-#'                            extension will be updated.
-#' @param recursive           Include all subfolders?
+#' @param path        Path to the folder containing the files to update. Only files with the .R and
+#'                    .SQL extension will be updated.
+#' @param recursive   Include all subfolders?
 #'
 #' @examples
 #' \dontrun{
@@ -44,10 +44,13 @@ updateCopyrightYearFile <- function(file) {
 #' }
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
-  flist <- list.files(path, pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$", full.names = TRUE, recursive = recursive)
+  flist <- list.files(path,
+                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$",
+                      full.names = TRUE,
+                      recursive = recursive)
   for (f in flist) {
     message("Checking copyright year in ", f)
     updateCopyrightYearFile(f)
-    
+
   }
 }

@@ -25,8 +25,7 @@ json object and store it in the 'inst/circe' folder, and fetch the template SQL 
 }
 \examples{
 \dontrun{
-# This will create 'inst/circe/Angioedema.json' and
-# 'inst/sql/sql_server/Angioedema.sql':
+# This will create 'inst/circe/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 
 insertCirceDefinitionInPackage(2132, "Angioedema")
 }

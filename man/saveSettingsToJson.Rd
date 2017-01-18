@@ -15,6 +15,7 @@ saveSettingsToJson(object, fileName)
 Save a settings object as JSON file
 }
 \details{
-Save a setting object as a JSON file, using pretty formatting and preserving object classes and attributes.
+Save a setting object as a JSON file, using pretty formatting and preserving object classes and
+attributes.
 }
 

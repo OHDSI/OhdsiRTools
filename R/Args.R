@@ -1,6 +1,6 @@
 # @file Args.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 # 
@@ -25,7 +25,8 @@
 #' @param functionName   The name of the function for which we want to create an args function.
 #' @param excludeArgs    Exclude these arguments from appearing in the args function.
 #' @param includeArgs    Include these arguments in the args function.
-#' @param addArgs        Add these arguments to the args functions. Defined as a list with format name = default.
+#' @param addArgs        Add these arguments to the args functions. Defined as a list with format name
+#'                       = default.
 #' @param rCode          A character vector representing the R code where the new function should be
 #'                       appended to.
 #' @param newName        The name of the new function. If not specified, the new name will be
@@ -33,8 +34,8 @@
 #'
 #' @return
 #' A character vector with the R code including the new function.
-#' 
-#' @examples 
+#'
+#' @examples
 #' createArgFunction("read.csv", addArgs = list(exposureId = "exposureId"))
 #'
 #' @export
@@ -121,11 +122,12 @@ createArgFunction <- function(functionName,
   }
   rCode <- c(rCode, "  # First: get default values:")
   rCode <- c(rCode, "  analysis <- list()")
-  rCode <- c(rCode, paste0("  for (name in names(formals(",createFunArgsName,"))) {"))
+  rCode <- c(rCode, paste0("  for (name in names(formals(", createFunArgsName, "))) {"))
   rCode <- c(rCode, "    analysis[[name]] <- get(name)")
   rCode <- c(rCode, "  }")
   rCode <- c(rCode, "  # Second: overwrite defaults with actual values:")
-  rCode <- c(rCode, "  values <- lapply(as.list(match.call())[-1], function(x) eval(x, envir = sys.frame(-3)))")
+  rCode <- c(rCode,
+             "  values <- lapply(as.list(match.call())[-1], function(x) eval(x, envir = sys.frame(-3)))")
   rCode <- c(rCode, "  for (name in names(values)) {")
   rCode <- c(rCode, "    if (name %in% names(analysis))")
   rCode <- c(rCode, "      analysis[[name]] <- values[[name]]")
@@ -215,8 +217,7 @@ matchInList <- function(x, toMatch) {
 #' Deprecated: Convert arguments used in call to a list
 #'
 #' @details
-#' Takes the argument values (both default and user-specified) and store them in a list. 
-#' 
+#' Takes the argument values (both default and user-specified) and store them in a list.
 #' This function is deprecated because it fails when used in a function that is called using ::.
 #'
 #' @param matchCall     The result of \code{match.call()}.
@@ -247,11 +248,11 @@ convertArgsToList <- function(matchCall, resultClass = "list") {
   return(result)
 }
 
-convertAttrToMember <- function(object){
-  if (is.list(object)){
+convertAttrToMember <- function(object) {
+  if (is.list(object)) {
     if (length(object) > 0) {
       for (i in 1:length(object)) {
-        if (!is.null(object[[i]])){
+        if (!is.null(object[[i]])) {
           object[[i]] <- convertAttrToMember(object[[i]])
         }
       }
@@ -259,23 +260,23 @@ convertAttrToMember <- function(object){
     a <- names(attributes(object))
     a <- a[a != "names"]
     if (length(a) > 0) {
-      object[paste("attr",a, sep = "_")] <- attributes(object)[a]
+      object[paste("attr", a, sep = "_")] <- attributes(object)[a]
     }
   }
   return(object)
 }
 
-convertMemberToAttr <-  function(object){
-  if (is.list(object)){
+convertMemberToAttr <- function(object) {
+  if (is.list(object)) {
     if (length(object) > 0) {
       for (i in 1:length(object)) {
-        if (!is.null(object[[i]])){
+        if (!is.null(object[[i]])) {
           object[[i]] <- convertMemberToAttr(object[[i]])
         }
       }
       attrNames <- names(object)[grep("^attr_", names(object))]
       cleanNames <- gsub("^attr_", "", attrNames)
-      if (any(cleanNames == "class")){
+      if (any(cleanNames == "class")) {
         class(object) <- object$attr_class
         object$attr_class <- NULL
         attrNames <- attrNames[attrNames != "attr_class"]
@@ -289,30 +290,31 @@ convertMemberToAttr <-  function(object){
 }
 
 #' Save a settings object as JSON file
-#' 
-#' @details 
-#' Save a setting object as a JSON file, using pretty formatting and preserving object classes and attributes.
-#' 
-#' @param object    R object to be saved.
-#' @param fileName  File name where the object should be saved.
-#' 
+#'
+#' @details
+#' Save a setting object as a JSON file, using pretty formatting and preserving object classes and
+#' attributes.
+#'
+#' @param object     R object to be saved.
+#' @param fileName   File name where the object should be saved.
+#'
 #' @export
-saveSettingsToJson <- function(object, fileName){
+saveSettingsToJson <- function(object, fileName) {
   object <- convertAttrToMember(object)
   json <- jsonlite::toJSON(object, pretty = TRUE, force = TRUE, null = "null", auto_unbox = TRUE)
   write(json, fileName)
 }
 
 #' Load a settings object from a JSON file
-#' 
-#' @details 
+#'
+#' @details
 #' Load a settings object from a JSON file, restoring object classes and attributes.
-#' 
-#' @param fileName  Name of the JSON file to load.
-#' 
-#' @return 
+#'
+#' @param fileName   Name of the JSON file to load.
+#'
+#' @return
 #' An R object as specified by the JSON.
-#' 
+#'
 #' @export
 loadSettingsFromJson <- function(fileName) {
   object <- jsonlite::fromJSON(fileName, simplifyVector = TRUE, simplifyDataFrame = FALSE)

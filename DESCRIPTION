@@ -1,8 +1,8 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools for Maintaining OHDSI R Packages
-Version: 1.1.2
-Date: 2016-12-23
+Version: 1.2.0
+Date: 2017-1-18
 Author: Martijn J. Schuemie [aut, cre],
     Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
@@ -12,6 +12,7 @@ License: Apache License 2.0
 Depends:
     R (>= 3.1.0)
 Imports:
+    devtools,
     codetools,
     formatR,
     snow,

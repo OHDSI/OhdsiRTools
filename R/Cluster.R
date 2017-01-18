@@ -1,6 +1,6 @@
 # @file Cluster.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 # 
@@ -102,16 +102,15 @@ setFfDir <- function(fftempdir) {
 #' The function will be executed on each element of x in the threads of the cluster. If there are more
 #' elements than threads, the elements will be queued. The progress bar will show the number of
 #' elements that have been completed.
-#' 
 #' It can sometimes be important to realize that the context in which a function is created is also
-#' transmitted to the worker node. If a function is defined inside another function, and that outer 
-#' function is called with a large argument, that argument will be transmitted to the worker node
-#' each time the function is executed. It can therefore make sense to define the function to be called
-#' at the package level rather than inside a function, to save overhead.
+#' transmitted to the worker node. If a function is defined inside another function, and that outer
+#' function is called with a large argument, that argument will be transmitted to the worker node each
+#' time the function is executed. It can therefore make sense to define the function to be called at
+#' the package level rather than inside a function, to save overhead.
 #'
 #' @param cluster          The cluster of threads to run the function.
 #' @param x                The list on which the function will be applied.
-#' @param fun              The function to apply. Note that the context in which the function is 
+#' @param fun              The function to apply. Note that the context in which the function is
 #'                         specifies matters (see details).
 #' @param ...              Additional parameters for the function.
 #' @param stopOnError      Stop when one of the threads reports an error? If FALSE, all errors will be
@@ -161,8 +160,8 @@ clusterApply <- function(cluster,
       if (progressBar)
         pb <- txtProgressBar(style = 3)
 
-      for (i in 1:min(n, p))  {
-        snow::sendCall(cluster[[i]], fun, c(list(x[[i]]), list(...)), tag = i) 
+      for (i in 1:min(n, p)) {
+        snow::sendCall(cluster[[i]], fun, c(list(x[[i]]), list(...)), tag = i)
       }
 
       val <- vector("list", n)
@@ -187,7 +186,7 @@ clusterApply <- function(cluster,
           setTxtProgressBar(pb, i/n)
         j <- i + min(n, p)
         if (j <= n) {
-          snow::sendCall(cluster[[d$node]], fun, c(list(x[[j]]), list(...)), tag = j) 
+          snow::sendCall(cluster[[d$node]], fun, c(list(x[[j]]), list(...)), tag = j)
         }
         val[d$tag] <- list(d$value)
       }
