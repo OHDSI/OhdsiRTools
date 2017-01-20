@@ -19,16 +19,6 @@ name in Circe will be used, but this may not lead to valid file names.}
 Load a Circe definition and insert it into this package
 }
 \details{
-Load a Circe definition from a WebApi instance and insert it into this package. This will fetch the
-json object and store it in the 'inst/circe' folder, and fetch the template SQL and store it in the
-'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
-}
-\examples{
-\dontrun{
-# This will create 'inst/circe/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
-
-insertCirceDefinitionInPackage(2132, "Angioedema")
-}
-
+Deprecated. Use \code{\link{insertCohortDefinitionInPackage}} instead.
 }
 
