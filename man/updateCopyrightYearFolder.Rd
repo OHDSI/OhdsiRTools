@@ -20,4 +20,3 @@ Update the copyright year in all R and SQL files in a folder
 updateCopyrightYearFolder()
 }
 }
-

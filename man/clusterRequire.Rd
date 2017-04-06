@@ -14,4 +14,3 @@ clusterRequire(cluster, package)
 \description{
 Require a package in the cluster
 }
-

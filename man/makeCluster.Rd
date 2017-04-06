@@ -18,4 +18,3 @@ An object representing the cluster.
 \description{
 Create a cluster of nodes for parallel computation
 }
-

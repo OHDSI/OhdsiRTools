@@ -18,4 +18,3 @@ Save a settings object as JSON file
 Save a setting object as a JSON file, using pretty formatting and preserving object classes and
 attributes.
 }
-

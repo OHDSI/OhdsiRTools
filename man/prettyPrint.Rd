@@ -15,4 +15,3 @@ Print a list of objects
 \details{
 Will print nested lists using indentation.
 }
-

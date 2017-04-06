@@ -26,4 +26,3 @@ snapshot <- takeEnvironmentSnapshot("OhdsiRTools")
 snapshot
 
 }
-

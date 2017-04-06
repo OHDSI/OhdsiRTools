@@ -18,4 +18,3 @@ Load a settings object from a JSON file
 \details{
 Load a settings object from a JSON file, restoring object classes and attributes.
 }
-

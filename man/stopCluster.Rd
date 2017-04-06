@@ -12,4 +12,3 @@ stopCluster(cluster)
 \description{
 Stop the cluster
 }
-

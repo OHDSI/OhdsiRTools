@@ -23,4 +23,3 @@ insertEnvironmentSnapshotInPackage("OhdsiRTools")
 }
 
 }
-

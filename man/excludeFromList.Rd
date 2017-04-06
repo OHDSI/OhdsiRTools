@@ -14,4 +14,3 @@ excludeFromList(x, exclude)
 \description{
 Exclude variables from a list of objects of the same type
 }
-

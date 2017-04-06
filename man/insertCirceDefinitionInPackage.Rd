@@ -21,4 +21,3 @@ Load a Circe definition and insert it into this package
 \details{
 Deprecated. Use \code{\link{insertCohortDefinitionInPackage}} instead.
 }
-

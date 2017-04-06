@@ -14,4 +14,3 @@ formatRFile(file, width.cutoff = 100)
 \description{
 Format an R file
 }
-

@@ -24,4 +24,3 @@ Format all R files in a folder
 formatRFolder()
 }
 }
-

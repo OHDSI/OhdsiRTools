@@ -14,4 +14,3 @@ selectFromList(x, select)
 \description{
 Select variables from a list of objects of the same type
 }
-

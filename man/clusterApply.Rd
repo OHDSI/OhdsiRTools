@@ -43,4 +43,3 @@ function is called with a large argument, that argument will be transmitted to t
 time the function is executed. It can therefore make sense to define the function to be called at
 the package level rather than inside a function, to save overhead.
 }
-

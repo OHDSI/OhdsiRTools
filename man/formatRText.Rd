@@ -17,4 +17,3 @@ A character vector with formatted R code.
 \description{
 Format R code
 }
-

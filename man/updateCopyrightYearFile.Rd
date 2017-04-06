@@ -12,4 +12,3 @@ updateCopyrightYearFile(file)
 \description{
 Update the copyright year in a R or SQL file
 }
-
