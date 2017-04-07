@@ -2,10 +2,14 @@ insertCohortDefinitionInPackage(definitionId = 3876,
                                 name = "Alendronate",
                                 generateStats = TRUE)
 
-definitionId <- 3876
 
 
 
-getCohortInclusionRules()
+insertCohortDefinitionSetInPackage(fileName = "cohorts.csv",
+                                   insertTableSql = TRUE,
+                                   insertCohortCreationR = TRUE,
+                                   generateStats = FALSE,
+                                   packageName = "OhdsiRTools")
 
-insertSqlForCohortTableInPackage(statsTables = TRUE)
+
+

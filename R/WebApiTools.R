@@ -104,57 +104,103 @@ insertCirceDefinitionInPackage <- function(definitionId,
   insertCohortDefinitionInPackage(definitionId, name, baseUrl)
 }
 
-#' Get cohort inclusion rules
+
+#' Insert a set of cohort definitions into package
+#'
+#' @param fileName               Name of a CSV file in the inst/settings folder of the package specifying
+#'                               the cohorts to insert. See details for the expected file format.
+#' @param baseUrl                The base URL for the WebApi instance. 
+#' @param insertTableSql         Should the SQL for creating the cohort table be inserted into the 
+#'                               package as well? This file will be called CreateCohortTable.sql.
+#' @param insertCohortCreationR  Insert R code that will create the cohort table and instantiate
+#'                               the cohorts? This will create a file called R/CreateCohorts.R containing
+#'                               a function called .createCohorts.
+#' @param generateStats          Should cohort inclusion rule statistics be created?
+#' @param packageName            The name of the package (only needed when inserting the R code as well).
 #' 
 #' @details 
-#' Parses all cohort definition JSON files in the inst/cohorts folder and extracts the name
-#' of all inclusion rules.
-#'
-#' @return
-#' A data frame with the names of all inclusion rules.
-#'
+#' The CSV file should have at least the following fields:
+#' \describe{
+#' \item{atlasId}{The cohort ID in ATLAS.} 
+#' \item{cohortId}{The cohort ID that will be used when instantiating the cohort (can be different from atlasId).}
+#' \item{name}{The name to be used for the cohort. This name will be used to generate file names, so please use letters and numbers only (no spaces).}
+#' }
+#' 
 #' @export
-getCohortInclusionRules <- function() {
+insertCohortDefinitionSetInPackage <- function(fileName,
+                                               baseUrl = "http://hix.jnj.com:8080/WebAPI",
+                                               insertTableSql = TRUE,
+                                               insertCohortCreationR = TRUE,
+                                               generateStats = FALSE,
+                                               packageName) {
+  if (insertCohortCreationR && !insertTableSql)
+    stop("Need to insert table SQL in order to generate R code")
+  cohortsToCreate <- read.csv(file.path("inst/settings", fileName))
+  for (i in 1:nrow(cohortsToCreate)) {
+    writeLines(paste("Inserting cohort:", cohortsToCreate$name[i]))
+    OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i], 
+                                                 name = cohortsToCreate$name[i], 
+                                                 baseUrl = baseUrl)
+  }
+  if (insertTableSql) {
+    .insertSqlForCohortTableInPackage(statsTables = generateStats)
+  }
+  if (generateStats) {
+    rules <- .getCohortInclusionRules()
+    rules <- merge(rules, data.frame(cohortId = cohortsToCreate$cohortId, 
+                                     cohortName = cohortsToCreate$name))
+    write.csv(rules, "inst/cohorts/InclusionRules.csv", row.names = FALSE)
+  }
+  if (insertCohortCreationR) {
+    templateFileName <- system.file("CreateCohorts.R", package = "OhdsiRTools")
+    rCode <- readChar(templateFileName, file.info(templateFileName)$size)
+    rCode <- gsub("#CopyrightYear#",  format(Sys.Date(), "%Y"), rCode)
+    rCode <- gsub("#packageName#",  packageName, rCode)
+    rCode <- gsub("#fileName#",  fileName, rCode)
+    if (generateStats) {
+      rCode <- gsub("#stats_start#",  "", rCode)
+      rCode <- gsub("#stats_end#",  "", rCode)
+    } else {
+      rCode <- gsub("#stats_start#.*?#stats_end#",  "", rCode)
+    }
+    fileConn <- file("R/CreateCohorts.R")
+    writeChar(rCode, fileConn, eos = NULL)
+    close(fileConn)
+  }
+}
+
+.getCohortInclusionRules <- function() {
   rules <- data.frame()
   for (file in list.files(path = "inst/cohorts", pattern = ".*\\.json")) {
     writeLines(paste("Parsing", file, "for inclusion rules"))
     definition <- RJSONIO::fromJSON(file.path("inst/cohorts", file))
     if (!is.null(definition$InclusionRules)) {
-      cohortName <- sub(".json", "", file)
       nrOfRules <- length(definition$InclusionRules)
-      for (i in 1:nrOfRules) {
-        rules <- rbind(rules, data.frame(cohortName = cohortName, 
-                                         ruleSequence = i - 1,
-                                         name = definition$InclusionRules[[i]]$name))
+      if (nrOfRules > 0) {
+        cohortName <- sub(".json", "", file)
+        for (i in 1:nrOfRules) {
+          rules <- rbind(rules, data.frame(cohortName = cohortName, 
+                                           ruleSequence = i - 1,
+                                           ruleName = definition$InclusionRules[[i]]$name))
+        }
       }
     }
   }
   return(rules)
 }
 
-#' Insert SQL for creating a cohort table in the package
-#'
-#' @details 
-#' Creates a SQL file called inst/sql/sql_server/CreateCohortTable.sql that
-#' will create an empty cohort table.
-#'
-#' @param statsTables   If TRUE, the SQL will also create the four tables needed
-#'                      when computing inclusion statistics.
-#' 
-#' @export
-insertSqlForCohortTableInPackage <- function(statsTables = FALSE) {
-  fileName <- system.file("cohortTable.sql", package = "OhdsiRTools")
+.insertSqlForCohortTableInPackage <- function(statsTables = FALSE) {
+  fileName <- system.file("CohortTable.sql", package = "OhdsiRTools")
   sql <- readChar(fileName, file.info(fileName)$size)
   if (statsTables) {
-    fileName <- system.file("inclusionStatsTables.sql", package = "OhdsiRTools")
+    fileName <- system.file("InclusionStatsTables.sql", package = "OhdsiRTools")
     sql <- paste(sql, readChar(fileName, file.info(fileName)$size), sep = "\n")
   }
   if (!file.exists("inst/sql/sql_server")) {
     dir.create("inst/sql/sql_server", recursive = TRUE)
   }
   fileConn <- file("inst/sql/sql_server/CreateCohortTable.sql")
-  writeLines(sql, fileConn)
+  writeChar(sql, fileConn, eos = NULL)
   close(fileConn)
   invisible(sql)
 }
-

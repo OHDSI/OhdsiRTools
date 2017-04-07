@@ -1,0 +1,106 @@
+# Copyright #CopyrightYear# Observational Health Data Sciences and Informatics
+#
+# This file is part of #packageName#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+.createCohorts <- function(connection,
+                           cdmDatabaseSchema,
+                           cohortDatabaseSchema,
+                           cohortTable,
+                           oracleTempSchema,
+                           outputFolder) {
+  
+  # Create study cohort table structure:
+  sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "CreateCohortTable.sql",
+                                           packageName = "#packageName#",
+                                           cohort_database_schema = cohortDatabaseSchema,
+                                           cohort_table = cohortTable, 
+                                           oracleTempSchema = oracleTempSchema)
+  DatabaseConnector::executeSql(connection, sql, progressBar = FALSE, reportOverallTime = FALSE)
+  
+  #stats_start#
+  # Insert rule names in cohort_inclusion table:
+  pathToCsv <- system.file("cohorts", "InclusionRules.csv", package = "#packageName#")
+  inclusionRules <- read.csv(pathToCsv)  
+  inclusionRules <- data.frame(cohort_definition_id = inclusionRules$cohortId,
+                               rule_sequence = inclusionRules$ruleSequence,
+                               name = inclusionRules$ruleName)
+  DatabaseConnector::insertTable(connection = connection,
+                                 tableName = "#cohort_inclusion",
+                                 data = inclusionRules,
+                                 dropTableIfExists = FALSE,
+                                 oracleTempSchema = oracleTempSchema)
+  #stats_end#
+  
+  # Instantiate cohorts:
+  pathToCsv <- system.file("settings", "#fileName#", package = "#packageName#")
+  cohortsToCreate <- read.csv(pathToCsv)
+  for (i in 1:nrow(cohortsToCreate)) {
+    writeLines(paste("Creating cohort:", cohortsToCreate$name[i]))
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = paste0(cohortsToCreate$name[i], ".sql"),
+                                             packageName = "#packageName#",
+                                             dbms = connectionDetails$dbms,
+                                             oracleTempSchema = oracleTempSchema,
+                                             cdm_database_schema = cdmDatabaseSchema,
+                                             #stats_start#
+                                             results_database_schema.cohort_inclusion = "#cohort_inclusion",  
+                                             results_database_schema.cohort_inclusion_result = "#cohort_inclusion_result",  
+                                             results_database_schema.cohort_inclusion_stats = "#cohort_inclusion_stats",  
+                                             results_database_schema.cohort_summary_stats = "#cohort_summary_stats",  
+                                             #stats_end#   
+                                             target_database_schema = cohortDatabaseSchema,
+                                             target_cohort_table = cohortTable,
+                                             target_cohort_id = cohortsToCreate$cohortId[i])
+    DatabaseConnector::executeSql(connection, sql)
+  }
+  
+  # Fetch cohort counts:
+  sql <- "SELECT cohort_definition_id, COUNT(*) AS count FROM @cohort_database_schema.@cohort_table GROUP BY cohort_definition_id"
+  sql <- SqlRender::renderSql(sql,
+                              cohort_database_schema = cohortDatabaseSchema,
+                              cohort_table = cohortTable)$sql
+  sql <- SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
+  counts <- DatabaseConnector::querySql(conn, sql)
+  names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+  counts <- merge(counts, data.frame(cohortDefinitionId = cohortsToCreate$cohortId[i],
+                                     cohortName  = cohortsToCreate$name[i]))
+  write.csv(counts, file.path(outputFolder, "CohortCounts.csv"))
+  
+  #stats_start#
+  # Fetch inclusion rule stats and drop tables:
+  fetchStats <- function(tableName) {
+    sql <- "SELECT * FROM #@table_name"
+    sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
+    sql <- SqlRender::translateSql(sql = sql, 
+                                   targetDialect = attr(connection, "dbms"),
+                                   oracleTempSchema = oracleTempSchema)
+    stats <- DatabaseConnector::querySql(connection, sql)
+    names(stats) <- SqlRender::snakeCaseToCamelCase(names(stats))
+    fileName <- file.path(outputFolder, paste0(SqlRender::snakeCaseToCamelCase(tableName), ".csv"))
+    write.csv(stats, fileName, row.names = FALSE)
+    
+    sql <- "TRUNCATE TABLE #@table_name; DROP TABLE #@table_name;"
+    sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
+    sql <- SqlRender::translateSql(sql = sql, 
+                                   targetDialect = attr(connection, "dbms"),
+                                   oracleTempSchema = oracleTempSchema)
+    DatabaseConnector::executeSql(connection, sql)
+  }
+  fetchStats("cohort_inclusion")
+  fetchStats("cohort_inclusion_result")
+  fetchStats("cohort_inclusion_stats")
+  fetchStats("cohort_summary_stats")
+  #stats_end#
+}
+
