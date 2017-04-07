@@ -1,11 +1,11 @@
 IF OBJECT_ID('tempdb..#cohort_inclusion', 'U') IS NOT NULL 
   DROP TABLE #cohort_inclusion;
   
-IF OBJECT_ID('tempdb..#cohort_inclusion_result', 'U') IS NOT NULL 
-  DROP TABLE #cohort_inclusion_result;
+IF OBJECT_ID('tempdb..#cohort_inc_result', 'U') IS NOT NULL 
+  DROP TABLE #cohort_inc_result;
   
-IF OBJECT_ID('tempdb..#cohort_inclusion_stats', 'U') IS NOT NULL 
-  DROP TABLE #cohort_inclusion_stats;
+IF OBJECT_ID('tempdb..#cohort_inc_stats', 'U') IS NOT NULL 
+  DROP TABLE #cohort_inc_stats;
   
 IF OBJECT_ID('tempdb..#cohort_summary_stats', 'U') IS NOT NULL 
   DROP TABLE #cohort_summary_stats;
@@ -17,13 +17,13 @@ CREATE TABLE #cohort_inclusion (
 	description VARCHAR(1000) NULL
 	);
 
-CREATE TABLE #cohort_inclusion_result (
+CREATE TABLE #cohort_inc_result (
 	cohort_definition_id INT NOT NULL,
 	inclusion_rule_mask BIGINT NOT NULL,
 	person_count BIGINT NOT NULL
 	);
 
-CREATE TABLE #cohort_inclusion_stats (
+CREATE TABLE #cohort_inc_stats (
 	cohort_definition_id INT NOT NULL,
 	rule_sequence INT NOT NULL,
 	person_count BIGINT NOT NULL,

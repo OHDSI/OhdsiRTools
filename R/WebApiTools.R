@@ -140,7 +140,8 @@ insertCohortDefinitionSetInPackage <- function(fileName,
     writeLines(paste("Inserting cohort:", cohortsToCreate$name[i]))
     OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i], 
                                                  name = cohortsToCreate$name[i], 
-                                                 baseUrl = baseUrl)
+                                                 baseUrl = baseUrl,
+                                                 generateStats = generateStats)
   }
   if (insertTableSql) {
     .insertSqlForCohortTableInPackage(statsTables = generateStats)

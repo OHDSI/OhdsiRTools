@@ -24,9 +24,10 @@
   # Create study cohort table structure:
   sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "CreateCohortTable.sql",
                                            packageName = "#packageName#",
+                                           dbms = attr(connection, "dbms"),
+                                           oracleTempSchema = oracleTempSchema,
                                            cohort_database_schema = cohortDatabaseSchema,
-                                           cohort_table = cohortTable, 
-                                           oracleTempSchema = oracleTempSchema)
+                                           cohort_table = cohortTable)
   DatabaseConnector::executeSql(connection, sql, progressBar = FALSE, reportOverallTime = FALSE)
   
   #stats_start#
@@ -40,6 +41,8 @@
                                  tableName = "#cohort_inclusion",
                                  data = inclusionRules,
                                  dropTableIfExists = FALSE,
+                                 createTable = FALSE,
+                                 tempTable = TRUE,
                                  oracleTempSchema = oracleTempSchema)
   #stats_end#
   
@@ -50,13 +53,13 @@
     writeLines(paste("Creating cohort:", cohortsToCreate$name[i]))
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename = paste0(cohortsToCreate$name[i], ".sql"),
                                              packageName = "#packageName#",
-                                             dbms = connectionDetails$dbms,
+                                             dbms = attr(connection, "dbms"),
                                              oracleTempSchema = oracleTempSchema,
                                              cdm_database_schema = cdmDatabaseSchema,
                                              #stats_start#
                                              results_database_schema.cohort_inclusion = "#cohort_inclusion",  
-                                             results_database_schema.cohort_inclusion_result = "#cohort_inclusion_result",  
-                                             results_database_schema.cohort_inclusion_stats = "#cohort_inclusion_stats",  
+                                             results_database_schema.cohort_inclusion_result = "#cohort_inc_result",  
+                                             results_database_schema.cohort_inclusion_stats = "#cohort_inc_stats",  
                                              results_database_schema.cohort_summary_stats = "#cohort_summary_stats",  
                                              #stats_end#   
                                              target_database_schema = cohortDatabaseSchema,
@@ -70,8 +73,8 @@
   sql <- SqlRender::renderSql(sql,
                               cohort_database_schema = cohortDatabaseSchema,
                               cohort_table = cohortTable)$sql
-  sql <- SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
-  counts <- DatabaseConnector::querySql(conn, sql)
+  sql <- SqlRender::translateSql(sql, targetDialect = attr(connection, "dbms"))$sql
+  counts <- DatabaseConnector::querySql(connection, sql)
   names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
   counts <- merge(counts, data.frame(cohortDefinitionId = cohortsToCreate$cohortId[i],
                                      cohortName  = cohortsToCreate$name[i]))
@@ -84,7 +87,7 @@
     sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
     sql <- SqlRender::translateSql(sql = sql, 
                                    targetDialect = attr(connection, "dbms"),
-                                   oracleTempSchema = oracleTempSchema)
+                                   oracleTempSchema = oracleTempSchema)$sql
     stats <- DatabaseConnector::querySql(connection, sql)
     names(stats) <- SqlRender::snakeCaseToCamelCase(names(stats))
     fileName <- file.path(outputFolder, paste0(SqlRender::snakeCaseToCamelCase(tableName), ".csv"))
@@ -94,12 +97,12 @@
     sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
     sql <- SqlRender::translateSql(sql = sql, 
                                    targetDialect = attr(connection, "dbms"),
-                                   oracleTempSchema = oracleTempSchema)
+                                   oracleTempSchema = oracleTempSchema)$sql
     DatabaseConnector::executeSql(connection, sql)
   }
   fetchStats("cohort_inclusion")
-  fetchStats("cohort_inclusion_result")
-  fetchStats("cohort_inclusion_stats")
+  fetchStats("cohort_inc_result")
+  fetchStats("cohort_inc_stats")
   fetchStats("cohort_summary_stats")
   #stats_end#
 }
