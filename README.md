@@ -11,7 +11,7 @@ Features
 - Auto checking of R code
 - Functions for parallel computation
 - Functions used for automating analyses
-- Functions for retrieving JSON and SQL objects from [CIRCE](https://github.com/OHDSI/Circe)
+- Functions for retrieving JSON and SQL cohort definitions from [ATLAS](https://github.com/OHDSI/Atlas)
 
 Examples
 ===========
@@ -24,7 +24,7 @@ formatRFolder()
 checkUsagePackage("OhdsiRTools")
 
 # Insert CIRCE JSON and SQL into a study package:
-insertCirceDefinitionInPackage(123, "MyocardialInfarction")
+insertCohortDefinitionInPackage(123, "MyocardialInfarction")
 ```
 
 Technology
@@ -63,7 +63,7 @@ Development
 ===========
 OhdsiRTools is being developed in R Studio.
 
-###Development status
+### Development status
 [![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
 [![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
 
