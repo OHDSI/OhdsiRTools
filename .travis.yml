@@ -85,7 +85,3 @@ after_success:
   # Rebuild docker container
   - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy_container.sh
-
-env:
-  global:
-    secure: DKyRGDpmg8YZSle5eaeur3dme/M+pPHbkh38x+YzREP0VnEqeSq89eFpLpn0usUhOlqJ7huCT/eNrZtWD2EGIvIcgCNxk7juw+2CkVoTT6kyg3DHEGemW+t3bzEQb0kpXbEWWzSaB/d2LflQNw7SVyejty3A+JHEXQHals37GMR7ziHxm8KlJQPoYltu9mAxSAutT11Z4jo9o5DhEljn/NEzWddl3Yud1HoWtvQ3qeyc8vPrt8Hc2GFW2jDai4jdg4Tdf0hCEpzMDsU1lRSO49I6K+zl0cIcwvWJb6pZ3Txh/NG6Ct7l3X7JYk/DO7CvuTm5jKos8tWy2yqX4hvQT6HCpIWMEYy2pA82QmHhNerC3eFb5D4ERazFSbtm2gD4VFNKl/cGQuGC6zsjqIawGDa6oW9atMz0sSIAabPAdge3J/wTxYROXnau1JXTzt2KN7RHka1GjDk+vUsL6v+9ujkaOowc0x7Pvo11vhlL12k6ywj3JXLl/61TIKdHDizXm+Gfft+3J8LH3ZnZUr6K1LPer+SDjTw79S/JWr0vNZjScnmf+vfwUpDYC5jLma9LHAhEFbim6dj5YvK/8F1dCTGek5i1JWErwOniMztl6fPmIrRfH58uz2sqmmwNh35IA1b/UfswET5e9ifJKcpGHQQjLzTugwH7vsRlEWqu80E=
