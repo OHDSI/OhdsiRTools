@@ -319,5 +319,25 @@ saveSettingsToJson <- function(object, fileName) {
 loadSettingsFromJson <- function(fileName) {
   object <- jsonlite::fromJSON(fileName, simplifyVector = TRUE, simplifyDataFrame = FALSE)
   object <- convertMemberToAttr(object)
+  object <- restoreDataFrames(object)
+  return(object)
+}
+
+restoreDataFrames <- function(object) {
+  if (is.list(object)) {
+    if (length(object) > 0) {
+      if (class(object[[1]]) == "data.frame") {
+        object <- do.call("rbind", object)
+        # df <- as.data.frame(t(sapply(object, function(x){class(x) <- "list"; return(x)})))
+       # str(df)
+      } else {
+        for (i in 1:length(object)) {
+          if (!is.null(object[[i]])) {
+            object[[i]] <- restoreDataFrames(object[[i]])
+          }
+        }
+      }
+    }
+  }
   return(object)
 }
