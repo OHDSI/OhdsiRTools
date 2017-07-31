@@ -6,7 +6,8 @@
 \usage{
 insertCohortDefinitionSetInPackage(fileName,
   baseUrl = "http://hix.jnj.com:8080/WebAPI", insertTableSql = TRUE,
-  insertCohortCreationR = TRUE, generateStats = FALSE, packageName)
+  insertCohortCreationR = TRUE, generateStats = FALSE, opts = list(),
+  packageName)
 }
 \arguments{
 \item{fileName}{Name of a CSV file in the inst/settings folder of the package specifying
@@ -22,6 +23,9 @@ the cohorts? This will create a file called R/CreateCohorts.R containing
 a function called .createCohorts.}
 
 \item{generateStats}{Should cohort inclusion rule statistics be created?}
+
+\item{opts}{List of options that can be passed to the RCurl methods for specifing additional 
+options for connecting to REST end-points}
 
 \item{packageName}{The name of the package (only needed when inserting the R code as well).}
 }
