@@ -32,9 +32,12 @@
 #' @param name           The name that will be used for the json and SQL files. If not provided, the
 #'                       name in cohort will be used, but this may not lead to valid file names.
 #' @param baseUrl        The base URL for the WebApi instance.
+#' 
 #' @param generateStats  Should the SQL include the code for generating inclusion rule statistics?
 #'                       Note that if TRUE, several additional tables are expected to exists as described
 #'                       in the details
+#' @param opts           List of options that can be passed to the RCurl methods for specifing additional 
+#'                       options for connecting to REST end-points
 #'
 #' @examples
 #' \dontrun{
@@ -47,11 +50,12 @@
 insertCohortDefinitionInPackage <- function(definitionId,
                                             name = NULL,
                                             baseUrl = "http://hix.jnj.com:8080/WebAPI",
-                                            generateStats = FALSE) {
+                                            generateStats = FALSE,
+                                            opts = list()) {
   
   ### Fetch JSON object ###
   url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
-  json <- RCurl::getURL(url)
+  json <- RCurl::getURL(url, .opts = opts)
   parsedJson <- RJSONIO::fromJSON(json)
   if (is.null(name)) {
     name <- parsedJson$name
@@ -74,8 +78,9 @@ insertCohortDefinitionInPackage <- function(definitionId,
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
   url <- paste(baseUrl, "cohortdefinition", "sql", sep = "/")
   
+  postFormOpts <- append(list(httpheader = httpheader, postfields = jsonBody), opts)
   cohortSqlJson <- RCurl::postForm(url,
-                                   .opts = list(httpheader = httpheader, postfields = jsonBody))
+                                   .opts = postFormOpts)
   sql <- RJSONIO::fromJSON(cohortSqlJson)
   if (!file.exists("inst/sql/sql_server")) {
     dir.create("inst/sql/sql_server", recursive = TRUE)
@@ -116,6 +121,8 @@ insertCirceDefinitionInPackage <- function(definitionId,
 #'                               the cohorts? This will create a file called R/CreateCohorts.R containing
 #'                               a function called .createCohorts.
 #' @param generateStats          Should cohort inclusion rule statistics be created?
+#' @param opts                   List of options that can be passed to the RCurl methods for specifing additional 
+#'                               options for connecting to REST end-points
 #' @param packageName            The name of the package (only needed when inserting the R code as well).
 #' 
 #' @details 
@@ -132,6 +139,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
                                                insertTableSql = TRUE,
                                                insertCohortCreationR = TRUE,
                                                generateStats = FALSE,
+                                               opts = list(),
                                                packageName) {
   if (insertCohortCreationR && !insertTableSql)
     stop("Need to insert table SQL in order to generate R code")
@@ -141,7 +149,8 @@ insertCohortDefinitionSetInPackage <- function(fileName,
     OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i], 
                                                  name = cohortsToCreate$name[i], 
                                                  baseUrl = baseUrl,
-                                                 generateStats = generateStats)
+                                                 generateStats = generateStats,
+                                                 opts = opts)
   }
   if (insertTableSql) {
     .insertSqlForCohortTableInPackage(statsTables = generateStats)
