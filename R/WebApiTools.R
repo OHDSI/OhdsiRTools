@@ -31,7 +31,7 @@
 #' @param definitionId   The number indicating which cohort definition to fetch.
 #' @param name           The name that will be used for the json and SQL files. If not provided, the
 #'                       name in cohort will be used, but this may not lead to valid file names.
-#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"
+#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"
 #' 
 #' @param generateStats  Should the SQL include the code for generating inclusion rule statistics?
 #'                       Note that if TRUE, several additional tables are expected to exists as described
@@ -99,7 +99,7 @@ insertCohortDefinitionInPackage <- function(definitionId,
 #' @param definitionId   The number indicating which Circe definition to fetch.
 #' @param name           The name that will be used for the json and SQL files. If not provided, the
 #'                       name in Circe will be used, but this may not lead to valid file names.
-#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"
+#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"
 #'
 #' @export
 insertCirceDefinitionInPackage <- function(definitionId,
@@ -114,7 +114,7 @@ insertCirceDefinitionInPackage <- function(definitionId,
 #'
 #' @param fileName               Name of a CSV file in the inst/settings folder of the package specifying
 #'                               the cohorts to insert. See details for the expected file format.
-#' @param baseUrl                The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"
+#' @param baseUrl                The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"
 #' @param insertTableSql         Should the SQL for creating the cohort table be inserted into the 
 #'                               package as well? This file will be called CreateCohortTable.sql.
 #' @param insertCohortCreationR  Insert R code that will create the cohort table and instantiate
@@ -236,7 +236,7 @@ getCohortDefinitionName <- function(baseUrl,
   # don't verify SSL chain. work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
 
-    if (formatName)
+  if (formatName)
   {
     return(stringr::str_replace_all(stringr::str_replace_all(stringr::str_replace_all(json$name, " ", "_"), "\\[(.*?)\\]_", ""), "_", " "))
   }
@@ -271,14 +271,14 @@ getConceptSetName <- function(baseUrl,
   return(json$name)
 }
 
-#' Get Vocab Source Key
+#' Get Priority Vocab Source Key
 #' 
 #' @details               Obtains the source key of the default OMOP Vocab in Atlas
 #' @param baseUrl         The base URL for the WebApi instance
 #' @return                A string with the source key of the default OMOP Vocab in Atlas
 #' 
 #' @export 
-getVocabSourceKey <- function(baseUrl)
+getPriorityVocabKey <- function(baseUrl)
 {
   url <- SqlRender::renderSql(sql = "@baseUrl/WebAPI/source/priorityVocabulary",                     
                               baseUrl = baseUrl)$sql 
@@ -294,6 +294,7 @@ getVocabSourceKey <- function(baseUrl)
 #' @details                 Obtains the full list of concept Ids in a concept set
 #' @param baseUrl           The base URL for the WebApi instance
 #' @param setId             The concept set id in Atlas
+#' @param vocabSourceKey    The source key of the Vocabulary. By default, the priority Vocabulary is used.
 #' @return                  A list of concept Ids
 #' 
 #' @export
@@ -303,7 +304,7 @@ getConceptSetConcepts <- function(baseUrl,
 {
   if (missing(vocabSourceKey))
   {
-    vocabSourceKey <- getVocabSourceKey(baseUrl = baseUrl)
+    vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
   }
   
   url <- SqlRender::renderSql(sql = "@baseUrl/WebAPI/conceptset/@setId/expression",
@@ -321,7 +322,7 @@ getConceptSetConcepts <- function(baseUrl,
   # don't verify SSL chain. work-around for self-certified certificates.
   httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type" = "application/json")
   
-  body <- as.character(RJSONIO::toJSON(x = json, digits = 50))
+  body <- as.character(RJSONIO::toJSON(x = json, digits = 50)) # disables scientific notation
   req <- RCurl::postForm(uri = url,
                          .opts = list(ssl.verifypeer = FALSE, 
                                       httpheader = httpheader,

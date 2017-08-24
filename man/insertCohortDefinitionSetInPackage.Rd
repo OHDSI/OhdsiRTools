@@ -12,7 +12,7 @@ insertCohortDefinitionSetInPackage(fileName, baseUrl, insertTableSql = TRUE,
 \item{fileName}{Name of a CSV file in the inst/settings folder of the package specifying
 the cohorts to insert. See details for the expected file format.}
 
-\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"}
 
 \item{insertTableSql}{Should the SQL for creating the cohort table be inserted into the 
 package as well? This file will be called CreateCohortTable.sql.}
