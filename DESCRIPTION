@@ -21,7 +21,10 @@ Imports:
     XML,
     jsonlite,
     methods,
-    utils
+    utils,
+    httr,
+    SqlRender,
+    stringr
 Suggests:
     testthat
 NeedsCompilation: no
