@@ -4,8 +4,7 @@
 \alias{insertCohortDefinitionSetInPackage}
 \title{Insert a set of cohort definitions into package}
 \usage{
-insertCohortDefinitionSetInPackage(fileName,
-  baseUrl = "http://hix.jnj.com:8080/WebAPI", insertTableSql = TRUE,
+insertCohortDefinitionSetInPackage(fileName, baseUrl, insertTableSql = TRUE,
   insertCohortCreationR = TRUE, generateStats = FALSE, opts = list(),
   packageName)
 }
@@ -13,7 +12,7 @@ insertCohortDefinitionSetInPackage(fileName,
 \item{fileName}{Name of a CSV file in the inst/settings folder of the package specifying
 the cohorts to insert. See details for the expected file format.}
 
-\item{baseUrl}{The base URL for the WebApi instance.}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"}
 
 \item{insertTableSql}{Should the SQL for creating the cohort table be inserted into the 
 package as well? This file will be called CreateCohortTable.sql.}

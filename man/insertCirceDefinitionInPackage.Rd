@@ -4,8 +4,7 @@
 \alias{insertCirceDefinitionInPackage}
 \title{Load a Circe definition and insert it into this package}
 \usage{
-insertCirceDefinitionInPackage(definitionId, name = NULL,
-  baseUrl = "http://hix.jnj.com:8080/WebAPI")
+insertCirceDefinitionInPackage(definitionId, name = NULL, baseUrl)
 }
 \arguments{
 \item{definitionId}{The number indicating which Circe definition to fetch.}
@@ -13,7 +12,7 @@ insertCirceDefinitionInPackage(definitionId, name = NULL,
 \item{name}{The name that will be used for the json and SQL files. If not provided, the
 name in Circe will be used, but this may not lead to valid file names.}
 
-\item{baseUrl}{The base URL for the WebApi instance.}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:8080/WebAPI"}
 }
 \description{
 Load a Circe definition and insert it into this package
