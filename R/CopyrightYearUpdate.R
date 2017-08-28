@@ -45,7 +45,7 @@ updateCopyrightYearFile <- function(file) {
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path,
-                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$",
+                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
                       full.names = TRUE,
                       recursive = recursive)
   for (f in flist) {
