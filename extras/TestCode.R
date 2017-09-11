@@ -23,6 +23,6 @@ mailSettings <- list(from = Sys.getenv("mailAddress"),
                      authenticate = TRUE,
                      send = TRUE)
 
-runAndNotify({x <- c(1,2,3)}, mailSettings = mailSettings, label = "Fancy code")
+runAndNotify({a <- b}, mailSettings = mailSettings, label = "Fancy code")
 
 

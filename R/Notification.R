@@ -47,23 +47,21 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
   result <- tryCatch({
     eval(expression)
   }, warning = function(w) {
-    assign("warningMessage", w$message, envir = ev)
+    assign("warningObject", w, envir = ev)
   }, error = function(e) {
-    assign("errorMessage", e$message, envir = ev)
+    assign("errorObject", e, envir = ev)
   }
   )
   delta <- Sys.time() - start
   timing <- paste("Code ran for", signif(delta, 3), attr(delta, "units"))
   subject <- NULL
   body <- NULL
-  if (exists("warningMessage", envir = ev)) {
+  if (exists("warningObject", envir = ev)) {
     subject <- paste0("[", label, "] ", "Warning")
-    body <- paste(get("warningMessage", envir = ev), timing, sep = "\n\n")
-    warning(get("warningMessage", envir = ev), call. = FALSE)
-  } else if (exists("errorMessage", envir = ev)) {
+    body <- paste(get("warningObject", envir = ev)$message, timing, sep = "\n\n")
+  } else if (exists("errorObject", envir = ev)) {
     subject <- paste0("[", label, "] ", "Error")
-    body <- paste(get("errorMessage", envir = ev), timing, sep = "\n\n")
-    warning(get("errorMessage", envir = ev), call. = FALSE)
+    body <- paste(get("errorObject", envir = ev)$message, timing, sep = "\n\n")
   } else {
     subject <- paste0("[", label, "] ", "Done")
     body <- timing
@@ -73,6 +71,16 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
   myfun <- get("send.mail", asNamespace("mailR"))
   do.call(myfun, mailSettings)
   writeLines(paste("Message sent to", mailSettings$to))
+  # writeLines(subject)
+  # writeLines(body)
+  
+  # Re-throw errors and warnings:
+  if (exists("warningObject", envir = ev)) {
+    warning(get("warningObject", envir = ev))
+  }
+  if (exists("errorObject", envir = ev)) {
+    stop(get("errorObject", envir = ev))
+  }
   invisible(result)
 }
 
