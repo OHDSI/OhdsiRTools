@@ -1,76 +1,31 @@
-# .travis.yml using container-based infrastructure
-# from: https://github.com/jtilly/R-travis-container-example/blob/master/.travis.yml
-
-language: c
-
-# use containers
+language: r
 sudo: false
+cache: packages
 
-# install R: use r-packages-precise (https://cran.r-project.org/bin/linux/ubuntu/precise/)
-# as source which is white listed (https://github.com/travis-ci/apt-source-whitelist/)
-addons:
-  apt:
-    sources:
-    - r-packages-precise
-    packages:
-    - r-base-dev
-    - r-recommended
-    - pandoc
+r_packages:
+  - covr
+  - drat
 
-# cache local R libraries directory:
-cache:
-  directories:
-    - ~/Rlib
-
-# install the package and dependencies:
-install:
-  - mkdir -p ~/Rlib
-  - echo 'R_LIBS=~/Rlib' > .Renviron
-  - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
-  - mkdir -p ~/.R
-  - Rscript -e 'if (!require("drat")) install.packages("drat")'
-  - echo 'drat::addRepo("OHDSI")' >> .Rprofile    
-  - grep '\-g'  /etc/R/Makeconf | sed 's/-g//g' > ~/.R/Makevars # Turn off debug symbols
-  - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
-  - Rscript -e 'if(!"covr" %in% rownames(installed.packages())) { install.packages("covr", dependencies = TRUE) }'
-  - Rscript -e 'if(!"ggplot2" %in% rownames(installed.packages())) { install.packages("ggplot2", dependencies = TRUE) }'
-  - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
-  - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
+r_github_packages:
+  - OHDSI/SqlRender
 
 before_script:
-- export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
-- export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
+  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
 
-# Build and check package
+ # Build and check package
 script:
-  - R CMD build . --no-build-vignettes --no-manual
-  - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
-  - PKG_NAME=$(ls -1t *.tar.gz | head -n 1 | sed 's/_.*gz//')
-  - _R_CHECK_CRAN_INCOMING_=FALSE R CMD check "${PKG_FILE_NAME}" --no-build-vignettes --no-manual --as-cran
+  - R CMD build .
+  - _R_CHECK_CRAN_INCOMING_=FALSE R CMD check "${PKG_TARBALL}" --as-cran
   - cat ${PKG_NAME}.Rcheck/00install.out # Print out install / compile log
 
-#language: cpp
-#
-#compiler:
-#    - gcc
-#
-#sudo: required
-#
-#before_install:
-#    - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-#    - chmod 755 ./travis-tool.sh
-#    - ./travis-tool.sh bootstrap
-#
-#install:
-#    - ./travis-tool.sh install_devtools
-#    - ./travis-tool.sh install_deps
-#    - ./travis-tool.sh install_github jimhester/covr
-#
-#script:
-#    - ./travis-tool.sh run_tests
-#
-#after_failure:
-#  - ./travis-tool.sh dump_logs
+after_success:
+  - Rscript -e 'covr::codecov()'
+  # Rebuild docker container
+  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
+  # Rebuild drat repo
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
 
 notifications:
   recipients:
@@ -79,13 +34,3 @@ notifications:
   email:
     on_success: change
     on_failure: change
-
-after_success:
-  - Rscript -e 'library(covr);codecov()'
-  # Rebuild docker container
-  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy_container.sh
-
-env:
-  global:
-    secure: DKyRGDpmg8YZSle5eaeur3dme/M+pPHbkh38x+YzREP0VnEqeSq89eFpLpn0usUhOlqJ7huCT/eNrZtWD2EGIvIcgCNxk7juw+2CkVoTT6kyg3DHEGemW+t3bzEQb0kpXbEWWzSaB/d2LflQNw7SVyejty3A+JHEXQHals37GMR7ziHxm8KlJQPoYltu9mAxSAutT11Z4jo9o5DhEljn/NEzWddl3Yud1HoWtvQ3qeyc8vPrt8Hc2GFW2jDai4jdg4Tdf0hCEpzMDsU1lRSO49I6K+zl0cIcwvWJb6pZ3Txh/NG6Ct7l3X7JYk/DO7CvuTm5jKos8tWy2yqX4hvQT6HCpIWMEYy2pA82QmHhNerC3eFb5D4ERazFSbtm2gD4VFNKl/cGQuGC6zsjqIawGDa6oW9atMz0sSIAabPAdge3J/wTxYROXnau1JXTzt2KN7RHka1GjDk+vUsL6v+9ujkaOowc0x7Pvo11vhlL12k6ywj3JXLl/61TIKdHDizXm+Gfft+3J8LH3ZnZUr6K1LPer+SDjTw79S/JWr0vNZjScnmf+vfwUpDYC5jLma9LHAhEFbim6dj5YvK/8F1dCTGek5i1JWErwOniMztl6fPmIrRfH58uz2sqmmwNh35IA1b/UfswET5e9ifJKcpGHQQjLzTugwH7vsRlEWqu80E=
