@@ -21,7 +21,8 @@ Imports:
     XML,
     jsonlite,
     methods,
-    utils
+    utils,
+    mailR
 Suggests:
     testthat
 NeedsCompilation: no
