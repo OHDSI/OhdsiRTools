@@ -12,7 +12,7 @@ insertCirceDefinitionInPackage(definitionId, name = NULL, baseUrl)
 \item{name}{The name that will be used for the json and SQL files. If not provided, the
 name in Circe will be used, but this may not lead to valid file names.}
 
-\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
 }
 \description{
 Load a Circe definition and insert it into this package

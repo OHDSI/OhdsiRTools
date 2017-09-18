@@ -7,18 +7,18 @@
 getConceptSetName(baseUrl, setId, formatName = FALSE)
 }
 \arguments{
-\item{baseUrl}{The base URL for the WebApi instance}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
 
-\item{setId}{The concept set id in Atlas}
+\item{setId}{The concept set id in Atlas.}
 
 \item{formatName}{Should the name be formatted to remove prefixes and underscores?}
 }
 \value{
-The name of the concept set
+The name of the concept set.
 }
 \description{
 Get a concept set's name from WebAPI
 }
 \details{
-Obtains the name of a concept set
+Obtains the name of a concept set.
 }

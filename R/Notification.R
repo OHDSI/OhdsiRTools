@@ -37,7 +37,9 @@
 #'                                  ssl = TRUE),
 #'                      authenticate = TRUE,
 #'                      send = TRUE)
-#' runAndNotify({a <- 1 + 2 + 3}, mailSettings = mailSettings, label = "My fancy R code")                      
+#' runAndNotify({a <- 1 + 2 + 3}, 
+#'              mailSettings = mailSettings, 
+#'              label = "My fancy R code")                      
 #' }
 #' 
 #' @export

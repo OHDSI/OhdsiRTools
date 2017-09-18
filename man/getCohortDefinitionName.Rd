@@ -7,18 +7,18 @@
 getCohortDefinitionName(baseUrl, definitionId, formatName = FALSE)
 }
 \arguments{
-\item{baseUrl}{The base URL for the WebApi instance}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
 
-\item{definitionId}{The cohort definition id in Atlas}
+\item{definitionId}{The cohort definition id in Atlas.}
 
 \item{formatName}{Should the name be formatted to remove prefixes and underscores?}
 }
 \value{
-The name of the cohort
+The name of the cohort.
 }
 \description{
 Get a cohort definition's name from WebAPI
 }
 \details{
-Obtains the name of a cohort
+Obtains the name of a cohort.
 }

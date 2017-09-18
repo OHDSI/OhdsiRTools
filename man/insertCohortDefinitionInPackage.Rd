@@ -13,14 +13,14 @@ insertCohortDefinitionInPackage(definitionId, name = NULL, baseUrl,
 \item{name}{The name that will be used for the json and SQL files. If not provided, the
 name in cohort will be used, but this may not lead to valid file names.}
 
-\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI"}
+\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
 
 \item{generateStats}{Should the SQL include the code for generating inclusion rule statistics?
 Note that if TRUE, several additional tables are expected to exists as described
-in the details}
+in the details.}
 
 \item{opts}{List of options that can be passed to the RCurl methods for specifing additional 
-options for connecting to REST end-points}
+options for connecting to REST end-points.}
 }
 \description{
 Load a cohort definition and insert it into this package

@@ -22,10 +22,7 @@ Imports:
     jsonlite,
     methods,
     utils,
-    mailR,
-    httr,
-    SqlRender,
-    stringr
+    mailR
 Suggests:
     testthat
 NeedsCompilation: no

@@ -26,3 +26,14 @@ mailSettings <- list(from = Sys.getenv("mailAddress"),
 runAndNotify({a <- b}, mailSettings = mailSettings, label = "Fancy code")
 
 
+
+# WebAPI functions -----------------------------------------------------------
+
+
+getCohortDefinitionName(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionId = 3289)
+
+getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 525)
+
+getPriorityVocabKey(baseUrl = "http://api.ohdsi.org:80/WebAPI")
+
+getConceptSetConcepts(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 525)
