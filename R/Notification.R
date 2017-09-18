@@ -19,29 +19,30 @@
 
 #' Run code and send e-mail notification on error, warning, or completion
 #'
-#' @param expression      The expression to run.
-#' @param mailSettings    Arguments to be passed to the send.mail function in the mailR package
-#'                        (except subject and body).
-#' @param label           A label to be used in the subject to identify a run.
+#' @param expression     The expression to run.
+#' @param mailSettings   Arguments to be passed to the send.mail function in the mailR package (except
+#'                       subject and body).
+#' @param label          A label to be used in the subject to identify a run.
 #'
-#' @return                The ouput of \code{expression}.
+#' @return
+#' The ouput of \code{expression}.
 #'
 #' @examples
 #' \dontrun{
 #' mailSettings <- list(from = "someone@gmail.com",
 #'                      to = c("someone_else@gmail.com"),
-#'                      smtp = list(host.name = "smtp.gmail.com", 
-#'                                  port = 465, 
-#'                                  user.name = "someone@gmail.com", 
-#'                                  passwd = "super_secret!", 
+#'                      smtp = list(host.name = "smtp.gmail.com",
+#'                                  port = 465,
+#'                                  user.name = "someone@gmail.com",
+#'                                  passwd = "super_secret!",
 #'                                  ssl = TRUE),
 #'                      authenticate = TRUE,
 #'                      send = TRUE)
 #' runAndNotify({a <- 1 + 2 + 3}, 
 #'              mailSettings = mailSettings, 
-#'              label = "My fancy R code")                      
+#'              label = "My fancy R code")
 #' }
-#' 
+#'
 #' @export
 runAndNotify <- function(expression, mailSettings, label = "R") {
   ev <- new.env()
@@ -52,8 +53,7 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
     assign("warningObject", w, envir = ev)
   }, error = function(e) {
     assign("errorObject", e, envir = ev)
-  }
-  )
+  })
   delta <- Sys.time() - start
   timing <- paste("Code ran for", signif(delta, 3), attr(delta, "units"))
   subject <- NULL
@@ -73,9 +73,8 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
   myfun <- get("send.mail", asNamespace("mailR"))
   do.call(myfun, mailSettings)
   writeLines(paste("Message sent to", mailSettings$to))
-  # writeLines(subject)
-  # writeLines(body)
-  
+  # writeLines(subject) writeLines(body)
+
   # Re-throw errors and warnings:
   if (exists("warningObject", envir = ev)) {
     warning(get("warningObject", envir = ev))

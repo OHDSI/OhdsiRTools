@@ -77,7 +77,7 @@ createArgFunction <- function(functionName,
   for (i in 1:(length(parameterHelp)/2)) {
     argInfo$help[argInfo$name == parameterHelp[i * 2 - 1]] <- gsub("\n", "", parameterHelp[i * 2])
   }
-
+  
   if (length(rCode) != 0) {
     rCode <- c(rCode, "")
   }
@@ -117,7 +117,7 @@ createArgFunction <- function(functionName,
     } else {
       end <- paste(end, ",", sep = "")
     }
-
+    
     rCode <- c(rCode, paste(start, argInfo$name[i], end, sep = ""))
   }
   rCode <- c(rCode, "  # First: get default values:")
@@ -217,8 +217,8 @@ matchInList <- function(x, toMatch) {
 #' Deprecated: Convert arguments used in call to a list
 #'
 #' @details
-#' Takes the argument values (both default and user-specified) and store them in a list.
-#' This function is deprecated because it fails when used in a function that is called using ::.
+#' Takes the argument values (both default and user-specified) and store them in a list. This function
+#' is deprecated because it fails when used in a function that is called using ::.
 #'
 #' @param matchCall     The result of \code{match.call()}.
 #' @param resultClass   The class of the resulting object.
@@ -328,8 +328,7 @@ restoreDataFrames <- function(object) {
     if (length(object) > 0) {
       if (class(object[[1]]) == "data.frame") {
         object <- do.call("rbind", object)
-        # df <- as.data.frame(t(sapply(object, function(x){class(x) <- "list"; return(x)})))
-       # str(df)
+        # df <- as.data.frame(t(sapply(object, function(x){class(x) <- 'list'; return(x)}))) str(df)
       } else {
         for (i in 1:length(object)) {
           if (!is.null(object[[i]])) {

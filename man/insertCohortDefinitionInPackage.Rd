@@ -13,27 +13,27 @@ insertCohortDefinitionInPackage(definitionId, name = NULL, baseUrl,
 \item{name}{The name that will be used for the json and SQL files. If not provided, the
 name in cohort will be used, but this may not lead to valid file names.}
 
-\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
+\item{baseUrl}{The base URL for the WebApi instance, for example:
+"http://api.ohdsi.org:80/WebAPI".}
 
 \item{generateStats}{Should the SQL include the code for generating inclusion rule statistics?
-Note that if TRUE, several additional tables are expected to exists as described
-in the details.}
+Note that if TRUE, several additional tables are expected to exists as
+described in the details.}
 
-\item{opts}{List of options that can be passed to the RCurl methods for specifing additional 
-options for connecting to REST end-points.}
+\item{opts}{List of options that can be passed to the RCurl methods for specifing
+additional options for connecting to REST end-points.}
 }
 \description{
 Load a cohort definition and insert it into this package
 }
 \details{
-Load a cohort definition from a WebApi instance and insert it into this package. This will fetch the
-json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it in the
-'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
-
+Load a cohort definition from a WebApi instance and insert it into this package. This will fetch
+the json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it
+in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
 When using generateStats = TRUE, the following tables are required to exist when executing the SQL:
-cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also note
-that the cohort_inclusion table should be populated with the names of the rules prior to executing
-the cohort definition SQL.
+cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also
+note that the cohort_inclusion table should be populated with the names of the rules prior to
+executing the cohort definition SQL.
 }
 \examples{
 \dontrun{

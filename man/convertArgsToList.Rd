@@ -18,8 +18,8 @@ An object of the class specified in \code{resultClass}.
 Deprecated: Convert arguments used in call to a list
 }
 \details{
-Takes the argument values (both default and user-specified) and store them in a list.
-This function is deprecated because it fails when used in a function that is called using ::.
+Takes the argument values (both default and user-specified) and store them in a list. This function
+is deprecated because it fails when used in a function that is called using ::.
 }
 \examples{
 myFun <- function(x = 1, y = 2) {

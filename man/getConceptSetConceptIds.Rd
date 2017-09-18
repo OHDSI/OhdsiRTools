@@ -7,11 +7,13 @@
 getConceptSetConceptIds(baseUrl, setId, vocabSourceKey = NULL)
 }
 \arguments{
-\item{baseUrl}{The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".}
+\item{baseUrl}{The base URL for the WebApi instance, for example:
+"http://api.ohdsi.org:80/WebAPI".}
 
 \item{setId}{The concept set id in Atlas.}
 
-\item{vocabSourceKey}{The source key of the Vocabulary. By default, the priority Vocabulary is used.}
+\item{vocabSourceKey}{The source key of the Vocabulary. By default, the priority Vocabulary is
+used.}
 }
 \value{
 A list of concept Ids.

@@ -83,8 +83,8 @@ takeEnvironmentSnapshot <- function(rootPackage) {
 #'
 #' @details
 #' This function restores the R environment to a previous snapshot, meaning all the packages will be
-#' restored to the versions they were at at the time of the snapshot.
-#' Note: on Windows you will very likely need to have RTools installed to build the various packages.
+#' restored to the versions they were at at the time of the snapshot. Note: on Windows you will very
+#' likely need to have RTools installed to build the various packages.
 #'
 #' @param snapshot              The snapshot data frame as generated using the
 #'                              \code{\link{takeEnvironmentSnapshot}} function.
@@ -139,13 +139,15 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE) {
 #' Store snapshot of the R environment in the package
 #'
 #' @details
-#' This function records all versions used in the R environment that are used by one root package, and stores them in the 
-#' R package that is currently being developed in a file called \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore 
-#' the environment to the state it was when a particular study package was run using the \code{\link{restoreEnvironment}} function.
+#' This function records all versions used in the R environment that are used by one root package, and
+#' stores them in the R package that is currently being developed in a file called
+#' \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
+#' environment to the state it was when a particular study package was run using the
+#' \code{\link{restoreEnvironment}} function.
 #'
 #' @param rootPackage   The name of the root package
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' insertEnvironmentSnapshotInPackage("OhdsiRTools")
 #' }

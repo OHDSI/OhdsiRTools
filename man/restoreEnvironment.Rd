@@ -18,8 +18,8 @@ Restore the R environment to a snapshot
 }
 \details{
 This function restores the R environment to a previous snapshot, meaning all the packages will be
-restored to the versions they were at at the time of the snapshot.
-Note: on Windows you will very likely need to have RTools installed to build the various packages.
+restored to the versions they were at at the time of the snapshot. Note: on Windows you will very
+likely need to have RTools installed to build the various packages.
 }
 \examples{
 \dontrun{

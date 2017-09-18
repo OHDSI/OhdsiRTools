@@ -19,25 +19,25 @@
 #' Load a cohort definition and insert it into this package
 #'
 #' @details
-#' Load a cohort definition from a WebApi instance and insert it into this package. This will fetch the
-#' json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it in the
-#' 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
-#' 
+#' Load a cohort definition from a WebApi instance and insert it into this package. This will fetch
+#' the json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it
+#' in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
 #' When using generateStats = TRUE, the following tables are required to exist when executing the SQL:
-#' cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also note
-#' that the cohort_inclusion table should be populated with the names of the rules prior to executing
-#' the cohort definition SQL. 
+#' cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also
+#' note that the cohort_inclusion table should be populated with the names of the rules prior to
+#' executing the cohort definition SQL.
 #'
-#' @param definitionId   The number indicating which cohort definition to fetch.
-#' @param name           The name that will be used for the json and SQL files. If not provided, the
-#'                       name in cohort will be used, but this may not lead to valid file names.
-#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' 
-#' @param generateStats  Should the SQL include the code for generating inclusion rule statistics?
-#'                       Note that if TRUE, several additional tables are expected to exists as described
-#'                       in the details.
-#' @param opts           List of options that can be passed to the RCurl methods for specifing additional 
-#'                       options for connecting to REST end-points.
+#' @param definitionId    The number indicating which cohort definition to fetch.
+#' @param name            The name that will be used for the json and SQL files. If not provided, the
+#'                        name in cohort will be used, but this may not lead to valid file names.
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://api.ohdsi.org:80/WebAPI".
+#'
+#' @param generateStats   Should the SQL include the code for generating inclusion rule statistics?
+#'                        Note that if TRUE, several additional tables are expected to exists as
+#'                        described in the details.
+#' @param opts            List of options that can be passed to the RCurl methods for specifing
+#'                        additional options for connecting to REST end-points.
 #'
 #' @examples
 #' \dontrun{
@@ -52,7 +52,7 @@ insertCohortDefinitionInPackage <- function(definitionId,
                                             baseUrl,
                                             generateStats = FALSE,
                                             opts = list()) {
-  
+
   ### Fetch JSON object ###
   url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
   json <- RCurl::getURL(url, .opts = opts)
@@ -67,25 +67,25 @@ insertCohortDefinitionInPackage <- function(definitionId,
   fileConn <- file(file.path("inst/cohorts", paste(name, "json", sep = ".")))
   writeLines(expression, fileConn)
   close(fileConn)
-  
+
   ### Fetch SQL by posting JSON object ###
   parsedExpression <- RJSONIO::fromJSON(parsedJson$expression)
   if (generateStats) {
-    jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression, options = list(generateStats = TRUE)), digits = 23)  
+    jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression,
+                                     options = list(generateStats = TRUE)), digits = 23)
   } else {
-    jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression), digits = 23)  
+    jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression), digits = 23)
   }
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
   url <- paste(baseUrl, "cohortdefinition", "sql", sep = "/")
-  
+
   postFormOpts <- append(list(httpheader = httpheader, postfields = jsonBody), opts)
-  cohortSqlJson <- RCurl::postForm(url,
-                                   .opts = postFormOpts)
+  cohortSqlJson <- RCurl::postForm(url, .opts = postFormOpts)
   sql <- RJSONIO::fromJSON(cohortSqlJson)
   if (!file.exists("inst/sql/sql_server")) {
     dir.create("inst/sql/sql_server", recursive = TRUE)
   }
-  
+
   fileConn <- file(file.path("inst/sql/sql_server", paste(name, "sql", sep = ".")))
   writeLines(sql, fileConn)
   close(fileConn)
@@ -95,16 +95,15 @@ insertCohortDefinitionInPackage <- function(definitionId,
 #'
 #' @details
 #' Deprecated. Use \code{\link{insertCohortDefinitionInPackage}} instead.
-#' 
+#'
 #' @param definitionId   The number indicating which Circe definition to fetch.
 #' @param name           The name that will be used for the json and SQL files. If not provided, the
 #'                       name in Circe will be used, but this may not lead to valid file names.
-#' @param baseUrl        The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
+#' @param baseUrl        The base URL for the WebApi instance, for example:
+#'                       "http://api.ohdsi.org:80/WebAPI".
 #'
 #' @export
-insertCirceDefinitionInPackage <- function(definitionId,
-                                           name = NULL,
-                                           baseUrl) {
+insertCirceDefinitionInPackage <- function(definitionId, name = NULL, baseUrl) {
   .Deprecated("insertCohortDefinitionInPackage")
   insertCohortDefinitionInPackage(definitionId, name, baseUrl)
 }
@@ -112,27 +111,28 @@ insertCirceDefinitionInPackage <- function(definitionId,
 
 #' Insert a set of cohort definitions into package
 #'
-#' @param fileName               Name of a CSV file in the inst/settings folder of the package specifying
-#'                               the cohorts to insert. See details for the expected file format.
-#' @param baseUrl                The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' @param insertTableSql         Should the SQL for creating the cohort table be inserted into the 
-#'                               package as well? This file will be called CreateCohortTable.sql.
-#' @param insertCohortCreationR  Insert R code that will create the cohort table and instantiate
-#'                               the cohorts? This will create a file called R/CreateCohorts.R containing
-#'                               a function called \code{.createCohorts}.
-#' @param generateStats          Should cohort inclusion rule statistics be created?
-#' @param opts                   List of options that can be passed to the RCurl methods for specifing additional 
-#'                               options for connecting to REST end-points.
-#' @param packageName            The name of the package (only needed when inserting the R code as well).
-#' 
-#' @details 
-#' The CSV file should have at least the following fields:
-#' \describe{
-#' \item{atlasId}{The cohort ID in ATLAS.} 
-#' \item{cohortId}{The cohort ID that will be used when instantiating the cohort (can be different from atlasId).}
-#' \item{name}{The name to be used for the cohort. This name will be used to generate file names, so please use letters and numbers only (no spaces).}
-#' }
-#' 
+#' @param fileName                Name of a CSV file in the inst/settings folder of the package
+#'                                specifying the cohorts to insert. See details for the expected file
+#'                                format.
+#' @param baseUrl                 The base URL for the WebApi instance, for example:
+#'                                "http://api.ohdsi.org:80/WebAPI".
+#' @param insertTableSql          Should the SQL for creating the cohort table be inserted into the
+#'                                package as well? This file will be called CreateCohortTable.sql.
+#' @param insertCohortCreationR   Insert R code that will create the cohort table and instantiate the
+#'                                cohorts? This will create a file called R/CreateCohorts.R containing
+#'                                a function called \code{.createCohorts}.
+#' @param generateStats           Should cohort inclusion rule statistics be created?
+#' @param opts                    List of options that can be passed to the RCurl methods for specifing
+#'                                additional options for connecting to REST end-points.
+#' @param packageName             The name of the package (only needed when inserting the R code as
+#'                                well).
+#'
+#' @details
+#' The CSV file should have at least the following fields: \describe{ \item{atlasId}{The cohort ID in
+#' ATLAS.} \item{cohortId}{The cohort ID that will be used when instantiating the cohort (can be
+#' different from atlasId).} \item{name}{The name to be used for the cohort. This name will be used to
+#' generate file names, so please use letters and numbers only (no spaces).} }
+#'
 #' @export
 insertCohortDefinitionSetInPackage <- function(fileName,
                                                baseUrl,
@@ -146,8 +146,8 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   cohortsToCreate <- read.csv(file.path("inst/settings", fileName))
   for (i in 1:nrow(cohortsToCreate)) {
     writeLines(paste("Inserting cohort:", cohortsToCreate$name[i]))
-    OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i], 
-                                                 name = cohortsToCreate$name[i], 
+    OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i],
+                                                 name = cohortsToCreate$name[i],
                                                  baseUrl = baseUrl,
                                                  generateStats = generateStats,
                                                  opts = opts)
@@ -157,21 +157,21 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   }
   if (generateStats) {
     rules <- .getCohortInclusionRules()
-    rules <- merge(rules, data.frame(cohortId = cohortsToCreate$cohortId, 
+    rules <- merge(rules, data.frame(cohortId = cohortsToCreate$cohortId,
                                      cohortName = cohortsToCreate$name))
     write.csv(rules, "inst/cohorts/InclusionRules.csv", row.names = FALSE)
   }
   if (insertCohortCreationR) {
     templateFileName <- system.file("CreateCohorts.R", package = "OhdsiRTools")
     rCode <- readChar(templateFileName, file.info(templateFileName)$size)
-    rCode <- gsub("#CopyrightYear#",  format(Sys.Date(), "%Y"), rCode)
-    rCode <- gsub("#packageName#",  packageName, rCode)
-    rCode <- gsub("#fileName#",  fileName, rCode)
+    rCode <- gsub("#CopyrightYear#", format(Sys.Date(), "%Y"), rCode)
+    rCode <- gsub("#packageName#", packageName, rCode)
+    rCode <- gsub("#fileName#", fileName, rCode)
     if (generateStats) {
-      rCode <- gsub("#stats_start#",  "", rCode)
-      rCode <- gsub("#stats_end#",  "", rCode)
+      rCode <- gsub("#stats_start#", "", rCode)
+      rCode <- gsub("#stats_end#", "", rCode)
     } else {
-      rCode <- gsub("#stats_start#.*?#stats_end#",  "", rCode)
+      rCode <- gsub("#stats_start#.*?#stats_end#", "", rCode)
     }
     fileConn <- file("R/CreateCohorts.R")
     writeChar(rCode, fileConn, eos = NULL)
@@ -189,7 +189,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
       if (nrOfRules > 0) {
         cohortName <- sub(".json", "", file)
         for (i in 1:nrOfRules) {
-          rules <- rbind(rules, data.frame(cohortName = cohortName, 
+          rules <- rbind(rules, data.frame(cohortName = cohortName,
                                            ruleSequence = i - 1,
                                            ruleName = definition$InclusionRules[[i]]$name))
         }
@@ -215,27 +215,32 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   invisible(sql)
 }
 
-formatName <- function(name) { 
+formatName <- function(name) {
   return(gsub("_", " ", gsub("\\[(.*?)\\]_", "", gsub(" ", "_", name))))
 }
 
 #' Get a cohort definition's name from WebAPI
+#'
+#' @details
+#' Obtains the name of a cohort.
 #' 
-#' @details                     Obtains the name of a cohort.
-#' @param baseUrl               The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' @param definitionId          The cohort definition id in Atlas.
-#' @param formatName            Should the name be formatted to remove prefixes and underscores?
-#' @return                      The name of the cohort.
+#' @param baseUrl        The base URL for the WebApi instance, for example:
+#'                       "http://api.ohdsi.org:80/WebAPI".
+#' @param definitionId   The cohort definition id in Atlas.
+#' @param formatName     Should the name be formatted to remove prefixes and underscores?
 #' 
+#' @return
+#' The name of the cohort.
+#'
 #' @export
-getCohortDefinitionName <- function(baseUrl, 
-                                    definitionId, 
-                                    formatName = FALSE) {
-  url <- gsub("@baseUrl", baseUrl, gsub("@definitionId", definitionId, "@baseUrl/cohortdefinition/@definitionId"))
-  
+getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
+  url <- gsub("@baseUrl",
+              baseUrl,
+              gsub("@definitionId", definitionId, "@baseUrl/cohortdefinition/@definitionId"))
+
   # don't verify SSL chain. work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
-  
+
   if (formatName) {
     return(formatName(json$name))
   } else {
@@ -245,22 +250,25 @@ getCohortDefinitionName <- function(baseUrl,
 
 
 #' Get a concept set's name from WebAPI
+#'
+#' @details
+#' Obtains the name of a concept set.
 #' 
-#' @details                     Obtains the name of a concept set.
-#' @param baseUrl               The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' @param setId                 The concept set id in Atlas.
-#' @param formatName            Should the name be formatted to remove prefixes and underscores?
-#' @return                      The name of the concept set.
+#' @param baseUrl      The base URL for the WebApi instance, for example:
+#'                     "http://api.ohdsi.org:80/WebAPI".
+#' @param setId        The concept set id in Atlas.
+#' @param formatName   Should the name be formatted to remove prefixes and underscores?
 #' 
+#' @return
+#' The name of the concept set.
+#'
 #' @export
-getConceptSetName <- function(baseUrl, 
-                              setId,
-                              formatName = FALSE) {
+getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId"))
-  
+
   # don't verify SSL chain. work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
-  
+
   if (formatName) {
     return(formatName(json$name))
   } else {
@@ -269,53 +277,65 @@ getConceptSetName <- function(baseUrl,
 }
 
 #' Get Priority Vocab Source Key
+#'
+#' @details
+#' Obtains the source key of the default OMOP Vocab in Atlas.
 #' 
-#' @details               Obtains the source key of the default OMOP Vocab in Atlas.
-#' @param baseUrl         The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' @return                A string with the source key of the default OMOP Vocab in Atlas.
-#' 
-#' @export 
+#' @param baseUrl   The base URL for the WebApi instance, for example:
+#'                  "http://api.ohdsi.org:80/WebAPI".
+#'                  
+#' @return
+#' A string with the source key of the default OMOP Vocab in Atlas.
+#'
+#' @export
 getPriorityVocabKey <- function(baseUrl) {
   url <- gsub("@baseUrl", baseUrl, "@baseUrl/source/priorityVocabulary")
-  
+
   # don't verify SSL chain, work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url = url, .opts = list(ssl.verifypeer = FALSE)))
-  return (json$sourceKey)
+  return(json$sourceKey)
 }
 
 
 #' Get Concept Set Concept Ids
+#'
+#' @details
+#' Obtains the full list of concept Ids in a concept set.
 #' 
-#' @details                 Obtains the full list of concept Ids in a concept set.
-#' @param baseUrl           The base URL for the WebApi instance, for example: "http://api.ohdsi.org:80/WebAPI".
-#' @param setId             The concept set id in Atlas.
-#' @param vocabSourceKey    The source key of the Vocabulary. By default, the priority Vocabulary is used.
-#' @return                  A list of concept Ids.
-#' 
+#' @param baseUrl          The base URL for the WebApi instance, for example:
+#'                         "http://api.ohdsi.org:80/WebAPI".
+#' @param setId            The concept set id in Atlas.
+#' @param vocabSourceKey   The source key of the Vocabulary. By default, the priority Vocabulary is
+#'                         used.
+#'                         
+#' @return
+#' A list of concept Ids.
+#'
 #' @export
-getConceptSetConceptIds <- function(baseUrl, 
-                                    setId, 
-                                    vocabSourceKey = NULL) {
+getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
     vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
   }
-  
+
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId/expression"))
-  
+
   # don't verify SSL chain. work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
-  
-  url <- gsub("@baseUrl", baseUrl, gsub("@vocabSourceKey", vocabSourceKey, "@baseUrl/vocabulary/@vocabSourceKey/resolveConceptSetExpression"))
-  
+
+  url <- gsub("@baseUrl",
+              baseUrl,
+              gsub("@vocabSourceKey",
+                   vocabSourceKey,
+                   "@baseUrl/vocabulary/@vocabSourceKey/resolveConceptSetExpression"))
+
   # don't verify SSL chain. work-around for self-certified certificates.
-  httpheader <- c(Accept="application/json; charset=UTF-8", "Content-Type" = "application/json")
-  
-  body <- as.character(RJSONIO::toJSON(x = json, digits = 50)) # disables scientific notation
-  req <- RCurl::postForm(uri = url,
-                         .opts = list(ssl.verifypeer = FALSE, 
-                                      httpheader = httpheader,
-                                      postfields = body))
+  httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
+
+  body <- as.character(RJSONIO::toJSON(x = json, digits = 50))  # disables scientific notation
+  req <- RCurl::postForm(uri = url, .opts = list(ssl.verifypeer = FALSE,
+                                                 httpheader = httpheader,
+                                                 postfields = body))
   concepts <- gsub(pattern = "\\[|\\]", replacement = "", x = req[1])
-  
-  return (as.integer(unlist(strsplit(x = concepts, split = ","))))
+
+  return(as.integer(unlist(strsplit(x = concepts, split = ","))))
 }

@@ -13,9 +13,11 @@ insertEnvironmentSnapshotInPackage(rootPackage)
 Store snapshot of the R environment in the package
 }
 \details{
-This function records all versions used in the R environment that are used by one root package, and stores them in the 
-R package that is currently being developed in a file called \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore 
-the environment to the state it was when a particular study package was run using the \code{\link{restoreEnvironment}} function.
+This function records all versions used in the R environment that are used by one root package, and
+stores them in the R package that is currently being developed in a file called
+\code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
+environment to the state it was when a particular study package was run using the
+\code{\link{restoreEnvironment}} function.
 }
 \examples{
 \dontrun{
