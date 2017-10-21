@@ -52,6 +52,9 @@ insertCohortDefinitionInPackage <- function(definitionId,
                                             baseUrl,
                                             generateStats = FALSE,
                                             opts = list()) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
 
   ### Fetch JSON object ###
   url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
@@ -141,6 +144,9 @@ insertCohortDefinitionSetInPackage <- function(fileName,
                                                generateStats = FALSE,
                                                opts = list(),
                                                packageName) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
   if (insertCohortCreationR && !insertTableSql)
     stop("Need to insert table SQL in order to generate R code")
   cohortsToCreate <- read.csv(file.path("inst/settings", fileName))
@@ -215,9 +221,17 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   invisible(sql)
 }
 
-formatName <- function(name) {
+.formatName <- function(name) {
   return(gsub("_", " ", gsub("\\[(.*?)\\]_", "", gsub(" ", "_", name))))
 }
+
+.checkBaseUrl <- function(baseUrl)
+{
+  return(grepl(pattern = "https?:\\/\\/[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})+(\\/.*)?\\/WebAPI$", 
+                x = baseUrl, 
+                ignore.case = FALSE))
+}
+
 
 #' Get a cohort definition's name from WebAPI
 #'
@@ -234,6 +248,9 @@ formatName <- function(name) {
 #'
 #' @export
 getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
   url <- gsub("@baseUrl",
               baseUrl,
               gsub("@definitionId", definitionId, "@baseUrl/cohortdefinition/@definitionId"))
@@ -242,7 +259,7 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
 
   if (formatName) {
-    return(formatName(json$name))
+    return(.formatName(json$name))
   } else {
     return(json$name)
   }
@@ -264,13 +281,17 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
 #'
 #' @export
 getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId"))
 
   # don't verify SSL chain. work-around for self-certified certificates.
   json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
 
   if (formatName) {
-    return(formatName(json$name))
+    return(.formatName(json$name))
   } else {
     return(json$name)
   }
@@ -289,6 +310,9 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
 #'
 #' @export
 getPriorityVocabKey <- function(baseUrl) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
   url <- gsub("@baseUrl", baseUrl, "@baseUrl/source/priorityVocabulary")
 
   # don't verify SSL chain, work-around for self-certified certificates.
@@ -313,6 +337,10 @@ getPriorityVocabKey <- function(baseUrl) {
 #'
 #' @export
 getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
   if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
     vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
   }
