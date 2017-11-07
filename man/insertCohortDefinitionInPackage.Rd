@@ -5,7 +5,7 @@
 \title{Load a cohort definition and insert it into this package}
 \usage{
 insertCohortDefinitionInPackage(definitionId, name = NULL, baseUrl,
-  generateStats = FALSE, opts = list())
+  generateStats = FALSE)
 }
 \arguments{
 \item{definitionId}{The number indicating which cohort definition to fetch.}
@@ -19,9 +19,6 @@ name in cohort will be used, but this may not lead to valid file names.}
 \item{generateStats}{Should the SQL include the code for generating inclusion rule statistics?
 Note that if TRUE, several additional tables are expected to exists as
 described in the details.}
-
-\item{opts}{List of options that can be passed to the RCurl methods for specifing
-additional options for connecting to REST end-points.}
 }
 \description{
 Load a cohort definition and insert it into this package

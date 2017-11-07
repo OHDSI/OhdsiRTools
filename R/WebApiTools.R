@@ -36,8 +36,6 @@
 #' @param generateStats   Should the SQL include the code for generating inclusion rule statistics?
 #'                        Note that if TRUE, several additional tables are expected to exists as
 #'                        described in the details.
-#' @param opts            List of options that can be passed to the RCurl methods for specifing
-#'                        additional options for connecting to REST end-points.
 #'
 #' @examples
 #' \dontrun{
@@ -50,29 +48,28 @@
 insertCohortDefinitionInPackage <- function(definitionId,
                                             name = NULL,
                                             baseUrl,
-                                            generateStats = FALSE,
-                                            opts = list()) {
+                                            generateStats = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
 
   ### Fetch JSON object ###
   url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
-  json <- RCurl::getURL(url, .opts = opts)
-  parsedJson <- RJSONIO::fromJSON(json)
+  json <- httr::GET(url)
+  json <- httr::content(json)
+  # expression <- RJSONIO::fromJSON(json$expression)
   if (is.null(name)) {
-    name <- parsedJson$name
+    name <- json$name
   }
-  expression <- parsedJson$expression
   if (!file.exists("inst/cohorts")) {
     dir.create("inst/cohorts", recursive = TRUE)
   }
   fileConn <- file(file.path("inst/cohorts", paste(name, "json", sep = ".")))
-  writeLines(expression, fileConn)
+  writeLines(json$expression, fileConn)
   close(fileConn)
 
   ### Fetch SQL by posting JSON object ###
-  parsedExpression <- RJSONIO::fromJSON(parsedJson$expression)
+  parsedExpression <- RJSONIO::fromJSON(json$expression)
   if (generateStats) {
     jsonBody <- RJSONIO::toJSON(list(expression = parsedExpression,
                                      options = list(generateStats = TRUE)), digits = 23)
@@ -81,10 +78,9 @@ insertCohortDefinitionInPackage <- function(definitionId,
   }
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
   url <- paste(baseUrl, "cohortdefinition", "sql", sep = "/")
-
-  postFormOpts <- append(list(httpheader = httpheader, postfields = jsonBody), opts)
-  cohortSqlJson <- RCurl::postForm(url, .opts = postFormOpts)
-  sql <- RJSONIO::fromJSON(cohortSqlJson)
+  cohortSqlJson <- httr::POST(url, body = jsonBody, config = httr::add_headers(httpheader))
+  cohortSqlJson <- httr::content(cohortSqlJson)
+  sql <- cohortSqlJson$templateSql
   if (!file.exists("inst/sql/sql_server")) {
     dir.create("inst/sql/sql_server", recursive = TRUE)
   }
@@ -125,8 +121,6 @@ insertCirceDefinitionInPackage <- function(definitionId, name = NULL, baseUrl) {
 #'                                cohorts? This will create a file called R/CreateCohorts.R containing
 #'                                a function called \code{.createCohorts}.
 #' @param generateStats           Should cohort inclusion rule statistics be created?
-#' @param opts                    List of options that can be passed to the RCurl methods for specifing
-#'                                additional options for connecting to REST end-points.
 #' @param packageName             The name of the package (only needed when inserting the R code as
 #'                                well).
 #'
@@ -142,7 +136,6 @@ insertCohortDefinitionSetInPackage <- function(fileName,
                                                insertTableSql = TRUE,
                                                insertCohortCreationR = TRUE,
                                                generateStats = FALSE,
-                                               opts = list(),
                                                packageName) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
@@ -155,8 +148,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
     OhdsiRTools::insertCohortDefinitionInPackage(definitionId = cohortsToCreate$atlasId[i],
                                                  name = cohortsToCreate$name[i],
                                                  baseUrl = baseUrl,
-                                                 generateStats = generateStats,
-                                                 opts = opts)
+                                                 generateStats = generateStats)
   }
   if (insertTableSql) {
     .insertSqlForCohortTableInPackage(statsTables = generateStats)
@@ -254,9 +246,8 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
   url <- gsub("@baseUrl",
               baseUrl,
               gsub("@definitionId", definitionId, "@baseUrl/cohortdefinition/@definitionId"))
-
-  # don't verify SSL chain. work-around for self-certified certificates.
-  json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
+  json <- httr::GET(url)
+  json <- httr::content(json)
 
   if (formatName) {
     return(.formatName(json$name))
@@ -286,9 +277,8 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
   }
   
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId"))
-
-  # don't verify SSL chain. work-around for self-certified certificates.
-  json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
+  json <- httr::GET(url)
+  json <- httr::content(json)
 
   if (formatName) {
     return(.formatName(json$name))
@@ -314,9 +304,8 @@ getPriorityVocabKey <- function(baseUrl) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
   url <- gsub("@baseUrl", baseUrl, "@baseUrl/source/priorityVocabulary")
-
-  # don't verify SSL chain, work-around for self-certified certificates.
-  json <- RJSONIO::fromJSON(RCurl::getURL(url = url, .opts = list(ssl.verifypeer = FALSE)))
+  json <- httr::GET(url)
+  json <- httr::content(json)
   return(json$sourceKey)
 }
 
@@ -346,24 +335,18 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   }
 
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId/expression"))
-
-  # don't verify SSL chain. work-around for self-certified certificates.
-  json <- RJSONIO::fromJSON(RCurl::getURL(url, .opts = list(ssl.verifypeer = FALSE)))
+  json <- httr::GET(url)
+  json <- httr::content(json)
 
   url <- gsub("@baseUrl",
               baseUrl,
               gsub("@vocabSourceKey",
                    vocabSourceKey,
                    "@baseUrl/vocabulary/@vocabSourceKey/resolveConceptSetExpression"))
-
-  # don't verify SSL chain. work-around for self-certified certificates.
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
-
   body <- as.character(RJSONIO::toJSON(x = json, digits = 50))  # disables scientific notation
-  req <- RCurl::postForm(uri = url, .opts = list(ssl.verifypeer = FALSE,
-                                                 httpheader = httpheader,
-                                                 postfields = body))
-  concepts <- gsub(pattern = "\\[|\\]", replacement = "", x = req[1])
-
-  return(as.integer(unlist(strsplit(x = concepts, split = ","))))
+  req <- httr::POST(url, body = body, config = httr::add_headers(httpheader))
+  req <- httr::content(req)
+  concepts <- unlist(req)
+  return(concepts)
 }

@@ -1,7 +1,12 @@
 insertCohortDefinitionInPackage(definitionId = 3876, name = "Alendronate", generateStats = TRUE)
 
 
+insertCohortDefinitionInPackage(5021, "Test", "https://epi.jnj.com:8443/WebAPI")
 
+url <- "https://epi.jnj.com:8443/WebAPI/cohortdefinition/5021"
+x <- httr::GET(url)
+definitionId <- 5021
+baseUrl <- "https://epi.jnj.com:8443/WebAPI"
 
 insertCohortDefinitionSetInPackage(fileName = "cohorts.csv",
                                    insertTableSql = TRUE,
@@ -32,10 +37,10 @@ runAndNotify({
 # WebAPI functions -----------------------------------------------------------
 
 
-getCohortDefinitionName(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionId = 3289)
+getCohortDefinitionName(baseUrl = "https://epi.jnj.com:8443/WebAPI", definitionId = 5021)
 
-getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 525)
+getConceptSetName(baseUrl = "https://epi.jnj.com:8443/WebAPI", setId = 12)
 
-getPriorityVocabKey(baseUrl = "http://api.ohdsi.org:80/WebAPI")
+getPriorityVocabKey(baseUrl = "https://epi.jnj.com:8443/WebAPI")
 
-getConceptSetConcepts(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 525)
+getConceptSetConceptIds(baseUrl = "https://epi.jnj.com:8443/WebAPI", setId = 12)
