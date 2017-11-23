@@ -23,6 +23,7 @@
 #' @param mailSettings   Arguments to be passed to the send.mail function in the mailR package (except
 #'                       subject and body).
 #' @param label          A label to be used in the subject to identify a run.
+#' @param stopOnWarning  Stop expression on warning and send notification?
 #'
 #' @return
 #' The ouput of \code{expression}.
@@ -44,16 +45,24 @@
 #' }
 #'
 #' @export
-runAndNotify <- function(expression, mailSettings, label = "R") {
+runAndNotify <- function(expression, mailSettings, label = "R", stopOnWarning = FALSE) {
   ev <- new.env()
   start <- Sys.time()
-  result <- tryCatch({
-    eval(expression)
-  }, warning = function(w) {
-    assign("warningObject", w, envir = ev)
-  }, error = function(e) {
-    assign("errorObject", e, envir = ev)
-  })
+  if (stopOnWarning) {
+    result <- tryCatch({
+      eval(expression)
+    }, warning = function(w) {
+      assign("warningObject", w, envir = ev)
+    }, error = function(e) {
+      assign("errorObject", e, envir = ev)
+    })
+  } else {
+    result <- tryCatch({
+      eval(expression)
+    }, error = function(e) {
+      assign("errorObject", e, envir = ev)
+    })   
+  }
   delta <- Sys.time() - start
   timing <- paste("Code ran for", signif(delta, 3), attr(delta, "units"))
   subject <- NULL
@@ -74,7 +83,7 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
   do.call(myfun, mailSettings)
   writeLines(paste("Message sent to", mailSettings$to))
   # writeLines(subject) writeLines(body)
-
+  
   # Re-throw errors and warnings:
   if (exists("warningObject", envir = ev)) {
     warning(get("warningObject", envir = ev))
@@ -84,5 +93,3 @@ runAndNotify <- function(expression, mailSettings, label = "R") {
   }
   invisible(result)
 }
-
-

@@ -4,7 +4,7 @@
 \alias{runAndNotify}
 \title{Run code and send e-mail notification on error, warning, or completion}
 \usage{
-runAndNotify(expression, mailSettings, label = "R")
+runAndNotify(expression, mailSettings, label = "R", stopOnWarning = FALSE)
 }
 \arguments{
 \item{expression}{The expression to run.}
@@ -13,6 +13,8 @@ runAndNotify(expression, mailSettings, label = "R")
 subject and body).}
 
 \item{label}{A label to be used in the subject to identify a run.}
+
+\item{stopOnWarning}{Stop expression on warning and send notification?}
 }
 \value{
 The ouput of \code{expression}.
