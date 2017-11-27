@@ -350,3 +350,84 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   concepts <- unlist(req)
   return(concepts)
 }
+
+#' Get Cohort Generation Statuses
+#' @details 
+#' Obtains cohort generation statuses for a collection of cohort definition Ids and CDM sources.
+#' Useful if running multiple cohort generation jobs that are long-running.
+#' 
+#' @param baseUrl          The base URL for the WebApi instance, for example:
+#'                         "http://api.ohdsi.org:80/WebAPI".            
+#' @param definitionIds    A list of cohort definition ids
+#' @param sourceKeys       A list of CDM source keys. These can be found in Atlas -> Configure.
+#' 
+#' @return 
+#' A data frame of cohort generation statuses per definition id and source key.
+#' 
+#' @export
+getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys)
+{
+  if (!.checkSourceKeys(baseUrl = baseUrl, sourceKeys = sourceKeys)) {
+    stop("One or more source keys is invalid, please check Atlas -> Configure page.")
+  }
+  
+  tuples <- list(definitionIds, sourceKeys)
+  df <- expand.grid(tuples, KEEP.OUT.ATTRS = FALSE)
+  colnames(df) <- c("definitionId", "sourceKey")
+  
+  statuses <- apply(X = df, MARGIN = 1, function(row)
+  {
+    status <- list(sourceKey = row["sourceKey"], definitionId = row["definitionId"], 
+                   status = .getCohortGenerationStatus(baseUrl = baseUrl, 
+                                                       definitionId = row["definitionId"],
+                                                       sourceKey = row["sourceKey"]))
+  })
+  
+  return (do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE)))
+}
+
+.getSourceIdFromKey <- function(baseUrl,
+                                sourceKey)
+{
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
+  url <- gsub("@baseUrl", baseUrl,
+              gsub("@sourceKey", sourceKey, "@baseUrl/source/@sourceKey"))
+  json <- httr::GET(url)
+  json <- httr::content(json)
+  if (is.null(json$sourceId))
+    json$sourceId <- -1
+  json$sourceId
+}
+
+.getCohortGenerationStatus <- function(baseUrl,
+                                       definitionId,
+                                       sourceKey)
+{
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
+  url <- gsub("@baseUrl", baseUrl,
+              gsub("@definitionId", definitionId, 
+                   "@baseUrl/cohortdefinition/@definitionId/info"))
+  json <- httr::GET(url)
+  json <- httr::content(json)
+  sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
+
+  json <- json[sapply(json, function(j) j$id$sourceId == sourceId)]
+  if (length(json) == 0) 
+  { 
+    return ("NA")
+  }
+  return (json[[1]]$status)
+}
+
+.checkSourceKeys <- function(baseUrl, sourceKeys)
+{
+  sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
+  return (!(-1 %in% sourceIds))
+}
+
