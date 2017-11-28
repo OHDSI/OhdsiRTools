@@ -25,6 +25,18 @@ checkUsagePackage("OhdsiRTools")
 
 # Insert CIRCE JSON and SQL into a study package:
 insertCohortDefinitionInPackage(123, "MyocardialInfarction")
+
+# Get a formatted cohort definition name (no bracketed prefixes) from Atlas:
+getCohortDefinitionName(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionId = 123, formatName = TRUE)
+
+# Get a formatted concept set name (no bracketed prefixes) from Atlas:
+getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123, formatName = TRUE))
+
+# Get all concept Ids from a concept set from Atlas:
+getConceptSetConceptIds(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123)
+
+# Get a data frame filled with generation statuses of multiple cohort definitions across multiple CDM sources in Atlas:
+getCohortGenerationStatuses(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah")))
 ```
 
 Technology
