@@ -10,12 +10,12 @@ getCohortGenerationStatuses(baseUrl, definitionIds, sourceKeys)
 \item{baseUrl}{The base URL for the WebApi instance, for example:
 "http://api.ohdsi.org:80/WebAPI".}
 
-\item{definitionIds}{A list of cohort definition ids}
+\item{definitionIds}{A list of cohort definition Ids}
 
 \item{sourceKeys}{A list of CDM source keys. These can be found in Atlas -> Configure.}
 }
 \value{
-A data frame of cohort generation statuses per definition id and source key.
+A data frame of cohort generation statuses, start times, and execution durations per definition id and source key.
 }
 \description{
 Get Cohort Generation Statuses
