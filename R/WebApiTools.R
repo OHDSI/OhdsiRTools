@@ -177,6 +177,41 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   }
 }
 
+
+#' Insert a set of concept sets' concept ids into package
+#'
+#' @param fileName                Name of a CSV file in the inst/settings folder of the package
+#'                                specifying the concept sets to insert. See details for the expected file
+#'                                format.
+#' @param baseUrl                 The base URL for the WebApi instance, for example:
+#'                                "http://api.ohdsi.org:80/WebAPI".
+#'
+#' @details
+#' The CSV file should have: \describe{ \item{atlasId}{The concept set Id in
+#' ATLAS.} }
+#'
+#' @export
+insertConceptSetConceptIdsInPackage <- function(fileName,
+                                                baseUrl)
+{
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
+  conceptSetsToCreate <- read.csv(file.path("inst/settings", fileName))
+  if (!file.exists("inst/conceptsets")) {
+    dir.create("inst/conceptsets", recursive = TRUE)
+  }
+  
+  for (i in 1:nrow(conceptSetsToCreate)) {
+    writeLines(paste("Inserting concept set:", conceptSetsToCreate$atlasId[i]))
+    conceptIds <- getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i])
+    fileConn <- file(file.path("inst/conceptsets", paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
+    write.csv(x = conceptIds, file = fileConn, col.names = c("CONCEPT_ID"))
+    close(fileConn)
+  }
+}
+
 .getCohortInclusionRules <- function() {
   rules <- data.frame()
   for (file in list.files(path = "inst/cohorts", pattern = ".*\\.json")) {
