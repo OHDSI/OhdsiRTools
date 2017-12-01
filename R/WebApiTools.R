@@ -208,7 +208,6 @@ insertConceptSetConceptIdsInPackage <- function(fileName,
     conceptIds <- getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i])
     fileConn <- file(file.path("inst/conceptsets", paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
     write.csv(x = conceptIds, file = fileConn, col.names = c("CONCEPT_ID"))
-    close(fileConn)
   }
 }
 
@@ -429,7 +428,7 @@ getCohortGenerationStatuses <- function(baseUrl,
                    definitionId = row["definitionId"], 
                    definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
                                                             definitionId = row["definitionId"], 
-                                                            formatName = TRUE),
+                                                            formatName = FALSE),
                    status = result$status,
                    startTime = result$startTime,
                    executionDuration = result$executionDuration,
