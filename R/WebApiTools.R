@@ -205,9 +205,10 @@ insertConceptSetConceptIdsInPackage <- function(fileName,
   
   for (i in 1:nrow(conceptSetsToCreate)) {
     writeLines(paste("Inserting concept set:", conceptSetsToCreate$atlasId[i]))
-    conceptIds <- getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i])
+    df <- as.data.frame(getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i]))
+    names(df) <- c("CONCEPT_ID")
     fileConn <- file(file.path("inst/conceptsets", paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
-    write.csv(x = conceptIds, file = fileConn, col.names = c("CONCEPT_ID"))
+    write.csv(x = df, file = fileConn, row.names = FALSE, quote = FALSE)
   }
 }
 
