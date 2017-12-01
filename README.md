@@ -11,7 +11,7 @@ Features
 - Auto checking of R code
 - Functions for parallel computation
 - Functions used for automating analyses
-- Functions for retrieving JSON and SQL cohort definitions from [ATLAS](https://github.com/OHDSI/Atlas)
+- Functions for retrieving cohort definition and concept set metadata, status, and composition (SQL/JSON/CSV) from [ATLAS](https://github.com/OHDSI/Atlas)
 
 Examples
 ===========
@@ -26,17 +26,20 @@ checkUsagePackage("OhdsiRTools")
 # Insert CIRCE JSON and SQL into a study package:
 insertCohortDefinitionInPackage(123, "MyocardialInfarction")
 
+# Insert concept set concept Ids into a study package:
+insertConceptSetConceptIdsInPackage(baseUrl = "http://api.ohdsi.org:80/WebAPI", fileName = "conceptsetids.csv")
+
 # Get a formatted cohort definition name (no bracketed prefixes) from Atlas:
 getCohortDefinitionName(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionId = 123, formatName = TRUE)
 
 # Get a formatted concept set name (no bracketed prefixes) from Atlas:
-getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123, formatName = TRUE))
+getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123, formatName = TRUE)
 
 # Get all concept Ids from a concept set from Atlas:
 getConceptSetConceptIds(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123)
 
 # Get a data frame filled with generation statuses of multiple cohort definitions across multiple CDM sources in Atlas:
-getCohortGenerationStatuses(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah")))
+getCohortGenerationStatuses(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah"))
 ```
 
 Technology
