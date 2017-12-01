@@ -427,9 +427,13 @@ getCohortGenerationStatuses <- function(baseUrl,
     
     status <- list(sourceKey = row["sourceKey"], 
                    definitionId = row["definitionId"], 
+                   definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
+                                                            definitionId = row["definitionId"], 
+                                                            formatName = TRUE),
                    status = result$status,
                    startTime = result$startTime,
-                   executionDuration = result$executionDuration)
+                   executionDuration = result$executionDuration,
+                   personCount = result$personCount)
   })
   
   return (do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE)))
@@ -475,10 +479,11 @@ getCohortGenerationStatuses <- function(baseUrl,
   json <- json[sapply(json, function(j) j$id$sourceId == sourceId)]
   if (length(json) == 0) 
   { 
-    return (list(status = "NA", startTime = "NA", executionDuration = "NA"))
+    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
   return (list(status = json[[1]]$status, 
                startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = json[[1]]$executionDuration))
+               executionDuration = json[[1]]$executionDuration,
+               personCount = json[[1]]$personCount))
 }
 
