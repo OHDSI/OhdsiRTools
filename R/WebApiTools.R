@@ -177,6 +177,41 @@ insertCohortDefinitionSetInPackage <- function(fileName,
   }
 }
 
+
+#' Insert a set of concept sets' concept ids into package
+#'
+#' @param fileName                Name of a CSV file in the inst/settings folder of the package
+#'                                specifying the concept sets to insert. See details for the expected file
+#'                                format.
+#' @param baseUrl                 The base URL for the WebApi instance, for example:
+#'                                "http://api.ohdsi.org:80/WebAPI".
+#'
+#' @details
+#' The CSV file should have: \describe{ \item{atlasId}{The concept set Id in
+#' ATLAS.} }
+#'
+#' @export
+insertConceptSetConceptIdsInPackage <- function(fileName,
+                                                baseUrl)
+{
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+  }
+  
+  conceptSetsToCreate <- read.csv(file.path("inst/settings", fileName))
+  if (!file.exists("inst/conceptsets")) {
+    dir.create("inst/conceptsets", recursive = TRUE)
+  }
+  
+  for (i in 1:nrow(conceptSetsToCreate)) {
+    writeLines(paste("Inserting concept set:", conceptSetsToCreate$atlasId[i]))
+    df <- as.data.frame(getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i]))
+    names(df) <- c("CONCEPT_ID")
+    fileConn <- file(file.path("inst/conceptsets", paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
+    write.csv(x = df, file = fileConn, row.names = FALSE, quote = FALSE)
+  }
+}
+
 .getCohortInclusionRules <- function() {
   rules <- data.frame()
   for (file in list.files(path = "inst/cohorts", pattern = ".*\\.json")) {
@@ -392,9 +427,13 @@ getCohortGenerationStatuses <- function(baseUrl,
     
     status <- list(sourceKey = row["sourceKey"], 
                    definitionId = row["definitionId"], 
+                   definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
+                                                            definitionId = row["definitionId"], 
+                                                            formatName = FALSE),
                    status = result$status,
                    startTime = result$startTime,
-                   executionDuration = result$executionDuration)
+                   executionDuration = result$executionDuration,
+                   personCount = result$personCount)
   })
   
   return (do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE)))
@@ -440,10 +479,11 @@ getCohortGenerationStatuses <- function(baseUrl,
   json <- json[sapply(json, function(j) j$id$sourceId == sourceId)]
   if (length(json) == 0) 
   { 
-    return (list(status = "NA", startTime = "NA", executionDuration = "NA"))
+    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
   return (list(status = json[[1]]$status, 
                startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = json[[1]]$executionDuration))
+               executionDuration = json[[1]]$executionDuration,
+               personCount = json[[1]]$personCount))
 }
 
