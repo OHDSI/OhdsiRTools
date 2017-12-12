@@ -22,7 +22,8 @@ Imports:
     jsonlite,
     methods,
     utils,
-    mailR
+    mailR,
+    futile.logger
 Suggests:
     testthat
 NeedsCompilation: no

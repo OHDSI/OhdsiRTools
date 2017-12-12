@@ -28,7 +28,7 @@
   ffmaxbytes <- ffmaxbytes/nClusters
   # Limit size on machines with a lot of memory to prevent integer overflows in ff:
   ffmaxbytes <- min(ffmaxbytes, .Machine$integer.max * 12)
-
+  
   ffbatchbytes <- ffmaxbytes/50
   return(c(round(ffmaxbytes), round(ffbatchbytes)))
 }
@@ -47,8 +47,28 @@ makeCluster <- function(numberOfThreads, singleThreadToMain = TRUE) {
   if (numberOfThreads == 1 && singleThreadToMain) {
     cluster <- list()
     class(cluster) <- "noCluster"
+    futile.logger::flog.info("Initiating cluster constisting only of main thread")
   } else {
+    futile.logger::flog.info("Initiating cluster constisting %s threads", numberOfThreads)
     cluster <- snow::makeCluster(numberOfThreads, type = "SOCK")
+    logThreadStart <- function(logger, threadNumber) {
+      futile.logger::flog.logger(name = logger$name, threshold = logger$threshold, appender = logger$appender, layout = logger$layout)
+      options("threadNumber" = threadNumber)
+      futile.logger::flog.info("Thread %s initiated", threadNumber)
+      finalize <- function(env) {
+        futile.logger::flog.info("Thread %s terminated", threadNumber)
+      }
+      parent <- parent.env(environment())
+      reg.finalizer(parent, finalize, onexit= TRUE)
+      return(NULL)
+    }
+    logger <- futile.logger::flog.logger()
+    for (i in 1:length(cluster)) {
+      snow::sendCall(cluster[[i]], logThreadStart, list(logger = logger, threadNumber = i))
+    }
+    for (i in 1:length(cluster)) {
+      snow::recvOneResult(cluster)
+    }
   }
   return(cluster)
 }
@@ -83,6 +103,7 @@ clusterRequire <- function(cluster, package) {
 stopCluster <- function(cluster) {
   if (class(cluster)[1] != "noCluster") {
     snow::stopCluster.default(cluster)
+    futile.logger::flog.info("Stopping cluster")
   }
 }
 
@@ -142,7 +163,7 @@ clusterApply <- function(cluster,
       }
       for (i in 1:length(cluster)) {
         if (min(snow::recvOneResult(cluster)$value == values) == 0)
-          warning("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
+          futile.logger::flog.warn("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
       }
     }
     if (setFfTempDir) {
@@ -153,34 +174,37 @@ clusterApply <- function(cluster,
         snow::recvOneResult(cluster)
       }
     }
-
+    
     n <- length(x)
     p <- length(cluster)
     if (n > 0 && p > 0) {
       if (progressBar)
         pb <- txtProgressBar(style = 3)
-
+      
       for (i in 1:min(n, p)) {
         snow::sendCall(cluster[[i]], fun, c(list(x[[i]]), list(...)), tag = i)
       }
-
+      
       val <- vector("list", n)
       errors <- c(paste("Error(s) when calling function ",
                         substitute(fun, parent.frame(1)),
                         ":",
                         sep = ""))
-      formatError <- function(error, args) {
-        paste("\nError \"", error[[1]], "\" when using argument(s): ",
-              paste(args, collapse = ","),
-              sep = "")
+      formatError <- function(threadNumber, error, args) {
+        sprintf("Thread %s returns error: \"%s\" when using argument(s): %s",
+                threadNumber,
+                gsub("\n", "\\n", gsub("\t", "\\t", error)),
+                gsub("\n", "\\n", gsub("\t", "\\t", paste(args, collapse = ","))))
       }
       for (i in 1:n) {
         d <- snow::recvOneResult(cluster)
         if (inherits(d$value, "try-error")) {
           val[d$tag] <- NULL
-          errors <- c(errors, formatError(d$value, c(list(x[[i]]), list(...))))
+          errorMessage <- formatError(d$node, d$value, c(list(x[[d$tag]]), list(...)))
+          futile.logger::flog.error(errorMessage)
+          errors <- c(errors, errorMessage)
           if (stopOnError)
-          stop(paste(errors, collapse = ""), call. = FALSE)
+            stop(paste(errors, collapse = ""), call. = FALSE)
         }
         if (progressBar)
           setTxtProgressBar(pb, i/n)
