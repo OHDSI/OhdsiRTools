@@ -25,6 +25,7 @@ Imports:
     mailR,
     futile.logger
 Suggests:
-    testthat
+    testthat,
+    shiny
 NeedsCompilation: no
 RoxygenNote: 6.0.1

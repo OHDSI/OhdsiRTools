@@ -23,5 +23,5 @@
 #' @importFrom methods getFunction
 #' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar installed.packages packageDescription sessionInfo
 #' @importFrom stats aggregate
-#' @importFrom utils write.csv read.csv
+#' @importFrom utils write.csv read.csv install.packages menu
 NULL

@@ -62,3 +62,5 @@ fun <- function(x) {
 clusterApply(cluster, 1:10, fun)
 
 stopCluster(cluster)
+
+launchLogViewer("c:/temp/logFile.txt")
