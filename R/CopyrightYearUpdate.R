@@ -48,9 +48,9 @@ updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
                       pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
                       full.names = TRUE,
                       recursive = recursive)
+  flist <- flist[!grepl("/packrat/", flist)]
   for (f in flist) {
-    message("Checking copyright year in ", f)
-    updateCopyrightYearFile(f)
-
+      message("Checking copyright year in ", f)
+      updateCopyrightYearFile(f)
   }
 }
