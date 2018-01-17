@@ -47,24 +47,26 @@ makeCluster <- function(numberOfThreads, singleThreadToMain = TRUE) {
   if (numberOfThreads == 1 && singleThreadToMain) {
     cluster <- list()
     class(cluster) <- "noCluster"
-    futile.logger::flog.info("Initiating cluster constisting only of main thread")
+    OhdsiRTools::logTrace("Initiating cluster constisting only of main thread")
   } else {
-    futile.logger::flog.info("Initiating cluster constisting %s threads", numberOfThreads)
+    OhdsiRTools::logTrace("Initiating cluster with ",numberOfThreads , " threads")
     cluster <- snow::makeCluster(numberOfThreads, type = "SOCK")
-    logThreadStart <- function(logger, threadNumber) {
-      futile.logger::flog.logger(name = logger$name, threshold = logger$threshold, appender = logger$appender, layout = logger$layout)
-      options("threadNumber" = threadNumber)
-      futile.logger::flog.info("Thread %s initiated", threadNumber)
-      finalize <- function(env) {
-        futile.logger::flog.info("Thread %s terminated", threadNumber)
+    logThreadStart <- function(loggers, threadNumber) {
+      OhdsiRTools::clearLoggers()
+      for (logger in loggers) {
+        OhdsiRTools::registerLogger(logger)
       }
-      parent <- parent.env(environment())
-      reg.finalizer(parent, finalize, onexit= TRUE)
+      options("threadNumber" = threadNumber)
+      OhdsiRTools::logTrace("Thread ", threadNumber, " initiated")
+      finalize <- function(env) {
+        OhdsiRTools::logTrace("Thread ", threadNumber, " terminated")
+      }
+      reg.finalizer(globalenv(), finalize, onexit= TRUE)
       return(NULL)
     }
-    logger <- futile.logger::flog.logger()
+    loggers <- OhdsiRTools::getLoggers()
     for (i in 1:length(cluster)) {
-      snow::sendCall(cluster[[i]], logThreadStart, list(logger = logger, threadNumber = i))
+      snow::sendCall(cluster[[i]], logThreadStart, list(loggers = loggers, threadNumber = i))
     }
     for (i in 1:length(cluster)) {
       snow::recvOneResult(cluster)
@@ -103,7 +105,7 @@ clusterRequire <- function(cluster, package) {
 stopCluster <- function(cluster) {
   if (class(cluster)[1] != "noCluster") {
     snow::stopCluster.default(cluster)
-    futile.logger::flog.info("Stopping cluster")
+    OhdsiRTools::logTrace("Stopping cluster")
   }
 }
 
@@ -163,7 +165,7 @@ clusterApply <- function(cluster,
       }
       for (i in 1:length(cluster)) {
         if (min(snow::recvOneResult(cluster)$value == values) == 0)
-          futile.logger::flog.warn("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
+          OhdsiRTools::logWarn("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
       }
     }
     if (setFfTempDir) {
@@ -201,10 +203,13 @@ clusterApply <- function(cluster,
         if (inherits(d$value, "try-error")) {
           val[d$tag] <- NULL
           errorMessage <- formatError(d$node, d$value, c(list(x[[d$tag]]), list(...)))
-          futile.logger::flog.error(errorMessage)
-          errors <- c(errors, errorMessage)
-          if (stopOnError)
-            stop(paste(errors, collapse = ""), call. = FALSE)
+          if (stopOnError) {
+            OhdsiRTools::logFatal(errorMessage)
+            stop(errorMessage, call. = FALSE)
+          } else {
+            OhdsiRTools::logError(errorMessage)
+            errors <- c(errors, errorMessage)
+          }
         }
         if (progressBar)
           setTxtProgressBar(pb, i/n)

@@ -22,8 +22,7 @@ Imports:
     jsonlite,
     methods,
     utils,
-    mailR,
-    futile.logger
+    mailR
 Suggests:
     testthat,
     shiny
