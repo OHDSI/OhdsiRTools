@@ -12,6 +12,6 @@ layoutParallel(level, message)
 \item{message}{The message to layout.}
 }
 \description{
-A layout function to be used with an appender. This layout addes the time, thread, and level to
+A layout function to be used with an appender. This layout addes the time, thread, level, package name, and function name to
 the message.
 }

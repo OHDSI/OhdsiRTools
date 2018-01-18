@@ -349,7 +349,7 @@ layoutTimestamp <- function (level, message) {
 #' Logging layout for parellel computing
 #' 
 #' @description 
-#' A layout function to be used with an appender. This layout addes the time, thread, and level to
+#' A layout function to be used with an appender. This layout addes the time, thread, level, package name, and function name to
 #' the message.
 #'
 #' @param level      The level of the message (e.g. "INFO")
@@ -364,7 +364,15 @@ layoutParallel <- function (level, message) {
   } else {
     threadLabel <- paste("Thread", threadNumber)
   }
-  sprintf("%s\t[%s]\t%s\t%s", time, threadLabel, level, message)
+  packageName <- packageName(env = parent.frame(4))
+  if (is.null(packageName)) {
+    packageName <- ""
+  }
+  functionName <- as.character(sys.call(-4)[[1]])
+  if (length(functionName) == 0) {
+    functionName <- ""
+  }
+  sprintf("%s\t[%s]\t%s\t%s\t%s\t%s", time, threadLabel, level, packageName, functionName, message)
 }
 
 #' Logging layout with timestamp
