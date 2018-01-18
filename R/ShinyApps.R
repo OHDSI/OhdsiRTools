@@ -21,7 +21,8 @@
 #' @param logFileName       Name of the log file to view.
 #' 
 #' @details 
-#' Launches a Shiny app that allows the user to view a log file.
+#' Launches a Shiny app that allows the user to view a log file created using the default file logger. Use 
+#' \code{\link{addDefaultFileLogger}} to start the default file logger.
 #' 
 #' @export
 launchLogViewer <- function(logFileName) {

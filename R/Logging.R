@@ -17,7 +17,7 @@
 # limitations under the License.
 
 getDefaultLoggerSettings <- function() {
-  loggerSettings <- list(loggers = list(createLogger()))
+  return(list(loggers = list(createLogger())))
 }
 
 getLoggerSettings <- function() {
@@ -194,6 +194,22 @@ clearLoggers <- function() {
   setLoggerSettings(settings)
 }
 
+#' Add the default file logger
+#' 
+#' @details 
+#' Creates a logger that writes to a file using the "TRACE" threshold and the \code{\link{layoutParallel}} layout. 
+#' The output can be viewed with the built-in log viewer tht can be started using \code{\link{launchLogViewer}}.
+#' 
+#' @param fileName The name of the file to write to.
+#' 
+#' @export
+addDefaultFileLogger <- function(fileName) {
+  registerLogger(createLogger(name = "DEFAULT",
+                              threshold = "TRACE", 
+                              appenders = list(createFileAppender(layout = layoutParallel, 
+                                                                  fileName = fileName))))
+}
+
 
 levelToInt <- function(level) {
   if (level == "TRACE") 
@@ -308,6 +324,8 @@ logFatal <- function(...) {
 #'
 #' @export
 layoutSimple <- function(level, message) {
+  # Avoid check notes about non-used parameters:
+  missing(level)
   return(message)
 }
 
@@ -322,6 +340,8 @@ layoutSimple <- function(level, message) {
 #'
 #' @export
 layoutTimestamp <- function (level, message) {
+  # Avoid check notes about non-used parameters:
+  missing(level)
   time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   sprintf("%s\t%s", time, message)
 }
@@ -358,6 +378,8 @@ layoutParallel <- function (level, message) {
 #'
 #' @export
 layoutStackTrace <- function (level, message) {
+  # Avoid check notes about non-used parameters:
+  missing(level)
   time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   stackTrace <- c()
   nFrame = -4
@@ -369,28 +391,4 @@ layoutStackTrace <- function (level, message) {
   }
   stackTrace <- paste(rev(stackTrace), collapse = " - ")
   sprintf("%s\t%s\t%s", time, stackTrace, message)
-}
-
-test <- function() {
-  options(loggerSettings = NULL)
-  unregisterLogger(1)
-  registerLogger(createLogger(appenders = list(createConsoleAppender(layoutStackTrace))))
-  registerLogger(createLogger("file", "TRACE", appenders = list(createFileAppender(layoutParallel, "c:/temp/testLog.txt"))))
-  
-  
-  logInfo("Hello world", ".", "How are you?")
-  
-  
-  fun <- function(x){
-    logInfo("Hello world")
-  }
-  x <- fun(1)
-  
-  unregisterLogger(2)
-  x <- getLoggerSettings()
-  
-  fun <- function(x){
-    return(sys.call(0))
-  }
-  x <- fun(1)
 }
