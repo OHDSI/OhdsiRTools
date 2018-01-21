@@ -41,8 +41,10 @@ setLoggerSettings <- function(settings) {
 #' 
 #' @export
 createConsoleAppender <- function(layout = layoutSimple) {
-  appendFunction <- function(this, message) {
-    writeLines(message)
+  appendFunction <- function(this, level, message) {
+    # Warnings and fatals will be shown on console when recasted
+    if (level != "WARN" && level != "FATAL")
+      writeLines(message)
   }
   appender <- list(appendFunction = appendFunction,
                    layout = layout)
@@ -60,7 +62,7 @@ createConsoleAppender <- function(layout = layoutSimple) {
 #' 
 #' @export
 createFileAppender <- function(layout = layoutParallel, fileName) {
-  appendFunction <- function(this, message) {
+  appendFunction <- function(this, level, message) {
     con <- file(fileName, open = "at", blocking = FALSE)
     writeLines(text = message, con = con)
     flush(con)
@@ -99,7 +101,7 @@ createLogger <- function(name = "SIMPLE",
   logFunction <- function(this, level, message) {
     for (appender in this$appenders) {
       formatted <- appender$layout(level, message)
-      appender$appendFunction(appender, formatted)
+      appender$appendFunction(appender, level, formatted)
     }
   } 
   logger <- list(name = name,
@@ -234,7 +236,25 @@ log <- function(level, ...) {
       logger$logFunction(this = logger, level = level, message = message)
     }
   }
-}
+  # Recast warnings and errors
+  if (level == "WARN") {
+    functionName <- as.character(sys.call(-2)[[1]])
+    if (length(functionName) != 0) {
+      warning("In ", functionName, "() :", message, call. = FALSE)
+    } else {
+      warning(message, call. = FALSE)
+    }
+  }
+  
+  if (level == "FATAL") {
+    functionName <- as.character(sys.call(-2)[[1]])
+    if (length(functionName) != 0) {
+      stop("In ", functionName, "() :", message, call. = FALSE)
+    } else {
+      stop(message, call. = FALSE)
+    }
+  }
+} 
 
 #' Log a message at the TRACE level
 #' 

@@ -36,3 +36,6 @@ stopCluster(cluster)
 # A convenient way to view the log file is with the log viewer:
 launchLogViewer("c:/temp/logFile.txt")
 
+
+
+

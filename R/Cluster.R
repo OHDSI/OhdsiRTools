@@ -205,7 +205,6 @@ clusterApply <- function(cluster,
           errorMessage <- formatError(d$node, d$value, c(list(x[[d$tag]]), list(...)))
           if (stopOnError) {
             OhdsiRTools::logFatal(errorMessage)
-            stop(errorMessage, call. = FALSE)
           } else {
             OhdsiRTools::logError(errorMessage)
             errors <- c(errors, errorMessage)
@@ -222,7 +221,7 @@ clusterApply <- function(cluster,
       if (progressBar)
         close(pb)
       if (length(errors) != 1)
-        stop(paste(errors, collapse = ""), call. = FALSE)
+        OhdsiRTools::logFatal(paste(errors, collapse = ""))
       return(val)
     }
   }
