@@ -27,6 +27,7 @@
 #' @export
 launchLogViewer <- function(logFileName) {
   ensure_installed("shiny")
+  ensure_installed("DT")
   appDir <- system.file("shinyApps", "LogViewer", package = "OhdsiRTools")
   .GlobalEnv$logFileName <- logFileName
   on.exit(rm(logFileName, envir=.GlobalEnv))
