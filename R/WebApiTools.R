@@ -487,11 +487,19 @@ getCohortGenerationStatuses <- function(baseUrl,
 
 .invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId)
 {
-  url <- sprintf("%1s/cohortdefinition/%2s/generate/%3s",
-                 baseUrl, definitionId, sourceKey)
-  json <- httr::GET(url)
-  json <- httr::content(json)
-  return(json$status)
+  result <- .getCohortGenerationStatus(baseUrl = baseUrl, sourceKey = sourceKey, definitionId = definitionId)
+  if (result$status %in% c("STARTING", "STARTED", "RUNNING"))
+  {
+    return(result$status)
+  }
+  else
+  {
+    url <- sprintf("%1s/cohortdefinition/%2s/generate/%3s",
+                   baseUrl, definitionId, sourceKey)
+    json <- httr::GET(url)
+    json <- httr::content(json)
+    return (json$status)
+  }
 }
 
 #' Invoke the generation of a set of cohort definitions
