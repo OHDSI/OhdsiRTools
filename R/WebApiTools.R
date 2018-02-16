@@ -488,8 +488,8 @@ getCohortGenerationStatuses <- function(baseUrl,
   
   return (list(status = json[[1]]$status, 
                startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = json[[1]]$executionDuration,
-               personCount = json[[1]]$personCount))
+               executionDuration = ifelse(is.null(json[[1]]$executionDuration), "NA", json[[1]]$executionDuration),
+               personCount = ifelse(is.null(json[[1]]$personCount), "NA", json[[1]]$personCount)))
 }
 
 .invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId)
