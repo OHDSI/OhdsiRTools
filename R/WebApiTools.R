@@ -468,21 +468,28 @@ getCohortGenerationStatuses <- function(baseUrl,
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
   
+  sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
+  
   url <- sprintf("%1s/cohortdefinition/%2s/info", baseUrl, definitionId)
 
-  json <- httr::GET(url)
-  json <- httr::content(json)
-  sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
-
-  json <- json[sapply(json, function(j) j$id$sourceId == sourceId)]
-  if (length(json) == 0) 
+  response <- httr::GET(url)
+  response <- httr::content(response)
+  
+  if (length(response) == 0) # cohort has no prior generation history at all
   { 
     return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
+  
+  json <- response[sapply(response, function(j) j$id$sourceId == sourceId)]
+  if (length(json) == 0) # cohort has no prior generation history for this source
+  { 
+    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
+  }
+  
   return (list(status = json[[1]]$status, 
                startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = json[[1]]$executionDuration,
-               personCount = json[[1]]$personCount))
+               executionDuration = ifelse(is.null(json[[1]]$executionDuration), "NA", json[[1]]$executionDuration),
+               personCount = ifelse(is.null(json[[1]]$personCount), "NA", json[[1]]$personCount)))
 }
 
 .invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId)
