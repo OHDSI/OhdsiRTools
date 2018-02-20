@@ -165,7 +165,7 @@ clusterApply <- function(cluster,
       }
       for (i in 1:length(cluster)) {
         if (min(snow::recvOneResult(cluster)$value == values) == 0)
-          OhdsiRTools::logWarn("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
+          warning("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
       }
     }
     if (setFfTempDir) {
@@ -188,10 +188,7 @@ clusterApply <- function(cluster,
       }
       
       val <- vector("list", n)
-      errors <- c(paste("Error(s) when calling function ",
-                        substitute(fun, parent.frame(1)),
-                        ":",
-                        sep = ""))
+      hasError <- FALSE
       formatError <- function(threadNumber, error, args) {
         sprintf("Thread %s returns error: \"%s\" when using argument(s): %s",
                 threadNumber,
@@ -204,10 +201,10 @@ clusterApply <- function(cluster,
           val[d$tag] <- NULL
           errorMessage <- formatError(d$node, d$value, c(list(x[[d$tag]]), list(...)))
           if (stopOnError) {
-            OhdsiRTools::logFatal(errorMessage)
+            stop(errorMessage)
           } else {
             OhdsiRTools::logError(errorMessage)
-            errors <- c(errors, errorMessage)
+            hasError <- TRUE
           }
         }
         if (progressBar)
@@ -218,10 +215,13 @@ clusterApply <- function(cluster,
         }
         val[d$tag] <- list(d$value)
       }
-      if (progressBar)
+      if (progressBar) {
         close(pb)
-      if (length(errors) != 1)
-        OhdsiRTools::logFatal(paste(errors, collapse = ""))
+      }
+      if (hasError) {
+        message <- paste0("Error(s) when calling function '", substitute(fun, parent.frame(1)), "', see earlier messages for details")
+        stop(message)
+      }
       return(val)
     }
   }

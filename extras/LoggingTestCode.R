@@ -9,27 +9,28 @@ logInfo("Hello world")
 # We can replace this with a fancier logger, for example with threshold = "DEBUG":
 
 clearLoggers()
-registerLogger(createLogger(threshold = "DEBUG",
-                            appenders = list(createConsoleAppender(layout = layoutTimestamp))))
+
+registerLogger(createLogger(threshold = "INFO",
+                            appenders = list(createConsoleAppender(layout = layoutSimple))))
+
+unlink("c:/temp/logFile.txt")
+addDefaultFileLogger("c:/temp/logFile.txt")
+
+message("hello")
 logDebug("Hello world")
 
 # We can add a second logger that logs to a file:
 
-unlink("c:/temp/logFile.txt")
-registerLogger(createLogger(threshold = "TRACE", 
-                            appenders = list(createFileAppender(layout = layoutParallel, 
-                                                                fileName = "c:/temp/logFile.txt"))))
-logInfo("Hello world")
 
 # Messages from separate threads will also be logged to the same file:
 cluster <- makeCluster(3)
 fun <- function(x) {
-  OhdsiRTools::logInfo("Value of x is ", x)
-  if (x == 6)
+  warning("warn: Value of x is ", x)
+  if (x == 6 || x == 9)
     x <- a
   return(NULL)
 }
-clusterApply(cluster, 1:10, fun)
+dummy <- clusterApply(cluster, 1:10, fun)
 
 stopCluster(cluster)
 
@@ -37,5 +38,21 @@ stopCluster(cluster)
 launchLogViewer("c:/temp/logFile.txt")
 
 
+stop("asdf")
+
+options(error = function() str(geterrmessage()))
 
 
+clearLoggers()
+registerLogger(createLogger(threshold = "DEBUG",
+                            appenders = list(createConsoleAppender(layout = layoutParallel))))
+
+
+
+a <- b
+
+logError("asd")
+
+options(warning.expression = substitute(print(sys.call(-4)[[2]])))
+         
+warning("hi my name is mud")

@@ -16,6 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+registerDefaultHandlers <- function() {
+  logBaseError <- function() {
+    logFatal(gsub("\n", " ", geterrmessage()))
+  }
+  options(error = logBaseError)
+  options(warning.expression = substitute(OhdsiRTools::logWarn(sys.call(-4)[[2]])))
+}
+
 getDefaultLoggerSettings <- function() {
   return(list(loggers = list(createLogger())))
 }
@@ -24,6 +33,9 @@ getLoggerSettings <- function() {
   settings <- getOption("loggerSettings")
   if (is.null(settings)) {
     settings <- getDefaultLoggerSettings()
+  }
+  if (is.null(getOption("warning.expression"))) {
+    registerDefaultHandlers()
   }
   return(settings)
 }
@@ -43,8 +55,8 @@ setLoggerSettings <- function(settings) {
 createConsoleAppender <- function(layout = layoutSimple) {
   appendFunction <- function(this, level, message) {
     # Warnings and fatals will be shown on console when recasted
-    if (level != "WARN" && level != "FATAL")
-      writeLines(message)
+    # if (level != "WARN" && level != "FATAL")
+    writeLines(message)
   }
   appender <- list(appendFunction = appendFunction,
                    layout = layout)
@@ -236,24 +248,24 @@ log <- function(level, ...) {
       logger$logFunction(this = logger, level = level, message = message)
     }
   }
-  # Recast warnings and errors
-  if (level == "WARN") {
-    functionName <- as.character(sys.call(-2)[[1]])
-    if (length(functionName) != 0) {
-      warning("In ", functionName, "() :", message, call. = FALSE)
-    } else {
-      warning(message, call. = FALSE)
-    }
-  }
-  
-  if (level == "FATAL") {
-    functionName <- as.character(sys.call(-2)[[1]])
-    if (length(functionName) != 0) {
-      stop("In ", functionName, "() :", message, call. = FALSE)
-    } else {
-      stop(message, call. = FALSE)
-    }
-  }
+  # # Recast warnings and errors
+  # if (level == "WARN") {
+  #   functionName <- as.character(sys.call(-2)[[1]])
+  #   if (length(functionName) != 0) {
+  #     warning("In ", functionName, "() :", message, call. = FALSE)
+  #   } else {
+  #     warning(message, call. = FALSE)
+  #   }
+  # }
+  # 
+  # if (level == "FATAL") {
+  #   functionName <- as.character(sys.call(-2)[[1]])
+  #   if (length(functionName) != 0) {
+  #     stop("In ", functionName, "() :", message, call. = FALSE)
+  #   } else {
+  #     stop(message, call. = FALSE)
+  #   }
+  # }
 } 
 
 #' Log a message at the TRACE level
@@ -298,7 +310,8 @@ logInfo <- function(...) {
 #' Log a message at the WARN level
 #' 
 #' @details 
-#' Log a message at the specified level. The message will be sent to all the registered loggers.
+#' Log a message at the specified level. The message will be sent to all the registered loggers. This function
+#' is automatically called when a warning is thrown.
 #' 
 #' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
 #'             with no separator).
@@ -324,7 +337,8 @@ logError <- function(...) {
 #' Log a message at the FATAL level
 #' 
 #' @details 
-#' Log a message at the specified level. The message will be sent to all the registered loggers.
+#' Log a message at the specified level. The message will be sent to all the registered loggers. This function is
+#' be automatically called when an error occurs.
 #' 
 #' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
 #'             with no separator).
@@ -384,13 +398,38 @@ layoutParallel <- function (level, message) {
   } else {
     threadLabel <- paste("Thread", threadNumber)
   }
-  packageName <- packageName(env = parent.frame(4))
-  if (is.null(packageName)) {
-    packageName <- ""
+  functionName <- ""
+  packageName <- ""
+  for (i in 4:sys.nframe()) {
+    # print(paste(-i, packageName(env = sys.frame(-i))))
+    packageName <- packageName(env = sys.frame(-i))
+    if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
+      # print(paste(packageName, sys.call(-i)))
+      # str(sys.call(-i))
+      functionName <- as.character(sys.call(-i)[[1]])
+      break
+    }  
   }
-  functionName <- as.character(sys.call(-4)[[1]])
+  
+  # 
+  # if (sys.nframe() > 5 && sys.call(-5)[[1]] == "stop") {
+  #   functionName <- as.character(sys.call(-6)[[1]])
+  #   print(sys.call(-6))
+  #   packageName <- packageName(env = sys.frame(-6))
+  # } else if (sys.nframe() > 3) {
+  #   functionName <- as.character(sys.call(-4)[[1]])
+  #   packageName <- packageName(env = sys.frame(-4))
+  # } else {
+  #   functionName <- ""
+  #   packageName <- ""
+  # }
   if (length(functionName) == 0) {
     functionName <- ""
+  } else  {
+    functionName <- functionName[length(functionName)]
+  }
+  if (is.null(packageName)) {
+    packageName <- ""
   }
   sprintf("%s\t[%s]\t%s\t%s\t%s\t%s", time, threadLabel, level, packageName, functionName, message)
 }

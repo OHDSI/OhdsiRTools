@@ -14,5 +14,6 @@ with no separator).}
 Log a message at the FATAL level
 }
 \details{
-Log a message at the specified level. The message will be sent to all the registered loggers.
+Log a message at the specified level. The message will be sent to all the registered loggers. This function is
+be automatically called when an error occurs.
 }
