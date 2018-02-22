@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 registerDefaultHandlers <- function() {
   logBaseError <- function() {
     logFatal(gsub("\n", " ", geterrmessage()))
@@ -224,7 +223,6 @@ addDefaultFileLogger <- function(fileName) {
                                                                   fileName = fileName))))
 }
 
-
 levelToInt <- function(level) {
   if (level == "TRACE") 
     return(1)
@@ -248,24 +246,6 @@ log <- function(level, ...) {
       logger$logFunction(this = logger, level = level, message = message)
     }
   }
-  # # Recast warnings and errors
-  # if (level == "WARN") {
-  #   functionName <- as.character(sys.call(-2)[[1]])
-  #   if (length(functionName) != 0) {
-  #     warning("In ", functionName, "() :", message, call. = FALSE)
-  #   } else {
-  #     warning(message, call. = FALSE)
-  #   }
-  # }
-  # 
-  # if (level == "FATAL") {
-  #   functionName <- as.character(sys.call(-2)[[1]])
-  #   if (length(functionName) != 0) {
-  #     stop("In ", functionName, "() :", message, call. = FALSE)
-  #   } else {
-  #     stop(message, call. = FALSE)
-  #   }
-  # }
 } 
 
 #' Log a message at the TRACE level
@@ -400,29 +380,12 @@ layoutParallel <- function (level, message) {
   }
   functionName <- ""
   packageName <- ""
-  for (i in 4:sys.nframe()) {
-    # print(paste(-i, packageName(env = sys.frame(-i))))
-    packageName <- packageName(env = sys.frame(-i))
+  for (i in 4:sys.nframe()) {    packageName <- packageName(env = sys.frame(-i))
     if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
-      # print(paste(packageName, sys.call(-i)))
-      # str(sys.call(-i))
       functionName <- as.character(sys.call(-i)[[1]])
       break
     }  
   }
-  
-  # 
-  # if (sys.nframe() > 5 && sys.call(-5)[[1]] == "stop") {
-  #   functionName <- as.character(sys.call(-6)[[1]])
-  #   print(sys.call(-6))
-  #   packageName <- packageName(env = sys.frame(-6))
-  # } else if (sys.nframe() > 3) {
-  #   functionName <- as.character(sys.call(-4)[[1]])
-  #   packageName <- packageName(env = sys.frame(-4))
-  # } else {
-  #   functionName <- ""
-  #   packageName <- ""
-  # }
   if (length(functionName) == 0) {
     functionName <- ""
   } else  {

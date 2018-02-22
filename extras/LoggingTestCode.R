@@ -16,7 +16,6 @@ registerLogger(createLogger(threshold = "INFO",
 unlink("c:/temp/logFile.txt")
 addDefaultFileLogger("c:/temp/logFile.txt")
 
-message("hello")
 logDebug("Hello world")
 
 # We can add a second logger that logs to a file:
