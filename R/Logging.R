@@ -431,6 +431,7 @@ layoutParallel <- function (level, message) {
   if (is.null(packageName)) {
     packageName <- ""
   }
+  message <- gsub("\n", " ", message)
   sprintf("%s\t[%s]\t%s\t%s\t%s\t%s", time, threadLabel, level, packageName, functionName, message)
 }
 

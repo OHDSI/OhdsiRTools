@@ -51,7 +51,7 @@ registerLogger(createLogger(threshold = "DEBUG",
 
 a <- b
 
-logError("asd")
+logError("asd\naaa")
 
 options(warning.expression = substitute(print(sys.call(-4)[[2]])))
          
