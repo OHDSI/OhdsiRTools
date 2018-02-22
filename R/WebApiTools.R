@@ -373,11 +373,8 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   json <- httr::GET(url)
   json <- httr::content(json)
 
-  url <- gsub("@baseUrl",
-              baseUrl,
-              gsub("@vocabSourceKey",
-                   vocabSourceKey,
-                   "@baseUrl/vocabulary/@vocabSourceKey/resolveConceptSetExpression"))
+  url <- sprintf("%1s/vocabulary/%2s/resolveConceptSetExpression", baseUrl, vocabSourceKey)
+
   httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
   body <- as.character(RJSONIO::toJSON(x = json, digits = 50))  # disables scientific notation
   req <- httr::POST(url, body = body, config = httr::add_headers(httpheader))
@@ -436,7 +433,9 @@ getCohortGenerationStatuses <- function(baseUrl,
                    personCount = result$personCount)
   })
   
-  return (do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE)))
+  df <- do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE))
+  rownames(df) <- c()
+  return(df)
 }
 
 .getSourceIdFromKey <- function(baseUrl,
@@ -446,8 +445,8 @@ getCohortGenerationStatuses <- function(baseUrl,
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
   
-  url <- gsub("@baseUrl", baseUrl,
-              gsub("@sourceKey", sourceKey, "@baseUrl/source/@sourceKey"))
+  url <- sprintf("%1s/source/%2s", baseUrl, sourceKey)
+  
   json <- httr::GET(url)
   json <- httr::content(json)
   if (is.null(json$sourceId))
@@ -469,21 +468,91 @@ getCohortGenerationStatuses <- function(baseUrl,
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
   
-  url <- gsub("@baseUrl", baseUrl,
-              gsub("@definitionId", definitionId, 
-                   "@baseUrl/cohortdefinition/@definitionId/info"))
-  json <- httr::GET(url)
-  json <- httr::content(json)
   sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
+  
+  url <- sprintf("%1s/cohortdefinition/%2s/info", baseUrl, definitionId)
 
-  json <- json[sapply(json, function(j) j$id$sourceId == sourceId)]
-  if (length(json) == 0) 
+  response <- httr::GET(url)
+  response <- httr::content(response)
+  
+  if (length(response) == 0) # cohort has no prior generation history at all
   { 
     return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
+  
+  json <- response[sapply(response, function(j) j$id$sourceId == sourceId)]
+  if (length(json) == 0) # cohort has no prior generation history for this source
+  { 
+    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
+  }
+  
   return (list(status = json[[1]]$status, 
                startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = json[[1]]$executionDuration,
-               personCount = json[[1]]$personCount))
+               executionDuration = ifelse(is.null(json[[1]]$executionDuration), "NA", json[[1]]$executionDuration),
+               personCount = ifelse(is.null(json[[1]]$personCount), "NA", json[[1]]$personCount)))
+}
+
+.invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId)
+{
+  result <- .getCohortGenerationStatus(baseUrl = baseUrl, sourceKey = sourceKey, definitionId = definitionId)
+  if (result$status %in% c("STARTING", "STARTED", "RUNNING"))
+  {
+    return(result$status)
+  }
+  else
+  {
+    url <- sprintf("%1s/cohortdefinition/%2s/generate/%3s",
+                   baseUrl, definitionId, sourceKey)
+    json <- httr::GET(url)
+    json <- httr::content(json)
+    return (json$status)
+  }
+}
+
+#' Invoke the generation of a set of cohort definitions
+#' 
+#' @details 
+#' Invokes the generation of a set of cohort definitions across a set of CDMs set up in WebAPI.
+#' Use \code{getCohortGenerationStatuses} to check the progress of the set.
+#' 
+#' @param baseUrl          The base URL for the WebApi instance, for example:
+#'                         "http://api.ohdsi.org:80/WebAPI".            
+#' @param definitionIds    A list of cohort definition Ids
+#' @param sourceKeys       A list of CDM source keys. These can be found in Atlas -> Configure.
+#' 
+#' @export
+invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds)
+{
+  checkSourceKeys <- function(baseUrl, sourceKeys)
+  {
+    sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
+    return (!(-1 %in% sourceIds))
+  }
+  
+  if (!checkSourceKeys(baseUrl = baseUrl, sourceKeys = sourceKeys)) {
+    stop("One or more source keys is invalid, please check Atlas -> Configure page.")
+  }
+  
+  tuples <- list(definitionIds, sourceKeys)
+  df <- expand.grid(tuples, KEEP.OUT.ATTRS = FALSE)
+  colnames(df) <- c("definitionId", "sourceKey")
+  
+  statuses <- apply(X = df, MARGIN = 1, function(row)
+  {
+    list(
+      sourceKey = row["sourceKey"], 
+      definitionId = row["definitionId"], 
+      definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
+                                               definitionId = row["definitionId"], 
+                                               formatName = FALSE),
+      result = .invokeCohortGeneration(baseUrl = baseUrl, 
+                                       sourceKey = row["sourceKey"], 
+                                       definitionId = row["definitionId"])
+    )
+  })
+  
+  df <- do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE))
+  rownames(df) <- c()
+  return(df)
 }
 
