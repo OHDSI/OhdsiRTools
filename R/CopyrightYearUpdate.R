@@ -32,6 +32,22 @@ updateCopyrightYearFile <- function(file) {
   writeLines(text, con = file)
 }
 
+#' Update the package name in a R or SQL file
+#'
+#' @param file   The path to the file.
+#' @param packageName The replacement package name
+#'
+#' @export
+updatePackageName <- function(file, packageName) {
+  text <- readLines(file)
+  matchString <- "# This file is part of [A-Za-z]+"
+  lineNr <- grep(matchString, text)
+  if (length(lineNr) > 0) {
+    text[lineNr] <- gsub(matchString, paste("# This file is part of", packageName), text[lineNr])
+  }
+  writeLines(text, con = file)
+}
+
 #' Update the copyright year in all R and SQL files in a folder
 #'
 #' @param path        Path to the folder containing the files to update. Only files with the .R and
@@ -52,5 +68,29 @@ updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
   for (f in flist) {
       message("Checking copyright year in ", f)
       updateCopyrightYearFile(f)
+  }
+}
+
+#' Update the package name in all R and SQL files in a folder
+#'
+#' @param path        Path to the folder containing the files to update. Only files with the .R and
+#'                    .SQL extension will be updated.
+#' @param packageName The replacement package name
+#' @param recursive   Include all subfolders?
+#'
+#' @examples
+#' \dontrun{
+#' updateCopyrightYearFolder()
+#' }
+#' @export
+updatePackageNameFolder <- function(path = ".", packageName, recursive = TRUE) {
+  flist <- list.files(path,
+                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
+                      full.names = TRUE,
+                      recursive = recursive)
+  flist <- flist[!grepl("/packrat/", flist)]
+  for (f in flist) {
+    message("Checking package name in ", f)
+    updatePackageName(f, packageName)
   }
 }
