@@ -16,6 +16,7 @@
 
 .createCohorts <- function(connection,
                            cdmDatabaseSchema,
+                           vocabularyDatabaseSchema,
                            cohortDatabaseSchema,
                            cohortTable,
                            oracleTempSchema,
@@ -56,6 +57,7 @@
                                              dbms = attr(connection, "dbms"),
                                              oracleTempSchema = oracleTempSchema,
                                              cdm_database_schema = cdmDatabaseSchema,
+                                             vocabulary_database_schema = vocabularyDatabaseSchema,
                                              #stats_start#
                                              results_database_schema.cohort_inclusion = "#cohort_inclusion",  
                                              results_database_schema.cohort_inclusion_result = "#cohort_inc_result",  
