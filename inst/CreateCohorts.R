@@ -16,7 +16,7 @@
 
 .createCohorts <- function(connection,
                            cdmDatabaseSchema,
-                           vocabularyDatabaseSchema,
+                           vocabularyDatabaseSchema = cdmDatabaseSchema,
                            cohortDatabaseSchema,
                            cohortTable,
                            oracleTempSchema,
