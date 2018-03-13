@@ -33,17 +33,33 @@
   return(c(round(ffmaxbytes), round(ffbatchbytes)))
 }
 
+setFfMem <- function(values) {
+  options(ffmaxbytes = values[1])
+  options(ffbatchbytes = values[2])
+  return(c(getOption("ffmaxbytes"), getOption("ffbatchbytes")))
+}
+
+setFfDir <- function(fftempdir) {
+  options(fftempdir = fftempdir)
+}
+
 #' Create a cluster of nodes for parallel computation
 #'
 #' @param numberOfThreads      Number of parallel threads.
 #' @param singleThreadToMain   If \code{numberOfThreads} is 1, should we fall back to running the
 #'                             process in the main thread?
+#' @param divideFfMemory       When TRUE, the memory available for processing ff and ffdf objects will be
+#'                             equally divided over the threads.
+#' @param setFfTempDir         When TRUE, the ffTempDir option will be copied to each thread.
 #'
 #' @return
 #' An object representing the cluster.
 #'
 #' @export
-makeCluster <- function(numberOfThreads, singleThreadToMain = TRUE) {
+makeCluster <- function(numberOfThreads, 
+                        singleThreadToMain = TRUE,
+                        divideFfMemory = TRUE,
+                        setFfTempDir = TRUE) {
   if (numberOfThreads == 1 && singleThreadToMain) {
     cluster <- list()
     class(cluster) <- "noCluster"
@@ -70,6 +86,24 @@ makeCluster <- function(numberOfThreads, singleThreadToMain = TRUE) {
     }
     for (i in 1:length(cluster)) {
       snow::recvOneResult(cluster)
+    }
+    if (divideFfMemory) {
+      values <- .computeFfMemPerCluster(length(cluster))
+      for (i in 1:length(cluster)) {
+        snow::sendCall(cluster[[i]], setFfMem, list(values = values))
+      }
+      for (i in 1:length(cluster)) {
+        if (min(snow::recvOneResult(cluster)$value == values) == 0)
+          warning("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
+      }
+    }
+    if (setFfTempDir) {
+      for (i in 1:length(cluster)) {
+        snow::sendCall(cluster[[i]], setFfDir, list(fftempdir = options("fftempdir")$fftempdir))
+      }
+      for (i in 1:length(cluster)) {
+        snow::recvOneResult(cluster)
+      }
     }
   }
   return(cluster)
@@ -109,16 +143,6 @@ stopCluster <- function(cluster) {
   }
 }
 
-setFfMem <- function(values) {
-  options(ffmaxbytes = values[1])
-  options(ffbatchbytes = values[2])
-  return(c(getOption("ffmaxbytes"), getOption("ffbatchbytes")))
-}
-
-setFfDir <- function(fftempdir) {
-  options(fftempdir = fftempdir)
-}
-
 #' Apply a function to a list using the cluster
 #'
 #' @details
@@ -139,9 +163,6 @@ setFfDir <- function(fftempdir) {
 #' @param stopOnError      Stop when one of the threads reports an error? If FALSE, all errors will be
 #'                         reported at the end.
 #' @param progressBar      Show a progress bar?
-#' @param divideFfMemory   When TRUE, the memory available for processing ff and ffdf objects will be
-#'                         equally divided over the threads.
-#' @param setFfTempDir     When TRUE, the ffTempDir option will be copied to each thread.
 #'
 #' @return
 #' A list with the result of the function on each item in x.
@@ -152,31 +173,10 @@ clusterApply <- function(cluster,
                          fun,
                          ...,
                          stopOnError = FALSE,
-                         progressBar = TRUE,
-                         divideFfMemory = TRUE,
-                         setFfTempDir = TRUE) {
+                         progressBar = TRUE) {
   if (class(cluster)[1] == "noCluster") {
     lapply(x, fun, ...)
   } else {
-    if (divideFfMemory) {
-      values <- .computeFfMemPerCluster(length(cluster))
-      for (i in 1:length(cluster)) {
-        snow::sendCall(cluster[[i]], setFfMem, list(values = values))
-      }
-      for (i in 1:length(cluster)) {
-        if (min(snow::recvOneResult(cluster)$value == values) == 0)
-          warning("Unable to set ffmaxbytes and/or ffbatchbytes on worker")
-      }
-    }
-    if (setFfTempDir) {
-      for (i in 1:length(cluster)) {
-        snow::sendCall(cluster[[i]], setFfDir, list(fftempdir = options("fftempdir")$fftempdir))
-      }
-      for (i in 1:length(cluster)) {
-        snow::recvOneResult(cluster)
-      }
-    }
-    
     n <- length(x)
     p <- length(cluster)
     if (n > 0 && p > 0) {

@@ -4,13 +4,19 @@
 \alias{makeCluster}
 \title{Create a cluster of nodes for parallel computation}
 \usage{
-makeCluster(numberOfThreads, singleThreadToMain = TRUE)
+makeCluster(numberOfThreads, singleThreadToMain = TRUE,
+  divideFfMemory = TRUE, setFfTempDir = TRUE)
 }
 \arguments{
 \item{numberOfThreads}{Number of parallel threads.}
 
 \item{singleThreadToMain}{If \code{numberOfThreads} is 1, should we fall back to running the
 process in the main thread?}
+
+\item{divideFfMemory}{When TRUE, the memory available for processing ff and ffdf objects will be
+equally divided over the threads.}
+
+\item{setFfTempDir}{When TRUE, the ffTempDir option will be copied to each thread.}
 }
 \value{
 An object representing the cluster.
