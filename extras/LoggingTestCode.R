@@ -22,6 +22,7 @@ logDebug("Hello world")
 
 
 # Messages from separate threads will also be logged to the same file:
+a <- 3
 cluster <- makeCluster(3)
 fun <- function(x) {
   warning("warn: Value of x is ", x)

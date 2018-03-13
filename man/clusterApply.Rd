@@ -4,8 +4,7 @@
 \alias{clusterApply}
 \title{Apply a function to a list using the cluster}
 \usage{
-clusterApply(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE,
-  divideFfMemory = TRUE, setFfTempDir = TRUE)
+clusterApply(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE)
 }
 \arguments{
 \item{cluster}{The cluster of threads to run the function.}
@@ -21,11 +20,6 @@ specifies matters (see details).}
 reported at the end.}
 
 \item{progressBar}{Show a progress bar?}
-
-\item{divideFfMemory}{When TRUE, the memory available for processing ff and ffdf objects will be
-equally divided over the threads.}
-
-\item{setFfTempDir}{When TRUE, the ffTempDir option will be copied to each thread.}
 }
 \value{
 A list with the result of the function on each item in x.

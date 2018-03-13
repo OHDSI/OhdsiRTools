@@ -21,7 +21,7 @@ registerDefaultHandlers <- function() {
     logFatal(gsub("\n", " ", geterrmessage()))
   }
   options(error = logBaseError)
-  options(warning.expression = substitute(OhdsiRTools::logWarn(sys.call(-4)[[2]])))
+  options(warning.expression = substitute(OhdsiRTools::logWarn(try(sys.call(-4)[[2]], silent = TRUE))))
 }
 
 getDefaultLoggerSettings <- function() {
@@ -380,11 +380,14 @@ layoutParallel <- function (level, message) {
   }
   functionName <- ""
   packageName <- ""
-  for (i in 4:sys.nframe()) {    packageName <- packageName(env = sys.frame(-i))
-    if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
-      functionName <- as.character(sys.call(-i)[[1]])
-      break
-    }  
+  if (sys.nframe() > 4) {
+    for (i in 4:sys.nframe()) {    
+      packageName <- packageName(env = sys.frame(-i)) 
+      if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
+        functionName <- as.character(sys.call(-i)[[1]])
+        break
+      }  
+    }
   }
   if (length(functionName) == 0) {
     functionName <- ""
