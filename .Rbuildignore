@@ -4,3 +4,4 @@
 extras
 .travis.yml
 deploy.sh
+compare_versions
