@@ -15,5 +15,5 @@ Log a message at the WARN level
 }
 \details{
 Log a message at the specified level. The message will be sent to all the registered loggers. This function
-is automatically called when a warning is thrown.
+is automatically called when a warning is thrown, and should not be called directly. Use \code{warning()} instead.
 }

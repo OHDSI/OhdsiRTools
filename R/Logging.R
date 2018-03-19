@@ -21,7 +21,14 @@ registerDefaultHandlers <- function() {
     logFatal(gsub("\n", " ", geterrmessage()))
   }
   options(error = logBaseError)
-  options(warning.expression = substitute(OhdsiRTools::logWarn(try(sys.call(-4)[[2]], silent = TRUE))))
+  
+  options (warning.expression = quote(
+    for (i in 1:sys.nframe()) {  
+      if (sys.call(-i)[[1]] == ".signalSimpleWarning" && length(sys.call(-i)) > 1) {
+        OhdsiRTools::logWarn(sys.call(-i)[[2]])
+        break
+      }
+    }))
 }
 
 getDefaultLoggerSettings <- function() {
@@ -53,9 +60,12 @@ setLoggerSettings <- function(settings) {
 #' @export
 createConsoleAppender <- function(layout = layoutSimple) {
   appendFunction <- function(this, level, message) {
-    # Warnings and fatals will be shown on console when recasted
-    # if (level != "WARN" && level != "FATAL")
-    writeLines(message)
+    if (level == "WARN" || level == "ERROR") {
+      writeLines(message, con = stderr())
+    } else if (level != "FATAL") {
+      # Note: Fatal messages should originate from stop(), which will print its own message.
+      writeLines(message, con = stdout())
+    }
   }
   appender <- list(appendFunction = appendFunction,
                    layout = layout)
@@ -291,7 +301,7 @@ logInfo <- function(...) {
 #' 
 #' @details 
 #' Log a message at the specified level. The message will be sent to all the registered loggers. This function
-#' is automatically called when a warning is thrown.
+#' is automatically called when a warning is thrown, and should not be called directly. Use \code{warning()} instead.
 #' 
 #' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
 #'             with no separator).
@@ -318,7 +328,7 @@ logError <- function(...) {
 #' 
 #' @details 
 #' Log a message at the specified level. The message will be sent to all the registered loggers. This function is
-#' be automatically called when an error occurs.
+#' be automatically called when an error occurs, and should not be called directly. Use \code{stop()} instead.
 #' 
 #' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
 #'             with no separator).
@@ -339,7 +349,9 @@ logFatal <- function(...) {
 #' @export
 layoutSimple <- function(level, message) {
   # Avoid check notes about non-used parameters:
-  missing(level)
+  if (level == "WARN") {
+    message <- paste("Warning:", message)
+  }
   return(message)
 }
 

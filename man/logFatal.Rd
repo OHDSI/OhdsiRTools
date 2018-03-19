@@ -15,5 +15,5 @@ Log a message at the FATAL level
 }
 \details{
 Log a message at the specified level. The message will be sent to all the registered loggers. This function is
-be automatically called when an error occurs.
+be automatically called when an error occurs, and should not be called directly. Use \code{stop()} instead.
 }

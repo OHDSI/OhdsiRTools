@@ -25,7 +25,7 @@ logDebug("Hello world")
 a <- 3
 cluster <- makeCluster(3)
 fun <- function(x) {
-  warning("warn: Value of x is ", x)
+  warning("warn: Value of runif is ", runif(1))
   if (x == 6 || x == 9)
     x <- a
   return(NULL)
@@ -56,3 +56,20 @@ logError("asd\naaa")
 options(warning.expression = substitute(print(sys.call(-4)[[2]])))
          
 warning("hi my name is mud")
+
+
+myfunc <- function () {
+  for (i in 1:sys.nframe()) {  
+    if (sys.call(-i)[[1]] == ".signalSimpleWarning") {
+      print(sys.call(-i)[[2]])
+      break
+    }
+  }
+}
+options (warning.expression=quote (myfunc ()))
+
+x <- 1
+warning ("test", x)
+
+stop("Test")
+
