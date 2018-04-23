@@ -217,6 +217,16 @@ clearLoggers <- function() {
   setLoggerSettings(settings)
 }
 
+#' Add the default console logger
+#' 
+#' @details 
+#' Creates a logger that writes to the console using the "INFO" threshold and the \code{\link{layoutSimple}} layout. 
+#' 
+#' @export
+addDefaultConsoleLogger <- function() {
+  registerLogger(createLogger())
+}
+
 #' Add the default file logger
 #' 
 #' @details 
@@ -394,7 +404,7 @@ layoutParallel <- function (level, message) {
   packageName <- ""
   if (sys.nframe() > 4) {
     for (i in 4:sys.nframe()) {    
-      packageName <- packageName(env = sys.frame(-i)) 
+      packageName <- utils::packageName(env = sys.frame(-i)) 
       if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
         functionName <- as.character(sys.call(-i)[[1]])
         break

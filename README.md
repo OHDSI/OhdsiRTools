@@ -10,6 +10,7 @@ Features
 - Auto code formatting
 - Auto checking of R code
 - Functions for parallel computation
+- Functions for logging
 - Functions used for automating analyses
 - Functions for retrieving cohort definition and concept set metadata, status, and composition (SQL/JSON/CSV) from [ATLAS](https://github.com/OHDSI/Atlas)
 
@@ -66,6 +67,7 @@ Getting Started
 
 Getting Involved
 =============
+* Vignette: [Logging using OhdsiRTools](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/inst/doc/Logging.pdf)
 * Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/extras/OhdsiRTools.pdf)
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements

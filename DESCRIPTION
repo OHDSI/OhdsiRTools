@@ -1,14 +1,15 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools for Maintaining OHDSI R Packages
-Version: 1.5.2
-Date: 2018-03-13
+Version: 1.5.3
+Date: 2018-04-23
 Author: Martijn J. Schuemie [aut, cre],
     Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
 Description: Format and check syntax of R code and packages following the OHDSI
     R style guidelines. Support for parallel computation.
 License: Apache License 2.0
+VignetteBuilder: knitr
 Depends:
     R (>= 3.1.0)
 Imports:
@@ -26,6 +27,8 @@ Imports:
 Suggests:
     testthat,
     shiny,
-    DT
+    DT,
+    knitr,
+    rmarkdown
 NeedsCompilation: no
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000

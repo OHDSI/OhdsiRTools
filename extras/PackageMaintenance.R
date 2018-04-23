@@ -21,6 +21,12 @@ OhdsiRTools::formatRFolder("R")
 OhdsiRTools::checkUsagePackage("OhdsiRTools")
 OhdsiRTools::updateCopyrightYearFolder()
 
-# Create manual:
+# Create manual and vignette:
 shell("rm extras/OhdsiRTools.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/OhdsiRTools.pdf")
+
+rmarkdown::render("vignettes/Logging.Rmd",
+                  output_file = "../inst/doc/Logging.pdf",
+                  rmarkdown::pdf_document(latex_engine = "pdflatex",
+                                          toc = TRUE,
+                                          number_sections = TRUE))

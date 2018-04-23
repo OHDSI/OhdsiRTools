@@ -29,7 +29,7 @@ launchLogViewer <- function(logFileName) {
   ensure_installed("shiny")
   ensure_installed("DT")
   appDir <- system.file("shinyApps", "LogViewer", package = "OhdsiRTools")
-  .GlobalEnv$logFileName <- logFileName
+  .GlobalEnv$logFileName <- normalizePath(logFileName)
   on.exit(rm(logFileName, envir=.GlobalEnv))
   shiny::runApp(appDir)
 }
