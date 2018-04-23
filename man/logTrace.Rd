@@ -7,7 +7,7 @@
 logTrace(...)
 }
 \arguments{
-\item{...}{Zero or more objects which can be coerced to character (and which are pasted together 
+\item{...}{Zero or more objects which can be coerced to character (and which are pasted together
 with no separator).}
 }
 \description{

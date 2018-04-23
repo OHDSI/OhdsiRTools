@@ -21,8 +21,8 @@
 #' @details
 #' Load a cohort definition from a WebApi instance and insert it into this package. This will fetch
 #' the json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it
-#' in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
-#' When using generateStats = TRUE, the following tables are required to exist when executing the SQL:
+#' in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist. When using
+#' generateStats = TRUE, the following tables are required to exist when executing the SQL:
 #' cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also
 #' note that the cohort_inclusion table should be populated with the names of the rules prior to
 #' executing the cohort definition SQL.
@@ -180,34 +180,32 @@ insertCohortDefinitionSetInPackage <- function(fileName,
 
 #' Insert a set of concept sets' concept ids into package
 #'
-#' @param fileName                Name of a CSV file in the inst/settings folder of the package
-#'                                specifying the concept sets to insert. See details for the expected file
-#'                                format.
-#' @param baseUrl                 The base URL for the WebApi instance, for example:
-#'                                "http://api.ohdsi.org:80/WebAPI".
+#' @param fileName   Name of a CSV file in the inst/settings folder of the package specifying the
+#'                   concept sets to insert. See details for the expected file format.
+#' @param baseUrl    The base URL for the WebApi instance, for example:
+#'                   "http://api.ohdsi.org:80/WebAPI".
 #'
 #' @details
-#' The CSV file should have: \describe{ \item{atlasId}{The concept set Id in
-#' ATLAS.} }
+#' The CSV file should have: \describe{ \item{atlasId}{The concept set Id in ATLAS.} }
 #'
 #' @export
-insertConceptSetConceptIdsInPackage <- function(fileName,
-                                                baseUrl)
-{
+insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
-  
+
   conceptSetsToCreate <- read.csv(file.path("inst/settings", fileName))
   if (!file.exists("inst/conceptsets")) {
     dir.create("inst/conceptsets", recursive = TRUE)
   }
-  
+
   for (i in 1:nrow(conceptSetsToCreate)) {
     writeLines(paste("Inserting concept set:", conceptSetsToCreate$atlasId[i]))
-    df <- as.data.frame(getConceptSetConceptIds(baseUrl = baseUrl, setId = conceptSetsToCreate$atlasId[i]))
+    df <- as.data.frame(getConceptSetConceptIds(baseUrl = baseUrl,
+                                                setId = conceptSetsToCreate$atlasId[i]))
     names(df) <- c("CONCEPT_ID")
-    fileConn <- file(file.path("inst/conceptsets", paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
+    fileConn <- file(file.path("inst/conceptsets",
+                               paste(conceptSetsToCreate$atlasId[i], "csv", sep = ".")))
     write.csv(x = df, file = fileConn, row.names = FALSE, quote = FALSE)
   }
 }
@@ -252,11 +250,10 @@ insertConceptSetConceptIdsInPackage <- function(fileName,
   return(gsub("_", " ", gsub("\\[(.*?)\\]_", "", gsub(" ", "_", name))))
 }
 
-.checkBaseUrl <- function(baseUrl)
-{
-  return(grepl(pattern = "https?:\\/\\/[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})+(\\/.*)?\\/WebAPI$", 
-                x = baseUrl, 
-                ignore.case = FALSE))
+.checkBaseUrl <- function(baseUrl) {
+  return(grepl(pattern = "https?:\\/\\/[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})+(\\/.*)?\\/WebAPI$",
+               x = baseUrl,
+               ignore.case = FALSE))
 }
 
 
@@ -264,12 +261,12 @@ insertConceptSetConceptIdsInPackage <- function(fileName,
 #'
 #' @details
 #' Obtains the name of a cohort.
-#' 
+#'
 #' @param baseUrl        The base URL for the WebApi instance, for example:
 #'                       "http://api.ohdsi.org:80/WebAPI".
 #' @param definitionId   The cohort definition id in Atlas.
 #' @param formatName     Should the name be formatted to remove prefixes and underscores?
-#' 
+#'
 #' @return
 #' The name of the cohort.
 #'
@@ -296,12 +293,12 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
 #'
 #' @details
 #' Obtains the name of a concept set.
-#' 
+#'
 #' @param baseUrl      The base URL for the WebApi instance, for example:
 #'                     "http://api.ohdsi.org:80/WebAPI".
 #' @param setId        The concept set id in Atlas.
 #' @param formatName   Should the name be formatted to remove prefixes and underscores?
-#' 
+#'
 #' @return
 #' The name of the concept set.
 #'
@@ -310,7 +307,7 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
-  
+
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId"))
   json <- httr::GET(url)
   json <- httr::content(json)
@@ -326,10 +323,10 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
 #'
 #' @details
 #' Obtains the source key of the default OMOP Vocab in Atlas.
-#' 
+#'
 #' @param baseUrl   The base URL for the WebApi instance, for example:
 #'                  "http://api.ohdsi.org:80/WebAPI".
-#'                  
+#'
 #' @return
 #' A string with the source key of the default OMOP Vocab in Atlas.
 #'
@@ -349,13 +346,13 @@ getPriorityVocabKey <- function(baseUrl) {
 #'
 #' @details
 #' Obtains the full list of concept Ids in a concept set.
-#' 
+#'
 #' @param baseUrl          The base URL for the WebApi instance, for example:
 #'                         "http://api.ohdsi.org:80/WebAPI".
 #' @param setId            The concept set id in Atlas.
 #' @param vocabSourceKey   The source key of the Vocabulary. By default, the priority Vocabulary is
 #'                         used.
-#'                         
+#'
 #' @return
 #' A list of concept Ids.
 #'
@@ -364,7 +361,7 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
-  
+
   if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
     vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
   }
@@ -384,69 +381,63 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
 }
 
 #' Get Cohort Generation Statuses
-#' 
-#' @details 
+#'
+#' @details
 #' Obtains cohort generation statuses for a collection of cohort definition Ids and CDM sources.
 #' Useful if running multiple cohort generation jobs that are long-running.
-#' 
-#' @param baseUrl          The base URL for the WebApi instance, for example:
-#'                         "http://api.ohdsi.org:80/WebAPI".            
-#' @param definitionIds    A list of cohort definition Ids
-#' @param sourceKeys       A list of CDM source keys. These can be found in Atlas -> Configure.
-#' 
-#' @return 
-#' A data frame of cohort generation statuses, start times, and execution durations per definition id and source key.
-#' 
+#'
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://api.ohdsi.org:80/WebAPI".
+#' @param definitionIds   A list of cohort definition Ids
+#' @param sourceKeys      A list of CDM source keys. These can be found in Atlas -> Configure.
+#'
+#' @return
+#' A data frame of cohort generation statuses, start times, and execution durations per definition id
+#' and source key.
+#'
 #' @export
-getCohortGenerationStatuses <- function(baseUrl, 
-                                        definitionIds, 
-                                        sourceKeys)
-{
-  checkSourceKeys <- function(baseUrl, sourceKeys)
-  {
+getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
+  checkSourceKeys <- function(baseUrl, sourceKeys) {
     sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
-    return (!(-1 %in% sourceIds))
+    return(!(-1 %in% sourceIds))
   }
-  
+
   if (!checkSourceKeys(baseUrl = baseUrl, sourceKeys = sourceKeys)) {
     stop("One or more source keys is invalid, please check Atlas -> Configure page.")
   }
-  
+
   tuples <- list(definitionIds, sourceKeys)
   df <- expand.grid(tuples, KEEP.OUT.ATTRS = FALSE)
   colnames(df) <- c("definitionId", "sourceKey")
-  
-  statuses <- apply(X = df, MARGIN = 1, function(row)
-  {
-    result <- .getCohortGenerationStatus(baseUrl = baseUrl, 
+
+  statuses <- apply(X = df, MARGIN = 1, function(row) {
+    result <- .getCohortGenerationStatus(baseUrl = baseUrl,
                                          definitionId = row["definitionId"],
                                          sourceKey = row["sourceKey"])
-    
-    status <- list(sourceKey = row["sourceKey"], 
-                   definitionId = row["definitionId"], 
-                   definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
-                                                            definitionId = row["definitionId"], 
+
+    status <- list(sourceKey = row["sourceKey"],
+                   definitionId = row["definitionId"],
+                   definitionName = getCohortDefinitionName(baseUrl = baseUrl,
+                                                            definitionId = row["definitionId"],
                                                             formatName = FALSE),
                    status = result$status,
                    startTime = result$startTime,
                    executionDuration = result$executionDuration,
                    personCount = result$personCount)
   })
-  
+
   df <- do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE))
   rownames(df) <- c()
   return(df)
 }
 
-.getSourceIdFromKey <- function(baseUrl,
-                                sourceKey)
-{
+.getSourceIdFromKey <- function(baseUrl, sourceKey) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
-  
+
   url <- sprintf("%1s/source/%2s", baseUrl, sourceKey)
-  
+
   json <- httr::GET(url)
   json <- httr::content(json)
   if (is.null(json$sourceId))
@@ -454,103 +445,91 @@ getCohortGenerationStatuses <- function(baseUrl,
   json$sourceId
 }
 
-.getCohortGenerationStatus <- function(baseUrl,
-                                       definitionId,
-                                       sourceKey)
-{
-  millisecondsToDate = function(milliseconds) 
-  {
-    sec = milliseconds / 1000
+.getCohortGenerationStatus <- function(baseUrl, definitionId, sourceKey) {
+  millisecondsToDate <- function(milliseconds) {
+    sec <- milliseconds/1000
     as.character(as.POSIXct(sec, origin = "1970-01-01", tz = Sys.timezone()))
   }
-  
+
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
   }
-  
+
   sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
-  
+
   url <- sprintf("%1s/cohortdefinition/%2s/info", baseUrl, definitionId)
 
   response <- httr::GET(url)
   response <- httr::content(response)
-  
-  if (length(response) == 0) # cohort has no prior generation history at all
-  { 
-    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
+
+  if (length(response) == 0) {
+    return(list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
-  
+
   json <- response[sapply(response, function(j) j$id$sourceId == sourceId)]
-  if (length(json) == 0) # cohort has no prior generation history for this source
-  { 
-    return (list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
+  if (length(json) == 0) {
+    return(list(status = "NA", startTime = "NA", executionDuration = "NA", personCount = "NA"))
   }
-  
-  return (list(status = json[[1]]$status, 
-               startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
-               executionDuration = ifelse(is.null(json[[1]]$executionDuration), "NA", json[[1]]$executionDuration),
-               personCount = ifelse(is.null(json[[1]]$personCount), "NA", json[[1]]$personCount)))
+
+  return(list(status = json[[1]]$status,
+              startTime = millisecondsToDate(milliseconds = json[[1]]$startTime),
+              executionDuration = ifelse(is.null(json[[1]]$executionDuration),
+                                         "NA",
+                                         json[[1]]$executionDuration),
+              personCount = ifelse(is.null(json[[1]]$personCount), "NA", json[[1]]$personCount)))
 }
 
-.invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId)
-{
-  result <- .getCohortGenerationStatus(baseUrl = baseUrl, sourceKey = sourceKey, definitionId = definitionId)
-  if (result$status %in% c("STARTING", "STARTED", "RUNNING"))
-  {
+.invokeCohortGeneration <- function(baseUrl, sourceKey, definitionId) {
+  result <- .getCohortGenerationStatus(baseUrl = baseUrl,
+                                       sourceKey = sourceKey,
+                                       definitionId = definitionId)
+  if (result$status %in% c("STARTING", "STARTED", "RUNNING")) {
     return(result$status)
-  }
-  else
-  {
-    url <- sprintf("%1s/cohortdefinition/%2s/generate/%3s",
-                   baseUrl, definitionId, sourceKey)
+  } else {
+    url <- sprintf("%1s/cohortdefinition/%2s/generate/%3s", baseUrl, definitionId, sourceKey)
     json <- httr::GET(url)
     json <- httr::content(json)
-    return (json$status)
+    return(json$status)
   }
 }
 
 #' Invoke the generation of a set of cohort definitions
-#' 
-#' @details 
-#' Invokes the generation of a set of cohort definitions across a set of CDMs set up in WebAPI.
-#' Use \code{getCohortGenerationStatuses} to check the progress of the set.
-#' 
-#' @param baseUrl          The base URL for the WebApi instance, for example:
-#'                         "http://api.ohdsi.org:80/WebAPI".            
-#' @param definitionIds    A list of cohort definition Ids
-#' @param sourceKeys       A list of CDM source keys. These can be found in Atlas -> Configure.
-#' 
+#'
+#' @details
+#' Invokes the generation of a set of cohort definitions across a set of CDMs set up in WebAPI. Use
+#' \code{getCohortGenerationStatuses} to check the progress of the set.
+#'
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://api.ohdsi.org:80/WebAPI".
+#' @param definitionIds   A list of cohort definition Ids
+#' @param sourceKeys      A list of CDM source keys. These can be found in Atlas -> Configure.
+#'
 #' @export
-invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds)
-{
-  checkSourceKeys <- function(baseUrl, sourceKeys)
-  {
+invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
+  checkSourceKeys <- function(baseUrl, sourceKeys) {
     sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
-    return (!(-1 %in% sourceIds))
+    return(!(-1 %in% sourceIds))
   }
-  
+
   if (!checkSourceKeys(baseUrl = baseUrl, sourceKeys = sourceKeys)) {
     stop("One or more source keys is invalid, please check Atlas -> Configure page.")
   }
-  
+
   tuples <- list(definitionIds, sourceKeys)
   df <- expand.grid(tuples, KEEP.OUT.ATTRS = FALSE)
   colnames(df) <- c("definitionId", "sourceKey")
-  
-  statuses <- apply(X = df, MARGIN = 1, function(row)
-  {
-    list(
-      sourceKey = row["sourceKey"], 
-      definitionId = row["definitionId"], 
-      definitionName = getCohortDefinitionName(baseUrl = baseUrl, 
-                                               definitionId = row["definitionId"], 
-                                               formatName = FALSE),
-      result = .invokeCohortGeneration(baseUrl = baseUrl, 
-                                       sourceKey = row["sourceKey"], 
-                                       definitionId = row["definitionId"])
-    )
+
+  statuses <- apply(X = df, MARGIN = 1, function(row) {
+    list(sourceKey = row["sourceKey"],
+         definitionId = row["definitionId"],
+         definitionName = getCohortDefinitionName(baseUrl = baseUrl,
+                                                  definitionId = row["definitionId"],
+                                                  formatName = FALSE),
+         result = .invokeCohortGeneration(baseUrl = baseUrl,
+                                          sourceKey = row["sourceKey"],
+                                          definitionId = row["definitionId"]))
   })
-  
+
   df <- do.call(rbind, lapply(statuses, data.frame, stringsAsFactors = FALSE))
   rownames(df) <- c()
   return(df)

@@ -34,8 +34,8 @@ updateCopyrightYearFile <- function(file) {
 
 #' Update the package name in a R or SQL file
 #'
-#' @param file   The path to the file.
-#' @param packageName The replacement package name
+#' @param file          The path to the file.
+#' @param packageName   The replacement package name
 #'
 #' @export
 updatePackageName <- function(file, packageName) {
@@ -66,17 +66,17 @@ updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
                       recursive = recursive)
   flist <- flist[!grepl("/packrat/", flist)]
   for (f in flist) {
-      message("Checking copyright year in ", f)
-      updateCopyrightYearFile(f)
+    message("Checking copyright year in ", f)
+    updateCopyrightYearFile(f)
   }
 }
 
 #' Update the package name in all R and SQL files in a folder
 #'
-#' @param path        Path to the folder containing the files to update. Only files with the .R and
-#'                    .SQL extension will be updated.
-#' @param packageName The replacement package name
-#' @param recursive   Include all subfolders?
+#' @param path          Path to the folder containing the files to update. Only files with the .R and
+#'                      .SQL extension will be updated.
+#' @param packageName   The replacement package name
+#' @param recursive     Include all subfolders?
 #'
 #' @examples
 #' \dontrun{

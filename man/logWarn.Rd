@@ -7,13 +7,14 @@
 logWarn(...)
 }
 \arguments{
-\item{...}{Zero or more objects which can be coerced to character (and which are pasted together 
+\item{...}{Zero or more objects which can be coerced to character (and which are pasted together
 with no separator).}
 }
 \description{
 Log a message at the WARN level
 }
 \details{
-Log a message at the specified level. The message will be sent to all the registered loggers. This function
-is automatically called when a warning is thrown, and should not be called directly. Use \code{warning()} instead.
+Log a message at the specified level. The message will be sent to all the registered loggers. This
+function is automatically called when a warning is thrown, and should not be called directly. Use
+\code{warning()} instead.
 }

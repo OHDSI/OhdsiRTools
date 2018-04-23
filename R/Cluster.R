@@ -48,15 +48,15 @@ setFfDir <- function(fftempdir) {
 #' @param numberOfThreads      Number of parallel threads.
 #' @param singleThreadToMain   If \code{numberOfThreads} is 1, should we fall back to running the
 #'                             process in the main thread?
-#' @param divideFfMemory       When TRUE, the memory available for processing ff and ffdf objects will be
-#'                             equally divided over the threads.
+#' @param divideFfMemory       When TRUE, the memory available for processing ff and ffdf objects will
+#'                             be equally divided over the threads.
 #' @param setFfTempDir         When TRUE, the ffTempDir option will be copied to each thread.
 #'
 #' @return
 #' An object representing the cluster.
 #'
 #' @export
-makeCluster <- function(numberOfThreads, 
+makeCluster <- function(numberOfThreads,
                         singleThreadToMain = TRUE,
                         divideFfMemory = TRUE,
                         setFfTempDir = TRUE) {
@@ -65,7 +65,7 @@ makeCluster <- function(numberOfThreads,
     class(cluster) <- "noCluster"
     OhdsiRTools::logTrace("Initiating cluster constisting only of main thread")
   } else {
-    OhdsiRTools::logTrace("Initiating cluster with ",numberOfThreads , " threads")
+    OhdsiRTools::logTrace("Initiating cluster with ", numberOfThreads, " threads")
     cluster <- snow::makeCluster(numberOfThreads, type = "SOCK")
     logThreadStart <- function(loggers, threadNumber) {
       OhdsiRTools::clearLoggers()
@@ -77,7 +77,7 @@ makeCluster <- function(numberOfThreads,
       finalize <- function(env) {
         OhdsiRTools::logTrace("Thread ", threadNumber, " terminated")
       }
-      reg.finalizer(globalenv(), finalize, onexit= TRUE)
+      reg.finalizer(globalenv(), finalize, onexit = TRUE)
       return(NULL)
     }
     loggers <- OhdsiRTools::getLoggers()
@@ -155,25 +155,20 @@ stopCluster <- function(cluster) {
 #' define the function to be called at the package level rather than inside a function, to save
 #' overhead.
 #'
-#' @param cluster          The cluster of threads to run the function.
-#' @param x                The list on which the function will be applied.
-#' @param fun              The function to apply. Note that the context in which the function is
-#'                         specifies matters (see details).
-#' @param ...              Additional parameters for the function.
-#' @param stopOnError      Stop when one of the threads reports an error? If FALSE, all errors will be
-#'                         reported at the end.
-#' @param progressBar      Show a progress bar?
+#' @param cluster       The cluster of threads to run the function.
+#' @param x             The list on which the function will be applied.
+#' @param fun           The function to apply. Note that the context in which the function is specifies
+#'                      matters (see details).
+#' @param ...           Additional parameters for the function.
+#' @param stopOnError   Stop when one of the threads reports an error? If FALSE, all errors will be
+#'                      reported at the end.
+#' @param progressBar   Show a progress bar?
 #'
 #' @return
 #' A list with the result of the function on each item in x.
 #'
 #' @export
-clusterApply <- function(cluster,
-                         x,
-                         fun,
-                         ...,
-                         stopOnError = FALSE,
-                         progressBar = TRUE) {
+clusterApply <- function(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE) {
   if (class(cluster)[1] == "noCluster") {
     lapply(x, fun, ...)
   } else {
@@ -219,7 +214,9 @@ clusterApply <- function(cluster,
         close(pb)
       }
       if (hasError) {
-        message <- paste0("Error(s) when calling function '", substitute(fun, parent.frame(1)), "', see earlier messages for details")
+        message <- paste0("Error(s) when calling function '",
+                          substitute(fun, parent.frame(1)),
+                          "', see earlier messages for details")
         stop(message)
       }
       return(val)

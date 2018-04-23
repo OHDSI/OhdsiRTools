@@ -26,8 +26,8 @@ Load a cohort definition and insert it into this package
 \details{
 Load a cohort definition from a WebApi instance and insert it into this package. This will fetch
 the json object and store it in the 'inst/cohorts' folder, and fetch the template SQL and store it
-in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist.
-When using generateStats = TRUE, the following tables are required to exist when executing the SQL:
+in the 'inst/sql/sql_server' folder. Both folders will be created if they don't exist. When using
+generateStats = TRUE, the following tables are required to exist when executing the SQL:
 cohort_inclusion, cohort_inclusion_result, cohort_inclusion_stats, and cohort_summary_stats. Also
 note that the cohort_inclusion table should be populated with the names of the rules prior to
 executing the cohort definition SQL.

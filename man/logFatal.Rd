@@ -7,13 +7,14 @@
 logFatal(...)
 }
 \arguments{
-\item{...}{Zero or more objects which can be coerced to character (and which are pasted together 
+\item{...}{Zero or more objects which can be coerced to character (and which are pasted together
 with no separator).}
 }
 \description{
 Log a message at the FATAL level
 }
 \details{
-Log a message at the specified level. The message will be sent to all the registered loggers. This function is
-be automatically called when an error occurs, and should not be called directly. Use \code{stop()} instead.
+Log a message at the specified level. The message will be sent to all the registered loggers. This
+function is be automatically called when an error occurs, and should not be called directly. Use
+\code{stop()} instead.
 }

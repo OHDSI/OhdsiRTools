@@ -13,8 +13,8 @@ makeCluster(numberOfThreads, singleThreadToMain = TRUE,
 \item{singleThreadToMain}{If \code{numberOfThreads} is 1, should we fall back to running the
 process in the main thread?}
 
-\item{divideFfMemory}{When TRUE, the memory available for processing ff and ffdf objects will be
-equally divided over the threads.}
+\item{divideFfMemory}{When TRUE, the memory available for processing ff and ffdf objects will
+be equally divided over the threads.}
 
 \item{setFfTempDir}{When TRUE, the ffTempDir option will be copied to each thread.}
 }

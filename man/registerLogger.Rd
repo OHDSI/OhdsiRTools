@@ -7,7 +7,7 @@
 registerLogger(logger)
 }
 \arguments{
-\item{logger}{An object of type \code{Logger} as created using the \code{\link{createLogger}} 
+\item{logger}{An object of type \code{Logger} as created using the \code{\link{createLogger}}
 function.}
 }
 \description{

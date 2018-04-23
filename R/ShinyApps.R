@@ -17,31 +17,32 @@
 # limitations under the License.
 
 #' Launch the log viewer Shiny app
-#' 
-#' @param logFileName       Name of the log file to view.
-#' 
-#' @details 
-#' Launches a Shiny app that allows the user to view a log file created using the default file logger. Use 
-#' \code{\link{addDefaultFileLogger}} to start the default file logger.
-#' 
+#'
+#' @param logFileName   Name of the log file to view.
+#'
+#' @details
+#' Launches a Shiny app that allows the user to view a log file created using the default file logger.
+#' Use \code{\link{addDefaultFileLogger}} to start the default file logger.
+#'
 #' @export
 launchLogViewer <- function(logFileName) {
   ensure_installed("shiny")
   ensure_installed("DT")
   appDir <- system.file("shinyApps", "LogViewer", package = "OhdsiRTools")
   .GlobalEnv$logFileName <- normalizePath(logFileName)
-  on.exit(rm(logFileName, envir=.GlobalEnv))
+  on.exit(rm(logFileName, envir = .GlobalEnv))
   shiny::runApp(appDir)
 }
 
-# Borrowed from devtools: https://github.com/hadley/devtools/blob/ba7a5a4abd8258c52cb156e7b26bb4bf47a79f0b/R/utils.r#L44
-is_installed <- function (pkg, version = 0) {
-  installed_version <- tryCatch(utils::packageVersion(pkg), 
-                                error = function(e) NA)
+# Borrowed from devtools:
+# https://github.com/hadley/devtools/blob/ba7a5a4abd8258c52cb156e7b26bb4bf47a79f0b/R/utils.r#L44
+is_installed <- function(pkg, version = 0) {
+  installed_version <- tryCatch(utils::packageVersion(pkg), error = function(e) NA)
   !is.na(installed_version) && installed_version >= version
 }
 
-# Borrowed and adapted from devtools: https://github.com/hadley/devtools/blob/ba7a5a4abd8258c52cb156e7b26bb4bf47a79f0b/R/utils.r#L74
+# Borrowed and adapted from devtools:
+# https://github.com/hadley/devtools/blob/ba7a5a4abd8258c52cb156e7b26bb4bf47a79f0b/R/utils.r#L74
 ensure_installed <- function(pkg) {
   if (!is_installed(pkg)) {
     msg <- paste0(sQuote(pkg), " must be installed for this functionality.")

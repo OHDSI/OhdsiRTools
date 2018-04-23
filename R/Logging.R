@@ -21,14 +21,13 @@ registerDefaultHandlers <- function() {
     logFatal(gsub("\n", " ", geterrmessage()))
   }
   options(error = logBaseError)
-  
-  options (warning.expression = quote(
-    for (i in 1:sys.nframe()) {  
-      if (sys.call(-i)[[1]] == ".signalSimpleWarning" && length(sys.call(-i)) > 1) {
-        OhdsiRTools::logWarn(sys.call(-i)[[2]])
-        break
-      }
-    }))
+
+  options(warning.expression = quote(for (i in 1:sys.nframe()) {
+    if (sys.call(-i)[[1]] == ".signalSimpleWarning" && length(sys.call(-i)) > 1) {
+      OhdsiRTools::logWarn(sys.call(-i)[[2]])
+      break
+    }
+  }))
 }
 
 getDefaultLoggerSettings <- function() {
@@ -51,12 +50,12 @@ setLoggerSettings <- function(settings) {
 }
 
 #' Create console appender
-#' 
-#' @details 
+#'
+#' @details
 #' Creates an appender that will write to the console.
-#' 
+#'
 #' @param layout   The layout to be used by the appender.
-#' 
+#'
 #' @export
 createConsoleAppender <- function(layout = layoutSimple) {
   appendFunction <- function(this, level, message) {
@@ -67,20 +66,19 @@ createConsoleAppender <- function(layout = layoutSimple) {
       writeLines(message, con = stdout())
     }
   }
-  appender <- list(appendFunction = appendFunction,
-                   layout = layout)
+  appender <- list(appendFunction = appendFunction, layout = layout)
   class(appender) <- "Appender"
   return(appender)
 }
 
 #' Create file appender
-#' 
-#' @details 
+#'
+#' @details
 #' Creates an appender that will write to a file.
-#' 
-#' @param layout   The layout to be used by the appender.
-#' @param fileName The name of the file to write to.
-#' 
+#'
+#' @param layout     The layout to be used by the appender.
+#' @param fileName   The name of the file to write to.
+#'
 #' @export
 createFileAppender <- function(layout = layoutParallel, fileName) {
   appendFunction <- function(this, level, message) {
@@ -89,42 +87,39 @@ createFileAppender <- function(layout = layoutParallel, fileName) {
     flush(con)
     close(con)
   }
-  appender <- list(appendFunction = appendFunction,
-                   layout = layout,
-                   fileName = fileName)
+  appender <- list(appendFunction = appendFunction, layout = layout, fileName = fileName)
   class(appender) <- "Appender"
   return(appender)
 }
 
 #' Create a logger
-#' 
-#' @details 
-#' Creates a logger that will log messages to its appenders. The logger will only log messages 
-#' at a level equal to or higher than its threshold. For example, if the threshold is "INFO" then
-#' messages marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is 
-#' "TRACE", "DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
-#' 
-#' @param name   A name for the logger.
-#' @param threshold The threshold to be used for reporting.
-#' @param appenders A list of one or more appenders as created for example using the 
-#'                  \code{\link{createConsoleAppender}} or \code{\link{createFileAppender}} function.
-#'                  
-#' @return 
+#'
+#' @details
+#' Creates a logger that will log messages to its appenders. The logger will only log messages at a
+#' level equal to or higher than its threshold. For example, if the threshold is "INFO" then messages
+#' marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is "TRACE",
+#' "DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
+#'
+#' @param name        A name for the logger.
+#' @param threshold   The threshold to be used for reporting.
+#' @param appenders   A list of one or more appenders as created for example using the
+#'                    \code{\link{createConsoleAppender}} or \code{\link{createFileAppender}} function.
+#'
+#' @return
 #' An object of type \code{Logger}, to be used with the \code{\link{registerLogger}} function.
-#' 
+#'
 #' @export
 createLogger <- function(name = "SIMPLE",
                          threshold = "INFO",
                          appenders = list(createConsoleAppender())) {
-  for (appender in appenders) 
-    if (!is(appender, "Appender"))
-      stop("All appenders must be of class 'Appender'")
+  for (appender in appenders) if (!is(appender, "Appender"))
+    stop("All appenders must be of class 'Appender'")
   logFunction <- function(this, level, message) {
     for (appender in this$appenders) {
       formatted <- appender$layout(level, message)
       appender$appendFunction(appender, level, formatted)
     }
-  } 
+  }
   logger <- list(name = name,
                  logFunction = logFunction,
                  threshold = threshold,
@@ -134,13 +129,13 @@ createLogger <- function(name = "SIMPLE",
 }
 
 #' Register a logger
-#' 
-#' @details 
+#'
+#' @details
 #' Registers a logger as created using the \code{\link{createLogger}} function to the logging system.
-#' 
-#' @param logger  An object of type \code{Logger} as created using the \code{\link{createLogger}} 
-#'                function.
-#' 
+#'
+#' @param logger   An object of type \code{Logger} as created using the \code{\link{createLogger}}
+#'                 function.
+#'
 #' @export
 registerLogger <- function(logger) {
   if (!is(logger, "Logger"))
@@ -152,16 +147,16 @@ registerLogger <- function(logger) {
 }
 
 #' Unregister a logger
-#' 
-#' @details 
+#'
+#' @details
 #' Unregisters a logger from the logging system.
-#' 
-#' @param x  Can either be an integer (e.g. 2 to remove the second logger), the name of the logger,
-#'           or the logger object itself.
-#'           
-#' @return 
-#' Returns TRUE if the logger was removed. 
-#' 
+#'
+#' @param x   Can either be an integer (e.g. 2 to remove the second logger), the name of the logger, or
+#'            the logger object itself.
+#'
+#' @return
+#' Returns TRUE if the logger was removed.
+#'
 #' @export
 unregisterLogger <- function(x) {
   settings <- getLoggerSettings()
@@ -192,16 +187,16 @@ unregisterLogger <- function(x) {
         return(TRUE)
       }
     }
-  } 
+  }
   warning("Could not find logger ", x)
   return(FALSE)
 }
 
 #' Get all registered loggers
-#' 
-#' @return 
+#'
+#' @return
 #' Returns all registerd loggers.
-#' 
+#'
 #' @export
 getLoggers <- function() {
   settings <- getLoggerSettings()
@@ -209,7 +204,7 @@ getLoggers <- function() {
 }
 
 #' Remove all registered loggers
-#' 
+#'
 #' @export
 clearLoggers <- function() {
   settings <- getLoggerSettings()
@@ -218,43 +213,45 @@ clearLoggers <- function() {
 }
 
 #' Add the default console logger
-#' 
-#' @details 
-#' Creates a logger that writes to the console using the "INFO" threshold and the \code{\link{layoutSimple}} layout. 
-#' 
+#'
+#' @details
+#' Creates a logger that writes to the console using the "INFO" threshold and the
+#' \code{\link{layoutSimple}} layout.
+#'
 #' @export
 addDefaultConsoleLogger <- function() {
   registerLogger(createLogger())
 }
 
 #' Add the default file logger
-#' 
-#' @details 
-#' Creates a logger that writes to a file using the "TRACE" threshold and the \code{\link{layoutParallel}} layout. 
-#' The output can be viewed with the built-in log viewer tht can be started using \code{\link{launchLogViewer}}.
-#' 
-#' @param fileName The name of the file to write to.
-#' 
+#'
+#' @details
+#' Creates a logger that writes to a file using the "TRACE" threshold and the
+#' \code{\link{layoutParallel}} layout. The output can be viewed with the built-in log viewer tht can
+#' be started using \code{\link{launchLogViewer}}.
+#'
+#' @param fileName   The name of the file to write to.
+#'
 #' @export
 addDefaultFileLogger <- function(fileName) {
   registerLogger(createLogger(name = "DEFAULT",
-                              threshold = "TRACE", 
-                              appenders = list(createFileAppender(layout = layoutParallel, 
+                              threshold = "TRACE",
+                              appenders = list(createFileAppender(layout = layoutParallel,
                                                                   fileName = fileName))))
 }
 
 levelToInt <- function(level) {
-  if (level == "TRACE") 
+  if (level == "TRACE")
     return(1)
-  if (level == "DEBUG") 
+  if (level == "DEBUG")
     return(2)
-  if (level == "INFO") 
+  if (level == "INFO")
     return(3)
-  if (level == "WARN") 
+  if (level == "WARN")
     return(4)
-  if (level == "ERROR") 
+  if (level == "ERROR")
     return(5)
-  if (level == "FATAL") 
+  if (level == "FATAL")
     return(6)
 }
 
@@ -266,95 +263,97 @@ log <- function(level, ...) {
       logger$logFunction(this = logger, level = level, message = message)
     }
   }
-} 
+}
 
 #' Log a message at the TRACE level
-#' 
-#' @details 
+#'
+#' @details
 #' Log a message at the specified level. The message will be sent to all the registered loggers.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logTrace <- function(...) {
   log(level = "TRACE", ...)
 }
 
 #' Log a message at the DEBUG level
-#' 
-#' @details 
+#'
+#' @details
 #' Log a message at the specified level. The message will be sent to all the registered loggers.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logDebug <- function(...) {
   log(level = "DEBUG", ...)
 }
 
 #' Log a message at the INFO level
-#' 
-#' @details 
+#'
+#' @details
 #' Log a message at the specified level. The message will be sent to all the registered loggers.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logInfo <- function(...) {
   log(level = "INFO", ...)
 }
 
 #' Log a message at the WARN level
-#' 
-#' @details 
-#' Log a message at the specified level. The message will be sent to all the registered loggers. This function
-#' is automatically called when a warning is thrown, and should not be called directly. Use \code{warning()} instead.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @details
+#' Log a message at the specified level. The message will be sent to all the registered loggers. This
+#' function is automatically called when a warning is thrown, and should not be called directly. Use
+#' \code{warning()} instead.
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logWarn <- function(...) {
   log(level = "WARN", ...)
 }
 
 #' Log a message at the ERROR level
-#' 
-#' @details 
+#'
+#' @details
 #' Log a message at the specified level. The message will be sent to all the registered loggers.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logError <- function(...) {
   log(level = "ERROR", ...)
 }
 
 #' Log a message at the FATAL level
-#' 
-#' @details 
-#' Log a message at the specified level. The message will be sent to all the registered loggers. This function is
-#' be automatically called when an error occurs, and should not be called directly. Use \code{stop()} instead.
-#' 
-#' @param ...	 Zero or more objects which can be coerced to character (and which are pasted together 
-#'             with no separator).
-#'           
+#'
+#' @details
+#' Log a message at the specified level. The message will be sent to all the registered loggers. This
+#' function is be automatically called when an error occurs, and should not be called directly. Use
+#' \code{stop()} instead.
+#'
+#' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
+#'              with no separator).
+#'
 #' @export
 logFatal <- function(...) {
   log(level = "FATAL", ...)
 }
 
 #' Simple logging layout
-#' 
-#' @description 
+#'
+#' @description
 #' A layout function to be used with an appender. This layout simply includes the message itself.
 #'
-#' @param level      The level of the message (e.g. "INFO")
-#' @param message    The message to layout.
+#' @param level     The level of the message (e.g. "INFO")
+#' @param message   The message to layout.
 #'
 #' @export
 layoutSimple <- function(level, message) {
@@ -366,16 +365,15 @@ layoutSimple <- function(level, message) {
 }
 
 #' Logging layout with timestamp
-#' 
-#' @description 
-#' A layout function to be used with an appender. This layout addes the time to
-#' the message.
 #'
-#' @param level      The level of the message (e.g. "INFO")
-#' @param message    The message to layout.
+#' @description
+#' A layout function to be used with an appender. This layout addes the time to the message.
+#'
+#' @param level     The level of the message (e.g. "INFO")
+#' @param message   The message to layout.
 #'
 #' @export
-layoutTimestamp <- function (level, message) {
+layoutTimestamp <- function(level, message) {
   # Avoid check notes about non-used parameters:
   missing(level)
   time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
@@ -383,16 +381,16 @@ layoutTimestamp <- function (level, message) {
 }
 
 #' Logging layout for parellel computing
-#' 
-#' @description 
-#' A layout function to be used with an appender. This layout addes the time, thread, level, package name, and function name to
-#' the message.
 #'
-#' @param level      The level of the message (e.g. "INFO")
-#' @param message    The message to layout.
+#' @description
+#' A layout function to be used with an appender. This layout addes the time, thread, level, package
+#' name, and function name to the message.
+#'
+#' @param level     The level of the message (e.g. "INFO")
+#' @param message   The message to layout.
 #'
 #' @export
-layoutParallel <- function (level, message) {
+layoutParallel <- function(level, message) {
   time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   threadNumber <- getOption("threadNumber")
   if (is.null(threadNumber)) {
@@ -403,17 +401,18 @@ layoutParallel <- function (level, message) {
   functionName <- ""
   packageName <- ""
   if (sys.nframe() > 4) {
-    for (i in 4:sys.nframe()) {    
-      packageName <- utils::packageName(env = sys.frame(-i)) 
-      if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName != "OhdsiRTools") {
+    for (i in 4:sys.nframe()) {
+      packageName <- utils::packageName(env = sys.frame(-i))
+      if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName !=
+        "OhdsiRTools") {
         functionName <- as.character(sys.call(-i)[[1]])
         break
-      }  
+      }
     }
   }
   if (length(functionName) == 0) {
     functionName <- ""
-  } else  {
+  } else {
     functionName <- functionName[length(functionName)]
   }
   if (is.null(packageName)) {
@@ -424,21 +423,20 @@ layoutParallel <- function (level, message) {
 }
 
 #' Logging layout with timestamp
-#' 
-#' @description 
-#' A layout function to be used with an appender. This layout addes the time to
-#' the message.
 #'
-#' @param level      The level of the message (e.g. "INFO")
-#' @param message    The message to layout.
+#' @description
+#' A layout function to be used with an appender. This layout addes the time to the message.
+#'
+#' @param level     The level of the message (e.g. "INFO")
+#' @param message   The message to layout.
 #'
 #' @export
-layoutStackTrace <- function (level, message) {
+layoutStackTrace <- function(level, message) {
   # Avoid check notes about non-used parameters:
   missing(level)
   time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   stackTrace <- c()
-  nFrame = -4
+  nFrame <- -4
   fun <- sys.call(nFrame)
   while (!is.null(fun)) {
     stackTrace <- c(stackTrace, as.character(fun[[1]]))

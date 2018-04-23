@@ -19,11 +19,11 @@
 
 #' Run code and send e-mail notification on error, warning, or completion
 #'
-#' @param expression     The expression to run.
-#' @param mailSettings   Arguments to be passed to the send.mail function in the mailR package (except
-#'                       subject and body).
-#' @param label          A label to be used in the subject to identify a run.
-#' @param stopOnWarning  Stop expression on warning and send notification?
+#' @param expression      The expression to run.
+#' @param mailSettings    Arguments to be passed to the send.mail function in the mailR package (except
+#'                        subject and body).
+#' @param label           A label to be used in the subject to identify a run.
+#' @param stopOnWarning   Stop expression on warning and send notification?
 #'
 #' @return
 #' The ouput of \code{expression}.
@@ -39,9 +39,9 @@
 #'                                  ssl = TRUE),
 #'                      authenticate = TRUE,
 #'                      send = TRUE)
-#' runAndNotify({a <- 1 + 2 + 3}, 
-#'              mailSettings = mailSettings, 
-#'              label = "My fancy R code")
+#' runAndNotify({
+#'   a <- 1 + 2 + 3
+#' }, mailSettings = mailSettings, label = "My fancy R code")
 #' }
 #'
 #' @export
@@ -61,7 +61,7 @@ runAndNotify <- function(expression, mailSettings, label = "R", stopOnWarning = 
       eval(expression)
     }, error = function(e) {
       assign("errorObject", e, envir = ev)
-    })   
+    })
   }
   delta <- Sys.time() - start
   timing <- paste("Code ran for", signif(delta, 3), attr(delta, "units"))
@@ -83,7 +83,7 @@ runAndNotify <- function(expression, mailSettings, label = "R", stopOnWarning = 
   do.call(myfun, mailSettings)
   writeLines(paste("Message sent to", mailSettings$to))
   # writeLines(subject) writeLines(body)
-  
+
   # Re-throw errors and warnings:
   if (exists("warningObject", envir = ev)) {
     warning(get("warningObject", envir = ev))

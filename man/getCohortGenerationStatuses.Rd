@@ -15,7 +15,8 @@ getCohortGenerationStatuses(baseUrl, definitionIds, sourceKeys)
 \item{sourceKeys}{A list of CDM source keys. These can be found in Atlas -> Configure.}
 }
 \value{
-A data frame of cohort generation statuses, start times, and execution durations per definition id and source key.
+A data frame of cohort generation statuses, start times, and execution durations per definition id
+and source key.
 }
 \description{
 Get Cohort Generation Statuses

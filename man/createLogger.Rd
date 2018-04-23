@@ -12,7 +12,7 @@ createLogger(name = "SIMPLE", threshold = "INFO",
 
 \item{threshold}{The threshold to be used for reporting.}
 
-\item{appenders}{A list of one or more appenders as created for example using the 
+\item{appenders}{A list of one or more appenders as created for example using the
 \code{\link{createConsoleAppender}} or \code{\link{createFileAppender}} function.}
 }
 \value{
@@ -22,8 +22,8 @@ An object of type \code{Logger}, to be used with the \code{\link{registerLogger}
 Create a logger
 }
 \details{
-Creates a logger that will log messages to its appenders. The logger will only log messages 
-at a level equal to or higher than its threshold. For example, if the threshold is "INFO" then
-messages marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is 
-"TRACE", "DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
+Creates a logger that will log messages to its appenders. The logger will only log messages at a
+level equal to or higher than its threshold. For example, if the threshold is "INFO" then messages
+marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is "TRACE",
+"DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
 }

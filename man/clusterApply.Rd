@@ -11,8 +11,8 @@ clusterApply(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE)
 
 \item{x}{The list on which the function will be applied.}
 
-\item{fun}{The function to apply. Note that the context in which the function is
-specifies matters (see details).}
+\item{fun}{The function to apply. Note that the context in which the function is specifies
+matters (see details).}
 
 \item{...}{Additional parameters for the function.}
 

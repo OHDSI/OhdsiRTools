@@ -18,6 +18,6 @@ invokeCohortSetGeneration(baseUrl, sourceKeys, definitionIds)
 Invoke the generation of a set of cohort definitions
 }
 \details{
-Invokes the generation of a set of cohort definitions across a set of CDMs set up in WebAPI.
-Use \code{getCohortGenerationStatuses} to check the progress of the set.
+Invokes the generation of a set of cohort definitions across a set of CDMs set up in WebAPI. Use
+\code{getCohortGenerationStatuses} to check the progress of the set.
 }

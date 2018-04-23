@@ -10,5 +10,6 @@ addDefaultConsoleLogger()
 Add the default console logger
 }
 \details{
-Creates a logger that writes to the console using the "INFO" threshold and the \code{\link{layoutSimple}} layout.
+Creates a logger that writes to the console using the "INFO" threshold and the
+\code{\link{layoutSimple}} layout.
 }

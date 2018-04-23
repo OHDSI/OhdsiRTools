@@ -12,6 +12,5 @@ layoutTimestamp(level, message)
 \item{message}{The message to layout.}
 }
 \description{
-A layout function to be used with an appender. This layout addes the time to
-the message.
+A layout function to be used with an appender. This layout addes the time to the message.
 }

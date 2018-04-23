@@ -7,9 +7,8 @@
 insertConceptSetConceptIdsInPackage(fileName, baseUrl)
 }
 \arguments{
-\item{fileName}{Name of a CSV file in the inst/settings folder of the package
-specifying the concept sets to insert. See details for the expected file
-format.}
+\item{fileName}{Name of a CSV file in the inst/settings folder of the package specifying the
+concept sets to insert. See details for the expected file format.}
 
 \item{baseUrl}{The base URL for the WebApi instance, for example:
 "http://api.ohdsi.org:80/WebAPI".}
@@ -18,6 +17,5 @@ format.}
 Insert a set of concept sets' concept ids into package
 }
 \details{
-The CSV file should have: \describe{ \item{atlasId}{The concept set Id in
-ATLAS.} }
+The CSV file should have: \describe{ \item{atlasId}{The concept set Id in ATLAS.} }
 }
