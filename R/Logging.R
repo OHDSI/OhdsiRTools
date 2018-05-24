@@ -405,7 +405,12 @@ layoutParallel <- function(level, message) {
       packageName <- utils::packageName(env = sys.frame(-i))
       if (length(packageName) != 0 && packageName != "base" && packageName != "snow" && packageName !=
         "OhdsiRTools") {
-        functionName <- as.character(sys.call(-i)[[1]])
+        if (class(sys.call(-i)[[1]]) == "function") {
+          # USing do.call without quotes means the function name is lost
+          functionName <- ""
+        } else {
+          functionName <- as.character(sys.call(-i)[[1]])
+        }
         break
       }
     }
@@ -438,7 +443,7 @@ layoutStackTrace <- function(level, message) {
   stackTrace <- c()
   nFrame <- -4
   fun <- sys.call(nFrame)
-  while (!is.null(fun)) {
+  while (!is.null(fun) && class(fun[[1]]) != "function") {
     stackTrace <- c(stackTrace, as.character(fun[[1]]))
     nFrame <- nFrame - 1
     fun <- sys.call(nFrame)
