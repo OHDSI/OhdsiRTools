@@ -24,23 +24,26 @@ formatRFolder()
 # Identify problems in R code in a package:
 checkUsagePackage("OhdsiRTools")
 
-# Insert CIRCE JSON and SQL into a study package:
-insertCohortDefinitionInPackage(123, "MyocardialInfarction")
+# Run a function in parallel:
+make
+
+# Insert cohort definition JSON and SQL into a study package:
+insertCohortDefinitionInPackage(123, "MyocardialInfarction", baseUrl = "http://server.org:80/WebAPI")
 
 # Insert concept set concept Ids into a study package:
-insertConceptSetConceptIdsInPackage(baseUrl = "http://api.ohdsi.org:80/WebAPI", fileName = "conceptsetids.csv")
+insertConceptSetConceptIdsInPackage(baseUrl = "http://server.org:80/WebAPI", fileName = "conceptsetids.csv")
 
 # Get a formatted cohort definition name (no bracketed prefixes) from Atlas:
-getCohortDefinitionName(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionId = 123, formatName = TRUE)
+getCohortDefinitionName(baseUrl = "http://server.org:80/WebAPI", definitionId = 123, formatName = TRUE)
 
 # Get a formatted concept set name (no bracketed prefixes) from Atlas:
-getConceptSetName(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123, formatName = TRUE)
+getConceptSetName(baseUrl = "http://server.org:80/WebAPI", setId = 123, formatName = TRUE)
 
 # Get all concept Ids from a concept set from Atlas:
-getConceptSetConceptIds(baseUrl = "http://api.ohdsi.org:80/WebAPI", setId = 123)
+getConceptSetConceptIds(baseUrl = "http://server.org:80/WebAPI", setId = 123)
 
 # Get a data frame filled with generation statuses of multiple cohort definitions across multiple CDM sources in Atlas:
-getCohortGenerationStatuses(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah"))
+getCohortGenerationStatuses(baseUrl = "http://server.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah"))
 ```
 
 Technology
@@ -68,6 +71,7 @@ Getting Started
 Getting Involved
 =============
 * Vignette: [Logging using OhdsiRTools](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/inst/doc/Logging.pdf)
+* Vignette: [Parallel execution using OhdsiRTools](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/inst/doc/Parallel.pdf)
 * Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/extras/OhdsiRTools.pdf)
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements

@@ -37,3 +37,12 @@ transmitted to the worker node each time the function is executed. It can theref
 define the function to be called at the package level rather than inside a function, to save
 overhead.
 }
+\examples{
+fun <- function(x) {
+  return (x^2)
+}
+
+cluster <- makeCluster(numberOfThreads = 3)
+clusterApply(cluster, 1:10, fun)
+stopCluster(cluster)
+}

@@ -12,5 +12,5 @@ clusterRequire(cluster, package)
 \item{package}{The name of the package to load in all nodes.}
 }
 \description{
-Require a package in the cluster
+Calls the \code{require} function in each node of the cluster.
 }

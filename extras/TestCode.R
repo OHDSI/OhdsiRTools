@@ -24,14 +24,13 @@ runAndNotify({
 
 # WebAPI functions -----------------------------------------------------------
 
+getCohortDefinitionName(baseUrl = Sys.getenv("baseUrl"), definitionId = 5021)
 
-getCohortDefinitionName(baseUrl = "https://epi.jnj.com:8443/WebAPI", definitionId = 5021)
+getConceptSetName(baseUrl = Sys.getenv("baseUrl"), setId = 12)
 
-getConceptSetName(baseUrl = "https://epi.jnj.com:8443/WebAPI", setId = 12)
+getPriorityVocabKey(baseUrl = Sys.getenv("baseUrl"))
 
-getPriorityVocabKey(baseUrl = "https://epi.jnj.com:8443/WebAPI")
-
-getConceptSetConceptIds(baseUrl = "https://epi.jnj.com:8443/WebAPI", setId = 12)
+getConceptSetConceptIds(baseUrl = Sys.getenv("baseUrl"), setId = 12)
 
 
 # Args functions --------------------------------------------------------------

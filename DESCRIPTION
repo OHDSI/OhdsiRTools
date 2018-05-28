@@ -1,13 +1,14 @@
 Package: OhdsiRTools
 Type: Package
-Title: Tools for Maintaining OHDSI R Packages
-Version: 1.5.3
-Date: 2018-04-23
+Title: Tools Used by 'Observational Health Data Science and Informatics' ('OHDSI')
+Version: 1.5.4
+Date: 2018-05-28
 Author: Martijn J. Schuemie [aut, cre],
     Marc A. Suchard [aut],
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
-Description: Format and check syntax of R code and packages following the OHDSI
-    R style guidelines. Support for parallel computation.
+Description: Includes functions to format and check syntax of R code and packages following the 'OHDSI'
+    R style guidelines. Support for parallel computation, logging, and function automation. Functionality
+    for interacting with instances of the open source `OHDSI` `WebApi'. 
 License: Apache License 2.0
 VignetteBuilder: knitr
 Depends:

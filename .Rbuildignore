@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 .gitattributes
 extras
+man-roxygen
 .travis.yml
 deploy.sh
 compare_versions

@@ -176,38 +176,31 @@ fetchRdDB <- function(filebase, key = NULL) {
     res else invisible(res)
 }
 
-.recursivePrettyPrint <- function(object, name, indent) {
-  name <- paste(paste(rep(" ", indent), collapse = ""), name, sep = "")
-  if (is.list(object)) {
-    writeLines(name)
-    for (i in 1:length(object)) {
-      .recursivePrettyPrint(object[[i]], names(object)[i], indent + 2)
-    }
-  } else if (is.character(object)) {
-    writeLines(paste(name, paste("\"", object, "\"", sep = ""), sep = " = "))
-  } else if (is.vector(object)) {
-    writeLines(substr(paste(name, paste(object, collapse = ", "), sep = " = "), 1, 100))
-  } else {
-    writeLines(paste(name, object, sep = " = "))
-  }
-}
-
-#' Print a list of objects
-#'
-#' @details
-#' Will print nested lists using indentation.
-#'
-#' @param object   The list to print.
-#'
-#' @export
-prettyPrint <- function(object) {
-  .recursivePrettyPrint(object, "", 0)
-}
-
 #' Select variables from a list of objects of the same type
 #'
 #' @param x        A list of objects of the same type.
 #' @param select   A character vector of names of variables to select.
+#'
+#' @examples 
+#' 
+#' x <- list(a = list(name = "John", age = 25, gender = "M"),
+#'           b = list(name = "Mary", age = 24, gender = "F"))
+#' selectFromList(x, c("name", "age"))
+#' 
+#' # $a
+#' # $a$name
+#' # [1] "John"
+#' # 
+#' # $a$age
+#' # [1] 25
+#' # 
+#' # 
+#' # $b
+#' # $b$name
+#' # [1] "Mary"
+#' # 
+#' # $b$age
+#' # [1] 24
 #'
 #' @export
 selectFromList <- function(x, select) {
@@ -239,6 +232,19 @@ excludeFromList <- function(x, exclude) {
 #'
 #' @return
 #' A list of objects that match the \code{toMatch} object.
+#' 
+#' @examples 
+#' x <- list(a = list(name = "John", age = 25, gender = "M"),
+#'           b = list(name = "Mary", age = 24, gender = "F"))
+#' 
+#' matchInList(x, list(name = "Mary"))
+#' 
+#' # [[1]]
+#' # [[1]]$name
+#' # [1] "Mary"
+#' # 
+#' # [[1]]$age
+#' # [1] 24
 #'
 #' @export
 matchInList <- function(x, toMatch) {
@@ -249,40 +255,6 @@ matchInList <- function(x, toMatch) {
       result[[length(result) + 1]] <- x[[i]]
     }
   }
-  return(result)
-}
-
-#' Deprecated: Convert arguments used in call to a list
-#'
-#' @details
-#' Takes the argument values (both default and user-specified) and store them in a list. This function
-#' is deprecated because it fails when used in a function that is called using ::.
-#'
-#' @param matchCall     The result of \code{match.call()}.
-#' @param resultClass   The class of the resulting object.
-#'
-#' @return
-#' An object of the class specified in \code{resultClass}.
-#'
-#' @examples
-#' myFun <- function(x = 1, y = 2) {
-#'   return(convertArgsToList(match.call()))
-#' }
-#'
-#' @export
-convertArgsToList <- function(matchCall, resultClass = "list") {
-  # First: get default values:
-  result <- list()
-  for (name in names(formals(as.character(matchCall[[1]])))) {
-    result[[name]] <- get(name, envir = parent.frame(n = 1))
-  }
-  # Second: overwrite defaults with actual values:
-  values <- lapply(as.list(matchCall)[-1], function(x) eval(x, envir = sys.frame(-4)))
-  for (name in names(values)) {
-    if (name %in% names(result))
-      result[[name]] <- values[[name]]
-  }
-  class(result) <- resultClass
   return(result)
 }
 
@@ -366,7 +338,6 @@ restoreDataFrames <- function(object) {
     if (length(object) > 0) {
       if (class(object[[1]]) == "data.frame") {
         object <- do.call("rbind", object)
-        # df <- as.data.frame(t(sapply(object, function(x){class(x) <- 'list'; return(x)}))) str(df)
       } else {
         for (i in 1:length(object)) {
           if (!is.null(object[[i]])) {

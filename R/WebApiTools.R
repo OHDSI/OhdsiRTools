@@ -90,23 +90,6 @@ insertCohortDefinitionInPackage <- function(definitionId,
   close(fileConn)
 }
 
-#' Load a Circe definition and insert it into this package
-#'
-#' @details
-#' Deprecated. Use \code{\link{insertCohortDefinitionInPackage}} instead.
-#'
-#' @param definitionId   The number indicating which Circe definition to fetch.
-#' @param name           The name that will be used for the json and SQL files. If not provided, the
-#'                       name in Circe will be used, but this may not lead to valid file names.
-#' @param baseUrl        The base URL for the WebApi instance, for example:
-#'                       "http://api.ohdsi.org:80/WebAPI".
-#'
-#' @export
-insertCirceDefinitionInPackage <- function(definitionId, name = NULL, baseUrl) {
-  .Deprecated("insertCohortDefinitionInPackage")
-  insertCohortDefinitionInPackage(definitionId, name, baseUrl)
-}
-
 
 #' Insert a set of cohort definitions into package
 #'
@@ -114,7 +97,7 @@ insertCirceDefinitionInPackage <- function(definitionId, name = NULL, baseUrl) {
 #'                                specifying the cohorts to insert. See details for the expected file
 #'                                format.
 #' @param baseUrl                 The base URL for the WebApi instance, for example:
-#'                                "http://api.ohdsi.org:80/WebAPI".
+#'                                "http://server.org:80/WebAPI".
 #' @param insertTableSql          Should the SQL for creating the cohort table be inserted into the
 #'                                package as well? This file will be called CreateCohortTable.sql.
 #' @param insertCohortCreationR   Insert R code that will create the cohort table and instantiate the
@@ -138,7 +121,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
                                                generateStats = FALSE,
                                                packageName) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
   if (insertCohortCreationR && !insertTableSql)
     stop("Need to insert table SQL in order to generate R code")

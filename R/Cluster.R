@@ -54,6 +54,8 @@ setFfDir <- function(fftempdir) {
 #'
 #' @return
 #' An object representing the cluster.
+#' 
+#' @template ClusterExample
 #'
 #' @export
 makeCluster <- function(numberOfThreads,
@@ -110,6 +112,9 @@ makeCluster <- function(numberOfThreads,
 }
 
 #' Require a package in the cluster
+#' 
+#' @description 
+#' Calls the \code{require} function in each node of the cluster.
 #'
 #' @param cluster   The cluster object.
 #' @param package   The name of the package to load in all nodes.
@@ -134,6 +139,8 @@ clusterRequire <- function(cluster, package) {
 #' Stop the cluster
 #'
 #' @param cluster   The cluster to stop
+#' 
+#' @template ClusterExample
 #'
 #' @export
 stopCluster <- function(cluster) {
@@ -166,6 +173,8 @@ stopCluster <- function(cluster) {
 #'
 #' @return
 #' A list with the result of the function on each item in x.
+#' 
+#' @template ClusterExample
 #'
 #' @export
 clusterApply <- function(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE) {
