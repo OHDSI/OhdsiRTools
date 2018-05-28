@@ -25,7 +25,13 @@ formatRFolder()
 checkUsagePackage("OhdsiRTools")
 
 # Run a function in parallel:
-make
+fun <- function(x) {
+  return (x^2)
+}
+
+cluster <- makeCluster(numberOfThreads = 3)
+result <- clusterApply(cluster, 1:10, fun)
+stopCluster(cluster)
 
 # Insert cohort definition JSON and SQL into a study package:
 insertCohortDefinitionInPackage(123, "MyocardialInfarction", baseUrl = "http://server.org:80/WebAPI")
