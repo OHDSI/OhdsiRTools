@@ -18,7 +18,7 @@ vignette: >
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(OhdsiRTools)
 knitr::opts_chunk$set(
-  cache=FALSE,
+  cache = FALSE,
   comment = "#>",
   error = FALSE,
   tidy = FALSE)
@@ -76,6 +76,22 @@ logger <- createLogger(name = "SIMPLE",
 registerLogger(logger)
 
 logInfo("Hello world")
+```
+
+## Shorthand 
+
+A shorthand for creating a simple console logger is offered by the `addDefaultConsoleLogger` function. The code
+
+```{r, eval=FALSE}
+addDefaultConsoleLogger()
+```
+
+is equivalent to
+
+```{r, eval=FALSE}
+registerLogger(createLogger(name = "SIMPLE",
+                            threshold = "INFO", 
+                            appenders = list(createConsoleAppender(layout = layoutSimple))))
 ```
 
 
