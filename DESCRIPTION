@@ -8,7 +8,7 @@ Authors@R: c(
     person("Marc", "Suchard", role = c("aut")),
     person("Observational Health Data Science and Informatics", role = c("cph"))
   )
-Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
+Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Includes functions to format and check syntax of R code and packages following the 'OHDSI'
     R style guidelines. Support for parallel computation, logging, and function automation. Functionality
     for interacting with instances of the open source `OHDSI` `WebApi'. 
