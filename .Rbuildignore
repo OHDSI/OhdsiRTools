@@ -6,3 +6,4 @@ man-roxygen
 .travis.yml
 deploy.sh
 compare_versions
+^cran-comments.md$
