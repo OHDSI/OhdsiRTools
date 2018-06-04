@@ -7,7 +7,7 @@
 getLoggers()
 }
 \value{
-Returns all registerd loggers.
+Returns all registered loggers.
 }
 \description{
 Get all registered loggers

@@ -35,7 +35,7 @@
 #'
 #' @details
 #' This function uses the codetools package to check the code from problems. Heuristics are used to
-#' elimite false positives due to non-standard evaluation.
+#' eliminate false positives due to non-standard evaluation.
 #'
 #' @param package                   The name of the package to check.
 #' @param ignoreHiddenFunctions     Ignore functions for which the definition cannot be retrieved?

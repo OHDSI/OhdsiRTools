@@ -195,7 +195,7 @@ unregisterLogger <- function(x) {
 #' Get all registered loggers
 #'
 #' @return
-#' Returns all registerd loggers.
+#' Returns all registered loggers.
 #'
 #' @export
 getLoggers <- function() {
@@ -227,7 +227,7 @@ addDefaultConsoleLogger <- function() {
 #'
 #' @details
 #' Creates a logger that writes to a file using the "TRACE" threshold and the
-#' \code{\link{layoutParallel}} layout. The output can be viewed with the built-in log viewer tht can
+#' \code{\link{layoutParallel}} layout. The output can be viewed with the built-in log viewer that can
 #' be started using \code{\link{launchLogViewer}}.
 #'
 #' @param fileName   The name of the file to write to.
@@ -367,7 +367,7 @@ layoutSimple <- function(level, message) {
 #' Logging layout with timestamp
 #'
 #' @description
-#' A layout function to be used with an appender. This layout addes the time to the message.
+#' A layout function to be used with an appender. This layout adds the time to the message.
 #'
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.
@@ -380,10 +380,10 @@ layoutTimestamp <- function(level, message) {
   sprintf("%s\t%s", time, message)
 }
 
-#' Logging layout for parellel computing
+#' Logging layout for parallel computing
 #'
 #' @description
-#' A layout function to be used with an appender. This layout addes the time, thread, level, package
+#' A layout function to be used with an appender. This layout adds the time, thread, level, package
 #' name, and function name to the message.
 #'
 #' @param level     The level of the message (e.g. "INFO")
@@ -430,7 +430,7 @@ layoutParallel <- function(level, message) {
 #' Logging layout with timestamp
 #'
 #' @description
-#' A layout function to be used with an appender. This layout addes the time to the message.
+#' A layout function to be used with an appender. This layout adds the time to the message.
 #'
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.

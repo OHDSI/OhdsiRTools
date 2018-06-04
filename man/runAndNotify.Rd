@@ -17,7 +17,7 @@ subject and body).}
 \item{stopOnWarning}{Stop expression on warning and send notification?}
 }
 \value{
-The ouput of \code{expression}.
+The output of \code{expression}.
 }
 \description{
 Run code and send e-mail notification on error, warning, or completion

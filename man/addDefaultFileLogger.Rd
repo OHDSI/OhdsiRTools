@@ -14,6 +14,6 @@ Add the default file logger
 }
 \details{
 Creates a logger that writes to a file using the "TRACE" threshold and the
-\code{\link{layoutParallel}} layout. The output can be viewed with the built-in log viewer tht can
+\code{\link{layoutParallel}} layout. The output can be viewed with the built-in log viewer that can
 be started using \code{\link{launchLogViewer}}.
 }

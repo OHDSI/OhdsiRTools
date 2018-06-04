@@ -26,7 +26,7 @@
 #' @param stopOnWarning   Stop expression on warning and send notification?
 #'
 #' @return
-#' The ouput of \code{expression}.
+#' The output of \code{expression}.
 #'
 #' @examples
 #' \dontrun{

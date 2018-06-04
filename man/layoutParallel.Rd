@@ -2,7 +2,7 @@
 % Please edit documentation in R/Logging.R
 \name{layoutParallel}
 \alias{layoutParallel}
-\title{Logging layout for parellel computing}
+\title{Logging layout for parallel computing}
 \usage{
 layoutParallel(level, message)
 }
@@ -12,6 +12,6 @@ layoutParallel(level, message)
 \item{message}{The message to layout.}
 }
 \description{
-A layout function to be used with an appender. This layout addes the time, thread, level, package
+A layout function to be used with an appender. This layout adds the time, thread, level, package
 name, and function name to the message.
 }

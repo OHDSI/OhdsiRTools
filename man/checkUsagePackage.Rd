@@ -19,5 +19,5 @@ Check all code in a package
 }
 \details{
 This function uses the codetools package to check the code from problems. Heuristics are used to
-elimite false positives due to non-standard evaluation.
+eliminate false positives due to non-standard evaluation.
 }
