@@ -1,10 +1,13 @@
 Package: OhdsiRTools
 Type: Package
-Title: Tools Used by 'Observational Health Data Science and Informatics' ('OHDSI')
+Title: Tools Used by Observational Health Data Science and Informatics (OHDSI)
 Version: 1.5.4
 Date: 2018-05-28
-Author: Martijn J. Schuemie [aut, cre],
-    Marc A. Suchard [aut],
+Authors@R: c(
+    person("Martijn", "Schuemie", email = "schuemie@ohdsi.org", role = c("aut", "cre")),
+    person("Marc", "Suchard", role = c("aut")),
+    person("Observational Health Data Science and Informatics", role = c("cph"))
+  )
 Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
 Description: Includes functions to format and check syntax of R code and packages following the 'OHDSI'
     R style guidelines. Support for parallel computation, logging, and function automation. Functionality

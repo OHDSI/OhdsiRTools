@@ -1,4 +1,5 @@
-Initial submission to CRAN
+Resubmission: Removed quotes around 'Observational Health Data Science and Informatics', added Observational Health Data Sciences 
+and Informatics as copyright holder.
 
 ---
 
