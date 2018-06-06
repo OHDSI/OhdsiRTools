@@ -93,7 +93,7 @@ takeEnvironmentSnapshot <- function(rootPackage) {
 #'
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' snapshot <- takeEnvironmentSnapshot("OhdsiRTools")
 #' write.csv(snapshot, "snapshot.csv")
 #'
@@ -148,7 +148,7 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE) {
 #' @param rootPackage   The name of the root package
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' insertEnvironmentSnapshotInPackage("OhdsiRTools")
 #' }
 #'

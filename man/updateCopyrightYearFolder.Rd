@@ -15,9 +15,3 @@ updateCopyrightYearFolder(path = ".", recursive = TRUE)
 \description{
 Update the copyright year in all R and SQL files in a folder
 }
-\examples{
-\donttest{
-updateCopyrightYearFolder()
-}
-
-}

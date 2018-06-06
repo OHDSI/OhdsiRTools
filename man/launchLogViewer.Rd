@@ -17,7 +17,7 @@ Launches a Shiny app that allows the user to view a log file created using the d
 Use \code{\link{addDefaultFileLogger}} to start the default file logger.
 }
 \examples{
-\donttest{
+\dontrun{
 addDefaultFileLogger("log.txt")
 logInfo("Hello world")
 launchLogViewer("log.txt")

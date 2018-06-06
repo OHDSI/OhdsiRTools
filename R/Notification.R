@@ -29,7 +29,7 @@
 #' The output of \code{expression}.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' mailSettings <- list(from = "someone@gmail.com",
 #'                      to = c("someone_else@gmail.com"),
 #'                      smtp = list(host.name = "smtp.gmail.com",

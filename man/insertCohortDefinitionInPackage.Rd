@@ -33,7 +33,7 @@ note that the cohort_inclusion table should be populated with the names of the r
 executing the cohort definition SQL.
 }
 \examples{
-\donttest{
+\dontrun{
 # This will create 'inst/cohorts/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 
 insertCohortDefinitionInPackage(definitionId = 282, 

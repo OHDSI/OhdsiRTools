@@ -38,7 +38,7 @@
 #'                        described in the details.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # This will create 'inst/cohorts/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 #'
 #' insertCohortDefinitionInPackage(definitionId = 282, 

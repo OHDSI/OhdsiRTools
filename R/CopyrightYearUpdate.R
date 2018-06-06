@@ -54,11 +54,6 @@ updatePackageName <- function(file, packageName) {
 #'                    .SQL extension will be updated.
 #' @param recursive   Include all subfolders?
 #'
-#' @examples
-#' \donttest{
-#' updateCopyrightYearFolder()
-#' }
-#' 
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path,
