@@ -8,7 +8,7 @@ getCohortGenerationStatuses(baseUrl, definitionIds, sourceKeys)
 }
 \arguments{
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 
 \item{definitionIds}{A list of cohort definition Ids}
 

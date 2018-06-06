@@ -8,7 +8,7 @@ getConceptSetConceptIds(baseUrl, setId, vocabSourceKey = NULL)
 }
 \arguments{
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 
 \item{setId}{The concept set id in Atlas.}
 

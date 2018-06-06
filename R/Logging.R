@@ -56,6 +56,8 @@ setLoggerSettings <- function(settings) {
 #'
 #' @param layout   The layout to be used by the appender.
 #'
+#' @template LoggingExample
+#' 
 #' @export
 createConsoleAppender <- function(layout = layoutSimple) {
   appendFunction <- function(this, level, message) {
@@ -107,6 +109,8 @@ createFileAppender <- function(layout = layoutParallel, fileName) {
 #'
 #' @return
 #' An object of type \code{Logger}, to be used with the \code{\link{registerLogger}} function.
+#' 
+#' @template LoggingExample
 #'
 #' @export
 createLogger <- function(name = "SIMPLE",
@@ -135,6 +139,8 @@ createLogger <- function(name = "SIMPLE",
 #'
 #' @param logger   An object of type \code{Logger} as created using the \code{\link{createLogger}}
 #'                 function.
+#'                 
+#' @template LoggingExample
 #'
 #' @export
 registerLogger <- function(logger) {
@@ -156,11 +162,13 @@ registerLogger <- function(logger) {
 #'
 #' @return
 #' Returns TRUE if the logger was removed.
+#' 
+#' @template LoggingExample
 #'
 #' @export
 unregisterLogger <- function(x) {
   settings <- getLoggerSettings()
-  if (is.integer(x) || as.numeric(x)) {
+  if (is.integer(x) || is.numeric(x)) {
     if (x <= length(settings$loggers)) {
       settings$loggers[[x]] <- NULL
       setLoggerSettings(settings)
@@ -218,6 +226,13 @@ clearLoggers <- function() {
 #' Creates a logger that writes to the console using the "INFO" threshold and the
 #' \code{\link{layoutSimple}} layout.
 #'
+#' @examples 
+#' logger <- addDefaultConsoleLogger()
+#' registerLogger(logger)                      
+#' logTrace("This event is below the threshold (INFO)")
+#' logInfo("Hello world")                       
+#' unregisterLogger(logger)  
+#' 
 #' @export
 addDefaultConsoleLogger <- function() {
   registerLogger(createLogger())
@@ -272,6 +287,8 @@ log <- function(level, ...) {
 #'
 #' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
 #'              with no separator).
+#'              
+#' @template LoggingExample
 #'
 #' @export
 logTrace <- function(...) {
@@ -299,6 +316,8 @@ logDebug <- function(...) {
 #' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
 #'              with no separator).
 #'
+#' @template LoggingExample
+#'
 #' @export
 logInfo <- function(...) {
   log(level = "INFO", ...)
@@ -313,7 +332,7 @@ logInfo <- function(...) {
 #'
 #' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
 #'              with no separator).
-#'
+#' 
 #' @export
 logWarn <- function(...) {
   log(level = "WARN", ...)
@@ -354,7 +373,7 @@ logFatal <- function(...) {
 #'
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.
-#'
+#' 
 #' @export
 layoutSimple <- function(level, message) {
   # Avoid check notes about non-used parameters:
@@ -372,6 +391,8 @@ layoutSimple <- function(level, message) {
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.
 #'
+#' @template LoggingExample
+#' 
 #' @export
 layoutTimestamp <- function(level, message) {
   # Avoid check notes about non-used parameters:
@@ -427,10 +448,10 @@ layoutParallel <- function(level, message) {
   sprintf("%s\t[%s]\t%s\t%s\t%s\t%s", time, threadLabel, level, packageName, functionName, message)
 }
 
-#' Logging layout with timestamp
+#' Logging layout with stacktrace
 #'
 #' @description
-#' A layout function to be used with an appender. This layout adds the time to the message.
+#' A layout function to be used with an appender. This layout adds the strack trace to the message.
 #'
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.

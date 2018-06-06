@@ -23,7 +23,7 @@ The output of \code{expression}.
 Run code and send e-mail notification on error, warning, or completion
 }
 \examples{
-\dontrun{
+\donttest{
 mailSettings <- list(from = "someone@gmail.com",
                      to = c("someone_else@gmail.com"),
                      smtp = list(host.name = "smtp.gmail.com",

@@ -32,7 +32,7 @@ This vignette describes how you can use the `OhdsiRTools` package to execute R c
 * **Cluster**: A set of compute nodes. 
 * **Node**: A separate instance of R that is instantiated, controlled, and terminated by the user's current R session.
 
-In this package, all nodes are on the same computer. Note that the `snow` package allows you to also create nodes on remote machines, for example in a physical computer cluster.
+In this package, all nodes are on the same computer. Note that the `parallel` package allows you to also create nodes on remote machines, for example in a physical computer cluster.
 
 # Creating a cluster
 

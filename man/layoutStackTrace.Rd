@@ -2,7 +2,7 @@
 % Please edit documentation in R/Logging.R
 \name{layoutStackTrace}
 \alias{layoutStackTrace}
-\title{Logging layout with timestamp}
+\title{Logging layout with stacktrace}
 \usage{
 layoutStackTrace(level, message)
 }
@@ -12,5 +12,5 @@ layoutStackTrace(level, message)
 \item{message}{The message to layout.}
 }
 \description{
-A layout function to be used with an appender. This layout adds the time to the message.
+A layout function to be used with an appender. This layout adds the strack trace to the message.
 }

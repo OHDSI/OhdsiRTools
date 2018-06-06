@@ -11,7 +11,7 @@ insertConceptSetConceptIdsInPackage(fileName, baseUrl)
 concept sets to insert. See details for the expected file format.}
 
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 }
 \description{
 Insert a set of concept sets' concept ids into package

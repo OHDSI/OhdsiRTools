@@ -14,7 +14,7 @@ insertCohortDefinitionInPackage(definitionId, name = NULL, baseUrl,
 name in cohort will be used, but this may not lead to valid file names.}
 
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 
 \item{generateStats}{Should the SQL include the code for generating inclusion rule statistics?
 Note that if TRUE, several additional tables are expected to exists as
@@ -33,10 +33,12 @@ note that the cohort_inclusion table should be populated with the names of the r
 executing the cohort definition SQL.
 }
 \examples{
-\dontrun{
+\donttest{
 # This will create 'inst/cohorts/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 
-insertCohortDefinitionInPackage(282, "Angioedema")
+insertCohortDefinitionInPackage(definitionId = 282, 
+                                name = "Angioedema",
+                                baseUrl = "http://server.org:80/WebAPI")
 }
 
 }

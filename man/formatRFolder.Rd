@@ -20,7 +20,7 @@ extension will be formatted.}
 Format all R files in a folder
 }
 \examples{
-\dontrun{
+\donttest{
 formatRFolder()
 }
 }

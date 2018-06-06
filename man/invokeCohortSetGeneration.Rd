@@ -8,7 +8,7 @@ invokeCohortSetGeneration(baseUrl, sourceKeys, definitionIds)
 }
 \arguments{
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 
 \item{sourceKeys}{A list of CDM source keys. These can be found in Atlas -> Configure.}
 

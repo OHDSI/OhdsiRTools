@@ -27,3 +27,14 @@ level equal to or higher than its threshold. For example, if the threshold is "I
 marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is "TRACE",
 "DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
 }
+\examples{
+appender <- createConsoleAppender(layout = layoutTimestamp)
+
+logger <- createLogger(name = "SIMPLE",
+                       threshold = "INFO",
+                       appenders = list(appender))
+registerLogger(logger)                      
+logTrace("This event is below the threshold (INFO)")
+logInfo("Hello world")                       
+unregisterLogger("SIMPLE")                     
+}

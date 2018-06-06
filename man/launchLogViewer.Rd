@@ -16,3 +16,11 @@ Launch the log viewer Shiny app
 Launches a Shiny app that allows the user to view a log file created using the default file logger.
 Use \code{\link{addDefaultFileLogger}} to start the default file logger.
 }
+\examples{
+\donttest{
+addDefaultFileLogger("log.txt")
+logInfo("Hello world")
+launchLogViewer("log.txt")
+}
+
+}

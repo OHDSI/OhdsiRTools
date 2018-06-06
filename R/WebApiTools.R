@@ -31,17 +31,19 @@
 #' @param name            The name that will be used for the json and SQL files. If not provided, the
 #'                        name in cohort will be used, but this may not lead to valid file names.
 #' @param baseUrl         The base URL for the WebApi instance, for example:
-#'                        "http://api.ohdsi.org:80/WebAPI".
+#'                        "http://server.org:80/WebAPI".
 #'
 #' @param generateStats   Should the SQL include the code for generating inclusion rule statistics?
 #'                        Note that if TRUE, several additional tables are expected to exists as
 #'                        described in the details.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # This will create 'inst/cohorts/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 #'
-#' insertCohortDefinitionInPackage(282, "Angioedema")
+#' insertCohortDefinitionInPackage(definitionId = 282, 
+#'                                 name = "Angioedema",
+#'                                 baseUrl = "http://server.org:80/WebAPI")
 #' }
 #'
 #' @export
@@ -50,7 +52,7 @@ insertCohortDefinitionInPackage <- function(definitionId,
                                             baseUrl,
                                             generateStats = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   ### Fetch JSON object ###
@@ -166,7 +168,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
 #' @param fileName   Name of a CSV file in the inst/settings folder of the package specifying the
 #'                   concept sets to insert. See details for the expected file format.
 #' @param baseUrl    The base URL for the WebApi instance, for example:
-#'                   "http://api.ohdsi.org:80/WebAPI".
+#'                   "http://server.org:80/WebAPI".
 #'
 #' @details
 #' The CSV file should have: \describe{ \item{atlasId}{The concept set Id in ATLAS.} }
@@ -174,7 +176,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
 #' @export
 insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   conceptSetsToCreate <- read.csv(file.path("inst/settings", fileName))
@@ -246,7 +248,7 @@ insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
 #' Obtains the name of a cohort.
 #'
 #' @param baseUrl        The base URL for the WebApi instance, for example:
-#'                       "http://api.ohdsi.org:80/WebAPI".
+#'                       "http://server.org:80/WebAPI".
 #' @param definitionId   The cohort definition id in Atlas.
 #' @param formatName     Should the name be formatted to remove prefixes and underscores?
 #'
@@ -256,7 +258,7 @@ insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
 #' @export
 getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
   url <- gsub("@baseUrl",
               baseUrl,
@@ -278,7 +280,7 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
 #' Obtains the name of a concept set.
 #'
 #' @param baseUrl      The base URL for the WebApi instance, for example:
-#'                     "http://api.ohdsi.org:80/WebAPI".
+#'                     "http://server.org:80/WebAPI".
 #' @param setId        The concept set id in Atlas.
 #' @param formatName   Should the name be formatted to remove prefixes and underscores?
 #'
@@ -288,7 +290,7 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
 #' @export
 getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId"))
@@ -308,7 +310,7 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
 #' Obtains the source key of the default OMOP Vocab in Atlas.
 #'
 #' @param baseUrl   The base URL for the WebApi instance, for example:
-#'                  "http://api.ohdsi.org:80/WebAPI".
+#'                  "http://server.org:80/WebAPI".
 #'
 #' @return
 #' A string with the source key of the default OMOP Vocab in Atlas.
@@ -316,7 +318,7 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
 #' @export
 getPriorityVocabKey <- function(baseUrl) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
   url <- gsub("@baseUrl", baseUrl, "@baseUrl/source/priorityVocabulary")
   json <- httr::GET(url)
@@ -331,7 +333,7 @@ getPriorityVocabKey <- function(baseUrl) {
 #' Obtains the full list of concept Ids in a concept set.
 #'
 #' @param baseUrl          The base URL for the WebApi instance, for example:
-#'                         "http://api.ohdsi.org:80/WebAPI".
+#'                         "http://server.org:80/WebAPI".
 #' @param setId            The concept set id in Atlas.
 #' @param vocabSourceKey   The source key of the Vocabulary. By default, the priority Vocabulary is
 #'                         used.
@@ -342,7 +344,7 @@ getPriorityVocabKey <- function(baseUrl) {
 #' @export
 getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
@@ -370,7 +372,7 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
 #' Useful if running multiple cohort generation jobs that are long-running.
 #'
 #' @param baseUrl         The base URL for the WebApi instance, for example:
-#'                        "http://api.ohdsi.org:80/WebAPI".
+#'                        "http://server.org:80/WebAPI".
 #' @param definitionIds   A list of cohort definition Ids
 #' @param sourceKeys      A list of CDM source keys. These can be found in Atlas -> Configure.
 #'
@@ -416,7 +418,7 @@ getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
 
 .getSourceIdFromKey <- function(baseUrl, sourceKey) {
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   url <- sprintf("%1s/source/%2s", baseUrl, sourceKey)
@@ -435,7 +437,7 @@ getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
   }
 
   if (!.checkBaseUrl(baseUrl)) {
-    stop("Base URL not valid, should be like http://api.ohdsi.org:80/WebAPI")
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
 
   sourceId <- .getSourceIdFromKey(baseUrl = baseUrl, sourceKey = sourceKey)
@@ -483,7 +485,7 @@ getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
 #' \code{getCohortGenerationStatuses} to check the progress of the set.
 #'
 #' @param baseUrl         The base URL for the WebApi instance, for example:
-#'                        "http://api.ohdsi.org:80/WebAPI".
+#'                        "http://server.org:80/WebAPI".
 #' @param definitionIds   A list of cohort definition Ids
 #' @param sourceKeys      A list of CDM source keys. These can be found in Atlas -> Configure.
 #'

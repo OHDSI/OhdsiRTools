@@ -16,7 +16,8 @@ updateCopyrightYearFolder(path = ".", recursive = TRUE)
 Update the copyright year in all R and SQL files in a folder
 }
 \examples{
-\dontrun{
+\donttest{
 updateCopyrightYearFolder()
 }
+
 }

@@ -17,8 +17,3 @@ updatePackageNameFolder(path = ".", packageName, recursive = TRUE)
 \description{
 Update the package name in all R and SQL files in a folder
 }
-\examples{
-\dontrun{
-updateCopyrightYearFolder()
-}
-}

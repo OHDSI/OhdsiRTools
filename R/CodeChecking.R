@@ -40,6 +40,9 @@
 #' @param package                   The name of the package to check.
 #' @param ignoreHiddenFunctions     Ignore functions for which the definition cannot be retrieved?
 #' @param suppressBindingKeywords   A set of keywords that are indicative of non-standard evaluation.
+#' 
+#' @examples 
+#' checkUsagePackage("OhdsiRTools")
 #'
 #' @export
 checkUsagePackage <- function(package,

@@ -100,14 +100,16 @@ registerLogger(createLogger(name = "SIMPLE",
 Probably more useful is a file logger. In the code below, we instantiate a logger that writes to file, using a threshold of `TRACE` (so including all events), and using the layout for parallel processing.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-unlink("log.txt")
+logFileName <- tempfile()
 ```
-
+```{r, eval=FALSE}
+logFileName <- "log.txt"
+```
 ```{r}
 logger <- createLogger(name = "PARALLEL",
                        threshold = "TRACE",
                        appenders = list(createFileAppender(layout = layoutParallel,
-                                                           fileName = "log.txt")))
+                                                           fileName = logFileName)))
 registerLogger(logger)
 
 logTrace("Executed this line")
@@ -120,13 +122,13 @@ logInfo("Hello world")
 We can read the log file:
 
 ```{r}
-writeLines(readChar("log.txt", file.info("log.txt")$size))
+writeLines(readChar(logFileName, file.info(logFileName)$size))
 ```
 
 And clean it up when we're done:
 
 ```{r}
-unlink("log.txt")
+unlink(logFileName)
 ```
 
 ## Shorthand 
@@ -134,7 +136,7 @@ unlink("log.txt")
 A shorthand for creating the file logger detailed here is offered by the `addDefaultFileLogger` function. The code
 
 ```{r, eval=FALSE}
-addDefaultFileLogger("log.txt")
+addDefaultFileLogger(logFileName)
 ```
 
 is equivalent to
@@ -143,7 +145,7 @@ is equivalent to
 registerLogger(createLogger(name = "DEFAULT",
                             threshold = "TRACE", 
                             appenders = list(createFileAppender(layout = layoutParallel, 
-                                                                  fileName = "log.txt"))))
+                                                                  fileName = logFileName))))
 ```
 
 
@@ -153,7 +155,7 @@ All R warnings and errors are automatically logged, and therefore do not require
 
 ```{r, eval=FALSE}
 clearLoggers()
-addDefaultFileLogger("log.txt")
+addDefaultFileLogger(logFileName)
 
 warning("Danger!")
 
@@ -163,16 +165,16 @@ as.numeric('a')
 # This throws an error:
 a <- b
 
-writeLines(readChar("log.txt", file.info("log.txt")$size))
+writeLines(readChar(logFileName, file.info(logFileName)$size))
 ```
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # knitr seems to use the same hook to capture warnings and errors, so minor cheat here:
 clearLoggers()
-addDefaultFileLogger("log.txt")
+addDefaultFileLogger(logFileName)
 logWarn("Danger!")
 logWarn("Warning: NAs introduced by coercion")
 logFatal("Error: object a not found")
-writeLines(readChar("log.txt", file.info("log.txt")$size))
+writeLines(readChar(logFileName, file.info(logFileName)$size))
 ```
 
 # Logging when parallel processing
@@ -180,10 +182,10 @@ writeLines(readChar("log.txt", file.info("log.txt")$size))
 The logging functions are designed to work with the parallel processing functions included in this package. The `layoutParallel` records thread identifiers, making it possible to later untangle the various threads. Below is a simple example:
 
 ```{r}
-unlink("log.txt") # Clean up log file from the previous example
+unlink(logFileName) # Clean up log file from the previous example
 clearLoggers() # Clean up the loggers from the previous example
 
-addDefaultFileLogger("log.txt")
+addDefaultFileLogger(logFileName)
 
 cluster <- makeCluster(3)
 
@@ -199,7 +201,7 @@ dummy <- clusterApply(cluster, 1:10, fun, progressBar = FALSE)
 
 stopCluster(cluster)
 
-writeLines(readChar("log.txt", file.info("log.txt")$size))
+writeLines(readChar(logFileName, file.info(logFileName)$size))
 ```
 
 # Shiny log viewer
@@ -207,7 +209,7 @@ writeLines(readChar("log.txt", file.info("log.txt")$size))
 A Shiny app for viewing a log file created using the `layoutParallel` is included in the package. To explore the log created in the prior example, run
 
 ```{r, eval=FALSE}
-launchLogViewer("log.txt")
+launchLogViewer(logFileName)
 ```
 
 to launch the viewer shown in Figure 1.
@@ -215,5 +217,5 @@ to launch the viewer shown in Figure 1.
 ![Shiny log viewer app](shinyApp.png)
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-unlink("log.txt")
+unlink(logFileName)
 ```

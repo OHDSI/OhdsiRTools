@@ -55,9 +55,10 @@ updatePackageName <- function(file, packageName) {
 #' @param recursive   Include all subfolders?
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' updateCopyrightYearFolder()
 #' }
+#' 
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path,
@@ -78,10 +79,6 @@ updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
 #' @param packageName   The replacement package name
 #' @param recursive     Include all subfolders?
 #'
-#' @examples
-#' \dontrun{
-#' updateCopyrightYearFolder()
-#' }
 #' @export
 updatePackageNameFolder <- function(path = ".", packageName, recursive = TRUE) {
   flist <- list.files(path,

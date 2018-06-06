@@ -22,7 +22,7 @@ restored to the versions they were at at the time of the snapshot. Note: on Wind
 likely need to have RTools installed to build the various packages.
 }
 \examples{
-\dontrun{
+\donttest{
 snapshot <- takeEnvironmentSnapshot("OhdsiRTools")
 write.csv(snapshot, "snapshot.csv")
 

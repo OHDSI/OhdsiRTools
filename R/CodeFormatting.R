@@ -159,9 +159,9 @@
   inDontRun <- FALSE
   level <- 0
   for (i in 1:length(text)) {
-    if (!inDontRun && regexpr("\\\\dontrun *\\{", text[i]) != -1) {
+    if (!inDontRun && regexpr("\\\\dont(run|test) *\\{", text[i]) != -1) {
       if (i > start) {
-        dontrun <- regexpr("\\\\dontrun *\\{", text[i])
+        dontrun <- regexpr("\\\\dont(run|test) *\\{", text[i])
         snippet <- c(snippet, text[start:(i - 1)])
         if (dontrun[[1]] > 1)
           snippet <- c(snippet, substr(text[i], 1, dontrun[[1]] - 1))
@@ -170,7 +170,11 @@
         if (gsub("\\s", "", snippet[1]) == "")
           snippet <- c()
       }
-      newText <- c(newText, "\\dontrun{")
+      if(regexpr("\\\\dontrun *\\{", text[i]) != -1) {
+        newText <- c(newText, "\\dontrun{")
+      } else {
+        newText <- c(newText, "\\donttest{")
+      }
       start <- i + 1
       inDontRun <- TRUE
     } else if (inDontRun) {
@@ -444,6 +448,23 @@
 #'
 #' @return
 #' A character vector with formatted R code.
+#' 
+#' @examples 
+#' code <- "
+#' #' Example functon
+#' #' 
+#' #' @param x One argument.
+#' #' @param fooBar Another argument.
+#' #'
+#' #' @examples 
+#' #' example(x=1,fooBar='abc')
+#' #'
+#' #'@export
+#' example <- function(x,foobar){paste(x,foobar)}
+#' "
+#' 
+#' formatted <- formatRText(code)
+#' writeLines(formatted)
 #'
 #' @export
 formatRText <- function(text, width.cutoff = 100) {
@@ -481,7 +502,7 @@ formatRFile <- function(file, width.cutoff = 100) {
 #' @param ...                 Parameters to be passed on the the formatRFile function
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' formatRFolder()
 #' }
 #' @export

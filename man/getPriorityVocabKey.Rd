@@ -8,7 +8,7 @@ getPriorityVocabKey(baseUrl)
 }
 \arguments{
 \item{baseUrl}{The base URL for the WebApi instance, for example:
-"http://api.ohdsi.org:80/WebAPI".}
+"http://server.org:80/WebAPI".}
 }
 \value{
 A string with the source key of the default OMOP Vocab in Atlas.

@@ -20,7 +20,7 @@ environment to the state it was when a particular study package was run using th
 \code{\link{restoreEnvironment}} function.
 }
 \examples{
-\dontrun{
+\donttest{
 insertEnvironmentSnapshotInPackage("OhdsiRTools")
 }
 
