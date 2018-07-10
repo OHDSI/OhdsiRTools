@@ -522,17 +522,16 @@ invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
 
 #' Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook
 #'
-#' @param fileName   Name of a CSV file in the inst/settings folder of the package specifying the
-#'                   concept sets to add to a workbook. See details for the expected file format.
-#' @param workFolder Directory location of where the workbook will be saved, defaults to working
-#'                   directory.
-#' @param baseUrl    The base URL for the WebApi instance, for example:
-#'                   "http://server.org:80/WebAPI".
-#' @param included   Should included concepts be included in the workbook?
-#' @param mapped     Should mapped concepts be included in the workbook?                   
+#' @param conceptSetIds A vector of concept set IDs.
+#' @param workFolder    Directory location where the workbook will be saved, defaults to working
+#'                      directory.
+#' @param baseUrl       The base URL for the WebApi instance, for example:
+#'                      "http://server.org:80/WebAPI".
+#' @param included      Should included concepts be included in the workbook?
+#' @param mapped        Should mapped concepts be included in the workbook?                   
 #'
 #' @details
-#' The CSV file should have at least the following fields: \describe{ \item{conceptSetId}{The concept set 
+#' The CSV file should have at least first field: \describe{ \item{conceptSetId}{The concept set 
 #' ID in ATLAS.} \item{conceptSetName}{The concept set name that corresponds to the conceptSetId (this 
 #' column can be named anything)} }
 #'  
@@ -542,7 +541,7 @@ invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
 #' concepts worksheet for each concept set are avaialble.
 #'
 #' @export
-createConceptSetWorkbook <- function(fileName, 
+createConceptSetWorkbook <- function(conceptSetIds, 
                                      workFolder = NULL, 
                                      baseUrl, 
                                      included = FALSE,
@@ -551,9 +550,19 @@ createConceptSetWorkbook <- function(fileName,
   if (is.null(workFolder))
     workFolder <- getwd()
   
-  conceptSets <- read.csv(file.path("inst/settings", fileName))
-  conceptSetsIds <- conceptSets[, "conceptSetId"]
-  
+  if (!is.vector(conceptSetIds))
+    stop("conceptSetIds argument must be a numeric vector")
+    
+  conceptSetNames <- NULL
+  for (i in conceptSetIds) {
+    conceptSetNames <- c(conceptSetNames, 
+                         OhdsiRTools::getConceptSetName(baseUrl = baseUrl,
+                                                        setId = i,
+                                                        formatName = FALSE))
+  }
+  conceptSets <- data.frame(conceptSetId = conceptSetIds,
+                            conceptSetName = conceptSetNames)
+
   wb <- openxlsx::createWorkbook()
   openxlsx::addWorksheet(wb = wb, sheetName = "conceptSetIds")
   openxlsx::writeDataTable(wb = wb,
@@ -589,7 +598,7 @@ createConceptSetWorkbook <- function(fileName,
                            widths = "auto")
   }
   
-  for (i in conceptSetsIds) {
+  for (i in conceptSetIds) {
     url <- paste(baseUrl, "conceptset", i, "export", sep = "/")
     httr::set_config(httr::config(ssl_verifypeer = 0L))
     r <- httr::GET(url = url)

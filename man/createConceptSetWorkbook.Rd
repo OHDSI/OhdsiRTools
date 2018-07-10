@@ -4,14 +4,13 @@
 \alias{createConceptSetWorkbook}
 \title{Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook}
 \usage{
-createConceptSetWorkbook(fileName, workFolder = NULL, baseUrl,
+createConceptSetWorkbook(conceptSetIds, workFolder = NULL, baseUrl,
   included = FALSE, mapped = FALSE)
 }
 \arguments{
-\item{fileName}{Name of a CSV file in the inst/settings folder of the package specifying the
-concept sets to add to a workbook. See details for the expected file format.}
+\item{conceptSetIds}{A vector of concept set IDs.}
 
-\item{workFolder}{Directory location of where the workbook will be saved, defaults to working
+\item{workFolder}{Directory location where the workbook will be saved, defaults to working
 directory.}
 
 \item{baseUrl}{The base URL for the WebApi instance, for example:
@@ -30,7 +29,7 @@ concepts worksheet for each concept set are avaialble.
 Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook
 }
 \details{
-The CSV file should have at least the following fields: \describe{ \item{conceptSetId}{The concept set 
+The CSV file should have at least first field: \describe{ \item{conceptSetId}{The concept set 
 ID in ATLAS.} \item{conceptSetName}{The concept set name that corresponds to the conceptSetId (this 
 column can be named anything)} }
 }
