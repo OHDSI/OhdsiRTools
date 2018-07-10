@@ -530,11 +530,6 @@ invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
 #' @param included      Should included concepts be included in the workbook?
 #' @param mapped        Should mapped concepts be included in the workbook?                   
 #'
-#' @details
-#' The CSV file should have at least first field: \describe{ \item{conceptSetId}{The concept set 
-#' ID in ATLAS.} \item{conceptSetName}{The concept set name that corresponds to the conceptSetId (this 
-#' column can be named anything)} }
-#'  
 #' @return
 #' A xlsx workbook (conceptSetExpressions.xlsx) that includes a list of all concept set IDs and names
 #' and a worksheet for the concepts in each set. Options to include an included concepts and mapped
