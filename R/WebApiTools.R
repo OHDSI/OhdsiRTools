@@ -520,3 +520,104 @@ invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
   return(df)
 }
 
+#' Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook
+#'
+#' @param conceptSetIds A vector of concept set IDs.
+#' @param workFolder    Directory location where the workbook will be saved, defaults to working
+#'                      directory.
+#' @param baseUrl       The base URL for the WebApi instance, for example:
+#'                      "http://server.org:80/WebAPI".
+#' @param included      Should included concepts be included in the workbook?
+#' @param mapped        Should mapped concepts be included in the workbook?                   
+#'
+#' @return
+#' A xlsx workbook (conceptSetExpressions.xlsx) that includes a list of all concept set IDs and names
+#' and a worksheet for the concepts in each set. Options to include an included concepts and mapped
+#' concepts worksheet for each concept set are avaialble.
+#'
+#' @export
+createConceptSetWorkbook <- function(conceptSetIds, 
+                                     workFolder = NULL, 
+                                     baseUrl, 
+                                     included = FALSE,
+                                     mapped = FALSE) {
+  
+  if (is.null(workFolder))
+    workFolder <- getwd()
+  
+  if (!is.vector(conceptSetIds))
+    stop("conceptSetIds argument must be a numeric vector")
+    
+  conceptSetNames <- NULL
+  for (i in conceptSetIds) {
+    conceptSetNames <- c(conceptSetNames, 
+                         OhdsiRTools::getConceptSetName(baseUrl = baseUrl,
+                                                        setId = i,
+                                                        formatName = FALSE))
+  }
+  conceptSets <- data.frame(conceptSetId = conceptSetIds,
+                            conceptSetName = conceptSetNames)
+
+  wb <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(wb = wb, sheetName = "conceptSetIds")
+  openxlsx::writeDataTable(wb = wb,
+                           sheet = "conceptSetIds",
+                           x = conceptSets,
+                           colNames = TRUE,
+                           rowNames = FALSE,
+                           withFilter = FALSE)
+  openxlsx::setColWidths(wb = wb,
+                         sheet = "conceptSetIds",
+                         cols = 1:ncol(conceptSets),
+                         widths = "auto")
+  
+  createSheet <- function(fileNumber, label) {
+    concepts <- read.csv(file = substring(files[fileNumber], first = 3),
+                         header = FALSE,
+                         sep = ",",
+                         strip.white = TRUE,
+                         blank.lines.skip = TRUE,
+                         skipNul = TRUE)
+    names(concepts) <- as.character(apply(concepts[1, ], 1, paste))
+    concepts <- concepts[-1, ]
+    openxlsx::addWorksheet(wb = wb, sheetName = paste(label, i, sep = "_"))
+    openxlsx::writeDataTable(wb = wb,
+                             sheet = paste(label, i, sep = "_"),
+                             x = concepts,
+                             colNames = TRUE,
+                             rowNames = FALSE,
+                             withFilter = FALSE)
+    openxlsx::setColWidths(wb = wb,
+                           sheet = paste(label, i, sep = "_"),
+                           cols = 1:ncol(concepts),
+                           widths = "auto")
+  }
+  
+  for (i in conceptSetIds) {
+    url <- paste(baseUrl, "conceptset", i, "export", sep = "/")
+    httr::set_config(httr::config(ssl_verifypeer = 0L))
+    r <- httr::GET(url = url)
+    bin <- httr::content(r, "raw")
+    base::writeBin(object = bin, con = file.path(workFolder, paste0(i, "_conceptSet.zip")))
+    files <- utils::unzip(zipfile = file.path(workFolder, paste0(i, "_conceptSet.zip")), overwrite = TRUE)
+    
+    # concept set
+    createSheet(1, "concepts")
+    
+    # included concepts
+    if (included)
+      createSheet(2, "included")
+      
+    # mapped concepts
+    if (mapped)
+      createSheet(3, "mapped")
+
+    # remove zip
+    file.remove(file.path(workFolder, paste0(i, "_conceptSet.zip")))
+  }
+  file.remove(files[1], files[2], files[3])
+  openxlsx::saveWorkbook(wb = wb,
+                         file = file.path(workFolder, "conceptSetExpressions.xlsx"),
+                         overwrite = TRUE)
+}
+
