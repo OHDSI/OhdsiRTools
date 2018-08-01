@@ -1,14 +1,19 @@
 library("testthat")
 
+validBaseUrl <- "http://api.ohdsi.org:80/WebAPI"
+
 test_that("Invalid source key", {
-  expect_error(object = getCohortGenerationStatuses(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah")))
-  expect_error(object = invokeCohortSetGeneration(baseUrl = "http://api.ohdsi.org:80/WebAPI", definitionIds = c(1234), sourceKeys = c("blah")))
+  expect_error(object = getCohortGenerationStatuses(baseUrl = validBaseUrl, definitionIds = c(1234), sourceKeys = c("blah")))
+  expect_error(object = invokeCohortSetGeneration(baseUrl = validBaseUrl, definitionIds = c(1234), sourceKeys = c("blah")))
 })
 
 test_that("Invalid base Url", {
-  expect_error(object = getCohortDefinitionName(baseUrl = "blah", definitionId = 1234))
-  expect_error(object = getConceptSetConceptIds(baseUrl = "blah", setId = 1234))
-  expect_error(object = insertCohortDefinitionSetInPackage(baseUrl = "blah", fileName = "conceptsetids.csv"))
-  expect_error(object = getCohortGenerationStatuses(baseUrl = "blah", definitionIds = c(1234), sourceKeys = c("CDM")))
-  expect_error(object = invokeCohortSetGeneration(baseUrl = "blah", definitionIds = c(1234), sourceKeys = c("CDM")))
+  baseUrls <- c("blah", "256.256.256.256:80/WebAPI", "1.1:80/WebAPI", "1.1.1.255/webapi")
+  for (baseUrl in baseUrls) {
+    expect_error(object = getCohortDefinitionName(baseUrl = baseUrl, definitionId = 1234))
+    expect_error(object = getConceptSetConceptIds(baseUrl = baseUrl, setId = 1234))
+    expect_error(object = insertCohortDefinitionSetInPackage(baseUrl = baseUrl, fileName = "conceptsetids.csv"))
+    expect_error(object = getCohortGenerationStatuses(baseUrl = baseUrl, definitionIds = c(1234), sourceKeys = c("CDM")))
+    expect_error(object = invokeCohortSetGeneration(baseUrl = baseUrl, definitionIds = c(1234), sourceKeys = c("CDM")))
+  }
 })
