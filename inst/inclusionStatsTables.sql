@@ -20,7 +20,8 @@ CREATE TABLE #cohort_inclusion (
 CREATE TABLE #cohort_inc_result (
 	cohort_definition_id INT NOT NULL,
 	inclusion_rule_mask BIGINT NOT NULL,
-	person_count BIGINT NOT NULL
+	person_count BIGINT NOT NULL,
+	mode_id INT
 	);
 
 CREATE TABLE #cohort_inc_stats (
@@ -28,11 +29,13 @@ CREATE TABLE #cohort_inc_stats (
 	rule_sequence INT NOT NULL,
 	person_count BIGINT NOT NULL,
 	gain_count BIGINT NOT NULL,
-	person_total BIGINT NOT NULL
+	person_total BIGINT NOT NULL,
+	mode_id INT
 	);
 
 CREATE TABLE #cohort_summary_stats (
 	cohort_definition_id INT NOT NULL,
 	base_count BIGINT NOT NULL,
-	final_count BIGINT NOT NULL
+	final_count BIGINT NOT NULL,
+	mode_id INT
 	);
