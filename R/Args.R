@@ -35,9 +35,6 @@
 #' @return
 #' A character vector with the R code including the new function.
 #'
-#' @examples
-#' createArgFunction("read.csv", addArgs = list(exposureId = "exposureId"))
-#'
 #' @export
 createArgFunction <- function(functionName,
                               excludeArgs = c(),
@@ -45,6 +42,7 @@ createArgFunction <- function(functionName,
                               addArgs = list(),
                               rCode = c(),
                               newName) {
+  .Deprecated("ParallelLogger::createArgFunction") 
   args <- formals(functionName)
   if (!is.null(includeArgs)) {
     args <- args[names(args) %in% includeArgs]
@@ -181,29 +179,9 @@ fetchRdDB <- function(filebase, key = NULL) {
 #' @param x        A list of objects of the same type.
 #' @param select   A character vector of names of variables to select.
 #'
-#' @examples 
-#' 
-#' x <- list(a = list(name = "John", age = 25, gender = "M"),
-#'           b = list(name = "Mary", age = 24, gender = "F"))
-#' selectFromList(x, c("name", "age"))
-#' 
-#' # $a
-#' # $a$name
-#' # [1] "John"
-#' # 
-#' # $a$age
-#' # [1] 25
-#' # 
-#' # 
-#' # $b
-#' # $b$name
-#' # [1] "Mary"
-#' # 
-#' # $b$age
-#' # [1] 24
-#'
 #' @export
 selectFromList <- function(x, select) {
+  .Deprecated("ParallelLogger::selectFromList") 
   return(sapply(x, function(x) {
     x[names(x)[names(x) %in% select]]
   }, simplify = FALSE))
@@ -216,6 +194,7 @@ selectFromList <- function(x, select) {
 #'
 #' @export
 excludeFromList <- function(x, exclude) {
+  .Deprecated("ParallelLogger::excludeFromList") 
   return(sapply(x, function(x) {
     x[names(x)[!(names(x) %in% exclude)]]
   }, simplify = FALSE))
@@ -232,22 +211,10 @@ excludeFromList <- function(x, exclude) {
 #'
 #' @return
 #' A list of objects that match the \code{toMatch} object.
-#' 
-#' @examples 
-#' x <- list(a = list(name = "John", age = 25, gender = "M"),
-#'           b = list(name = "Mary", age = 24, gender = "F"))
-#' 
-#' matchInList(x, list(name = "Mary"))
-#' 
-#' # [[1]]
-#' # [[1]]$name
-#' # [1] "Mary"
-#' # 
-#' # [[1]]$age
-#' # [1] 24
 #'
 #' @export
 matchInList <- function(x, toMatch) {
+  .Deprecated("ParallelLogger::matchInList") 
   selected <- selectFromList(x, names(toMatch))
   result <- list()
   for (i in 1:length(x)) {
@@ -310,6 +277,7 @@ convertMemberToAttr <- function(object) {
 #'
 #' @export
 saveSettingsToJson <- function(object, fileName) {
+  .Deprecated("ParallelLogger::saveSettingsToJson") 
   object <- convertAttrToMember(object)
   json <- jsonlite::toJSON(object, pretty = TRUE, force = TRUE, null = "null", auto_unbox = TRUE)
   write(json, fileName)
@@ -327,6 +295,7 @@ saveSettingsToJson <- function(object, fileName) {
 #'
 #' @export
 loadSettingsFromJson <- function(fileName) {
+  .Deprecated("ParallelLogger::loadSettingsFromJson") 
   object <- jsonlite::fromJSON(fileName, simplifyVector = TRUE, simplifyDataFrame = FALSE)
   object <- convertMemberToAttr(object)
   object <- restoreDataFrames(object)

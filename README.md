@@ -1,6 +1,9 @@
 OhdsiRTools
 ===========
 
+[![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
+[![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
+
 Introduction
 ============
 An R package with tools to be used in the other OHDSI R packages
@@ -9,13 +12,10 @@ Features
 ========
 - Auto code formatting
 - Auto checking of R code
-- Functions for parallel computation
-- Functions for logging
-- Functions used for automating analyses
 - Functions for retrieving cohort definition and concept set metadata, status, and composition (SQL/JSON/CSV) from [ATLAS](https://github.com/OHDSI/Atlas)
 
 Examples
-===========
+========
 
 ```r
 # Auto-format all R files in a package:
@@ -23,15 +23,6 @@ formatRFolder()
 
 # Identify problems in R code in a package:
 checkUsagePackage("OhdsiRTools")
-
-# Run a function in parallel:
-fun <- function(x) {
-  return (x^2)
-}
-
-cluster <- makeCluster(numberOfThreads = 3)
-result <- clusterApply(cluster, 1:10, fun)
-stopCluster(cluster)
 
 # Insert cohort definition JSON and SQL into a study package:
 insertCohortDefinitionInPackage(123, "MyocardialInfarction", baseUrl = "http://server.org:80/WebAPI")
@@ -64,23 +55,24 @@ Dependencies
 ============
 None
 
-Getting Started
-===============
+Installation
+=============
 1. In R, use the following commands to download and install OhdsiRTools:
 
   ```r
-  install.packages("devtools")
-  library(devtools)
-  install_github("ohdsi/OhdsiRTools")
+  install.packages("drat")
+  drat::addRepo("OHDSI")
+  install.packages("OhdsiRTools")
   ```
 
-Getting Involved
-=============
-* Vignette: [Logging using OhdsiRTools](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/inst/doc/Logging.pdf)
-* Vignette: [Parallel execution using OhdsiRTools](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/inst/doc/Parallel.pdf)
+User Documentation
+==================
 * Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/extras/OhdsiRTools.pdf)
+
+Support
+=======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-* We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+* We use the <a href="https://github.com/OHDSI/OhdsiRTools/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
 License
 =======
@@ -91,8 +83,6 @@ Development
 OhdsiRTools is being developed in R Studio.
 
 ### Development status
-[![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
-[![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
 
 Ready for use
 

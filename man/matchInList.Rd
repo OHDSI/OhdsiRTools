@@ -21,17 +21,3 @@ In a list of object of the same type, find those that match the input
 Typically, toMatch will contain a subset of the variables that are in the objects in the list. Any
 object matching all variables in \code{toMatch} will be included in the result.
 }
-\examples{
-x <- list(a = list(name = "John", age = 25, gender = "M"),
-          b = list(name = "Mary", age = 24, gender = "F"))
-
-matchInList(x, list(name = "Mary"))
-
-# [[1]]
-# [[1]]$name
-# [1] "Mary"
-# 
-# [[1]]$age
-# [1] 24
-
-}

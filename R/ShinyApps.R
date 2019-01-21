@@ -33,6 +33,7 @@
 #'
 #' @export
 launchLogViewer <- function(logFileName) {
+  .Deprecated("ParallelLogger::launchLogViewer") 
   ensure_installed("shiny")
   ensure_installed("DT")
   appDir <- system.file("shinyApps", "LogViewer", package = "OhdsiRTools")

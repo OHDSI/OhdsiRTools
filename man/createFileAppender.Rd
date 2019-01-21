@@ -16,4 +16,6 @@ Create file appender
 }
 \details{
 Creates an appender that will write to a file.
+
+Deprecated. This function has moved to ParallelLogger.
 }

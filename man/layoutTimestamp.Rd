@@ -14,14 +14,3 @@ layoutTimestamp(level, message)
 \description{
 A layout function to be used with an appender. This layout adds the time to the message.
 }
-\examples{
-appender <- createConsoleAppender(layout = layoutTimestamp)
-
-logger <- createLogger(name = "SIMPLE",
-                       threshold = "INFO",
-                       appenders = list(appender))
-registerLogger(logger)                      
-logTrace("This event is below the threshold (INFO)")
-logInfo("Hello world")                       
-unregisterLogger("SIMPLE")                     
-}

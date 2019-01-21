@@ -13,11 +13,3 @@ Add the default console logger
 Creates a logger that writes to the console using the "INFO" threshold and the
 \code{\link{layoutSimple}} layout.
 }
-\examples{
-logger <- addDefaultConsoleLogger()
-registerLogger(logger)                      
-logTrace("This event is below the threshold (INFO)")
-logInfo("Hello world")                       
-unregisterLogger(logger)  
-
-}

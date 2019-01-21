@@ -22,7 +22,8 @@
 #' @name OhdsiRTools
 #' @importFrom methods getFunction is
 #' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar
-#' installed.packages packageDescription sessionInfo
+#' installed.packages packageDescription sessionInfo write.csv read.csv install.packages menu
 #' @importFrom stats aggregate
-#' @importFrom utils write.csv read.csv install.packages menu
+#' @importFrom httr GET POST content set_config config add_headers
+#' @import openxlsx 
 NULL

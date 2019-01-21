@@ -33,7 +33,3 @@ Create an argument function
 This function can be used to create a function that has (almost) the same interface as the
 specified function, and the output of this function will be a list of argument values.
 }
-\examples{
-createArgFunction("read.csv", addArgs = list(exposureId = "exposureId"))
-
-}

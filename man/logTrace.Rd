@@ -16,14 +16,3 @@ Log a message at the TRACE level
 \details{
 Log a message at the specified level. The message will be sent to all the registered loggers.
 }
-\examples{
-appender <- createConsoleAppender(layout = layoutTimestamp)
-
-logger <- createLogger(name = "SIMPLE",
-                       threshold = "INFO",
-                       appenders = list(appender))
-registerLogger(logger)                      
-logTrace("This event is below the threshold (INFO)")
-logInfo("Hello world")                       
-unregisterLogger("SIMPLE")                     
-}

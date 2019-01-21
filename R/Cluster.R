@@ -55,13 +55,12 @@ setFfDir <- function(fftempdir) {
 #' @return
 #' An object representing the cluster.
 #' 
-#' @template ClusterExample
-#'
 #' @export
 makeCluster <- function(numberOfThreads,
                         singleThreadToMain = TRUE,
                         divideFfMemory = TRUE,
                         setFfTempDir = TRUE) {
+  .Deprecated("ParallelLogger::makeCluster") 
   if (numberOfThreads == 1 && singleThreadToMain) {
     cluster <- list()
     class(cluster) <- "noCluster"
@@ -121,6 +120,7 @@ makeCluster <- function(numberOfThreads,
 #'
 #' @export
 clusterRequire <- function(cluster, package) {
+  .Deprecated("ParallelLogger::cluterRequire") 
   if (class(cluster)[1] == "noCluster") {
     do.call("require", list(package = package))
   } else {
@@ -140,10 +140,9 @@ clusterRequire <- function(cluster, package) {
 #'
 #' @param cluster   The cluster to stop
 #' 
-#' @template ClusterExample
-#'
 #' @export
 stopCluster <- function(cluster) {
+  .Deprecated("ParallelLogger::stopCluster") 
   if (class(cluster)[1] != "noCluster") {
     snow::stopCluster.default(cluster)
     OhdsiRTools::logTrace("Stopping cluster")
@@ -174,10 +173,9 @@ stopCluster <- function(cluster) {
 #' @return
 #' A list with the result of the function on each item in x.
 #' 
-#' @template ClusterExample
-#'
 #' @export
 clusterApply <- function(cluster, x, fun, ..., stopOnError = FALSE, progressBar = TRUE) {
+  .Deprecated("ParallelLogger::clusterApply") 
   if (class(cluster)[1] == "noCluster") {
     lapply(x, fun, ...)
   } else {

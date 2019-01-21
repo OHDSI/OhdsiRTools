@@ -53,13 +53,14 @@ setLoggerSettings <- function(settings) {
 #'
 #' @details
 #' Creates an appender that will write to the console.
+#' 
+#' Deprecated. This function has moved to ParallelLogger.
 #'
 #' @param layout   The layout to be used by the appender.
 #'
-#' @template LoggingExample
-#' 
 #' @export
 createConsoleAppender <- function(layout = layoutSimple) {
+  .Deprecated("ParallelLogger::createConsoleAppender") 
   appendFunction <- function(this, level, message) {
     if (level == "WARN" || level == "ERROR") {
       writeLines(message, con = stderr())
@@ -78,11 +79,14 @@ createConsoleAppender <- function(layout = layoutSimple) {
 #' @details
 #' Creates an appender that will write to a file.
 #'
+#' Deprecated. This function has moved to ParallelLogger.
+#' 
 #' @param layout     The layout to be used by the appender.
 #' @param fileName   The name of the file to write to.
 #'
 #' @export
 createFileAppender <- function(layout = layoutParallel, fileName) {
+  .Deprecated("ParallelLogger::createFileAppender") 
   appendFunction <- function(this, level, message) {
     con <- file(fileName, open = "at", blocking = FALSE)
     writeLines(text = message, con = con)
@@ -102,6 +106,8 @@ createFileAppender <- function(layout = layoutParallel, fileName) {
 #' marked "INFO" will be logged, but messages marked "TRACE" will not. The order of levels is "TRACE",
 #' "DEBUG", "INFO", "WARN", "ERROR, "and FATAL".
 #'
+#' Deprecated. This function has moved to ParallelLogger.
+#'
 #' @param name        A name for the logger.
 #' @param threshold   The threshold to be used for reporting.
 #' @param appenders   A list of one or more appenders as created for example using the
@@ -110,12 +116,11 @@ createFileAppender <- function(layout = layoutParallel, fileName) {
 #' @return
 #' An object of type \code{Logger}, to be used with the \code{\link{registerLogger}} function.
 #' 
-#' @template LoggingExample
-#'
 #' @export
 createLogger <- function(name = "SIMPLE",
                          threshold = "INFO",
                          appenders = list(createConsoleAppender())) {
+  .Deprecated("ParallelLogger::createLogger") 
   for (appender in appenders) if (!is(appender, "Appender"))
     stop("All appenders must be of class 'Appender'")
   logFunction <- function(this, level, message) {
@@ -137,13 +142,14 @@ createLogger <- function(name = "SIMPLE",
 #' @details
 #' Registers a logger as created using the \code{\link{createLogger}} function to the logging system.
 #'
+#' Deprecated. This function has moved to ParallelLogger.
+#' 
 #' @param logger   An object of type \code{Logger} as created using the \code{\link{createLogger}}
 #'                 function.
-#'                 
-#' @template LoggingExample
 #'
 #' @export
 registerLogger <- function(logger) {
+  .Deprecated("ParallelLogger::registerLogger") 
   if (!is(logger, "Logger"))
     stop("Logger must be of class 'Logger'")
   settings <- getLoggerSettings()
@@ -157,16 +163,17 @@ registerLogger <- function(logger) {
 #' @details
 #' Unregisters a logger from the logging system.
 #'
+#' Deprecated. This function has moved to ParallelLogger.
+#' 
 #' @param x   Can either be an integer (e.g. 2 to remove the second logger), the name of the logger, or
 #'            the logger object itself.
 #'
 #' @return
 #' Returns TRUE if the logger was removed.
-#' 
-#' @template LoggingExample
 #'
 #' @export
 unregisterLogger <- function(x) {
+  .Deprecated("ParallelLogger::unregisterLogger") 
   settings <- getLoggerSettings()
   if (is.integer(x) || is.numeric(x)) {
     if (x <= length(settings$loggers)) {
@@ -207,6 +214,7 @@ unregisterLogger <- function(x) {
 #'
 #' @export
 getLoggers <- function() {
+  .Deprecated("ParallelLogger::getLoggers") 
   settings <- getLoggerSettings()
   return(settings$loggers)
 }
@@ -226,13 +234,6 @@ clearLoggers <- function() {
 #' Creates a logger that writes to the console using the "INFO" threshold and the
 #' \code{\link{layoutSimple}} layout.
 #'
-#' @examples 
-#' logger <- addDefaultConsoleLogger()
-#' registerLogger(logger)                      
-#' logTrace("This event is below the threshold (INFO)")
-#' logInfo("Hello world")                       
-#' unregisterLogger(logger)  
-#' 
 #' @export
 addDefaultConsoleLogger <- function() {
   registerLogger(createLogger())
@@ -249,6 +250,7 @@ addDefaultConsoleLogger <- function() {
 #'
 #' @export
 addDefaultFileLogger <- function(fileName) {
+  .Deprecated("ParallelLogger::addDefaultFileLogger") 
   registerLogger(createLogger(name = "DEFAULT",
                               threshold = "TRACE",
                               appenders = list(createFileAppender(layout = layoutParallel,
@@ -271,6 +273,7 @@ levelToInt <- function(level) {
 }
 
 log <- function(level, ...) {
+  .Deprecated("ParallelLogger::log") 
   message <- .makeMessage(...)
   settings <- getLoggerSettings()
   for (logger in settings$loggers) {
@@ -288,8 +291,6 @@ log <- function(level, ...) {
 #' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
 #'              with no separator).
 #'              
-#' @template LoggingExample
-#'
 #' @export
 logTrace <- function(...) {
   log(level = "TRACE", ...)
@@ -313,10 +314,10 @@ logDebug <- function(...) {
 #' @details
 #' Log a message at the specified level. The message will be sent to all the registered loggers.
 #'
+#' Deprecated. This function has moved to ParallelLogger.
+#' 
 #' @param ...   Zero or more objects which can be coerced to character (and which are pasted together
 #'              with no separator).
-#'
-#' @template LoggingExample
 #'
 #' @export
 logInfo <- function(...) {
@@ -391,8 +392,6 @@ layoutSimple <- function(level, message) {
 #' @param level     The level of the message (e.g. "INFO")
 #' @param message   The message to layout.
 #'
-#' @template LoggingExample
-#' 
 #' @export
 layoutTimestamp <- function(level, message) {
   # Avoid check notes about non-used parameters:
