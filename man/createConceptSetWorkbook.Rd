@@ -28,8 +28,3 @@ concepts worksheet for each concept set are avaialble.
 \description{
 Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook
 }
-\details{
-The CSV file should have at least first field: \describe{ \item{conceptSetId}{The concept set 
-ID in ATLAS.} \item{conceptSetName}{The concept set name that corresponds to the conceptSetId (this 
-column can be named anything)} }
-}
