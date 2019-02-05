@@ -79,6 +79,25 @@ takeEnvironmentSnapshot <- function(rootPackage) {
   return(snapshot)
 }
 
+comparable <- function(installedVersion, requiredVersion) {
+  parts1 <- strsplit(as.character(installedVersion), "[^0-9]")[[1]]
+  parts2 <- strsplit(as.character(requiredVersion), "[^0-9]")[[1]]
+  if (parts1[1] != parts2[1]) {
+    return(FALSE)
+  } 
+  parts1 <- as.numeric(parts1)
+  parts2 <- as.numeric(parts2)
+  if (length(parts1) > 1 && parts1[2] > parts2[2]) {
+    return(TRUE)
+  } else if (length(parts1) > 2 && parts1[2] == parts2[2] && parts1[3] > parts2[3]) {
+    return(TRUE)
+  } else if (length(parts1) > 3 && parts1[2] == parts2[2] && parts1[3] == parts2[3] && parts1[4] > parts2[4]) {
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+
 #' Restore the R environment to a snapshot
 #'
 #' @details
@@ -90,6 +109,11 @@ takeEnvironmentSnapshot <- function(rootPackage) {
 #'                              \code{\link{takeEnvironmentSnapshot}} function.
 #' @param stopOnWrongRVersion   Should the function stop when the wrong version of R is installed? Else
 #'                              just a warning will be thrown when the version doesn't match.
+#' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
+#'                              package will only be installed if (a) a newer version is required than
+#'                              currently installed, or (b) the major version number is different.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
+#'                              to be installed manualy.
 #'
 #'
 #' @examples
@@ -103,35 +127,69 @@ takeEnvironmentSnapshot <- function(rootPackage) {
 #' restoreEnvironment(snapshot)
 #' }
 #' @export
-restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE) {
+restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE) {
+  start <- Sys.time()
+  # R core packages that cannot be installed:
+  corePackages <- c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets", "rlang", "devtools")
+  
+  # OHDSI packages not in CRAN:
+  ohdsiPackages <- c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CohortMethod", 
+                     "EvidenceSynthesis", "FeatureExtraction", "IcTemporalPatternDiscovery", 
+                     "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
+                     "PheValuator", "SelfControlledCaseSeries", "SelfControlledCohort")
+  
   s <- sessionInfo()
   rVersion <- paste(s$R.version$major, s$R.version$minor, sep = ".")
   if (rVersion != as.character(snapshot$version[snapshot$package == "R"])) {
-    message <- paste0("Wrong R version: need version ",
-                      as.character(snapshot$version[snapshot$package ==
-      "R"]), ", found version ", rVersion)
+    message <- sprintf("Wrong R version: need version %s, found version %s",
+                       as.character(snapshot$version[snapshot$package == "R"]),
+                       rVersion)
     if (stopOnWrongRVersion) {
       stop(message)
     } else {
       warning(message)
     }
   }
+  
   snapshot <- snapshot[snapshot$package != "R", ]
+  if (skipLast) {
+    snapshot <- snapshot[1:(nrow(snapshot) - 1), ]
+  }
   for (i in 1:nrow(snapshot)) {
     package <- as.character(snapshot$package[i])
-    version <- as.character(snapshot$version[i])
-    if (package %in% c("grDevices", "graphics", "utils", "stats", "methods", "tools")) {
-      writeLines(paste0("Skipping ", package, " (", version, ") because part of R itself"))
-    } else if (package %in% installed.packages() && packageDescription(package)$Version == version) {
-      writeLines(paste0("Skipping ",
-                        package,
-                        " (",
-                        version,
-                        ") because correct version already installed"))
+    requiredVersion <- as.character(snapshot$version[i])
+    isInstalled <- package %in% installed.packages()
+    if (isInstalled) {
+      installedVersion <- packageDescription(package)$Version
+    }
+    if (package %in% corePackages) {
+      writeLines(sprintf("Skipping %s (%s) because part of R core", package, requiredVersion))
+    } else if (isInstalled && requiredVersion == installedVersion) {
+      writeLines(sprintf("Skipping %s (%s) because correct version already installed", package, requiredVersion))
+    } else if (!strict && isInstalled && comparable(installedVersion, requiredVersion)) {  
+      writeLines(sprintf("Skipping %s because installed version (%s) is newer than required version (%s), and major version number is the same", 
+                         package,
+                         installedVersion, 
+                         requiredVersion))
+    } else if (package %in% ohdsiPackages) {
+      if (isInstalled) {
+        writeLines(sprintf("Installing %s because version %s needed but version %s found", package, requiredVersion, installedVersion))
+      } else {
+        writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
+      }
+      url <- sprintf("https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz", package, requiredVersion)
+      devtools::install_url(url, dependencies = FALSE)
     } else {
-      devtools::install_version(package = package, version = version, type = "source")
+      if (package %in% installed.packages()) {
+        writeLines(sprintf("Installing %s because version %s needed but version %s found", package, requiredVersion, installedVersion))
+      } else {
+        writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
+      }
+      devtools::install_version(package = package, version = requiredVersion, type = "source", dependencies = FALSE)
     }
   }
+  delta <- Sys.time() - start
+  writeLines(paste("Restoring environment took", delta, attr(delta, "units")))
   invisible(NULL)
 }
 
@@ -140,12 +198,13 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE) {
 #'
 #' @details
 #' This function records all versions used in the R environment that are used by one root package, and
-#' stores them in the R package that is currently being developed in a file called
+#' stores them in a CSV file in the R package that is currently being developed. The default location is
 #' \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
 #' environment to the state it was when a particular study package was run using the
 #' \code{\link{restoreEnvironment}} function.
 #'
 #' @param rootPackage   The name of the root package
+#' @param pathToCsv    The path for saving the snapshot (as CSV file).
 #'
 #' @examples
 #' \dontrun{
@@ -153,11 +212,88 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE) {
 #' }
 #'
 #' @export
-insertEnvironmentSnapshotInPackage <- function(rootPackage) {
+insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/settings/rEnvironmentSnapshot.csv") {
   snapshot <- takeEnvironmentSnapshot(rootPackage)
-  if (!file.exists("inst/settings")) {
-    dir.create("inst/settings", recursive = TRUE)
+  folder <- dirname(pathToCsv)
+  if (!file.exists(folder)) {
+    dir.create(folder, recursive = TRUE)
   }
-  fileName <- file.path("inst/settings", "rEnvironmentSnapshot.csv")
-  write.csv(snapshot, fileName, row.names = FALSE)
+  write.csv(snapshot, pathToCsv, row.names = FALSE)
 }
+
+#' Restore environment stored in package
+#'
+#' @details
+#' This function restores all packages (and package versions) described in the environment snapshot stored
+#' in the package currently being developed. The default location is
+#' \code{inst/settings/rEnvironmentSnapshot.csv}.
+#'
+#' @param pathToCsv             The path for saving the snapshot (as CSV file).
+#' @param stopOnWrongRVersion   Should the function stop when the wrong version of R is installed? Else
+#'                              just a warning will be thrown when the version doesn't match.
+#' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
+#'                              package will only be installed if (a) a newer version is required than
+#'                              currently installed, or (b) the major version number is different.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
+#'                              to be installed manualy.
+#'
+#' @examples
+#' \dontrun{
+#' restoreEnvironmentFromPackage()
+#' }
+#'
+#' @export
+restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmentSnapshot.csv", 
+                                          stopOnWrongRVersion = FALSE, 
+                                          strict = FALSE,
+                                          skipLast = TRUE) {
+  snapshot <- read.csv(pathToCsv)
+  restoreEnvironment(snapshot = snapshot,
+                     stopOnWrongRVersion = stopOnWrongRVersion,
+                     strict = strict,
+                     skipLast = skipLast)
+  
+}
+
+#' Restore environment stored in package
+#'
+#' @details
+#' This function restores all packages (and package versions) described in the environment snapshot stored
+#' in the package currently being developed. The default location is
+#' \code{inst/settings/rEnvironmentSnapshot.csv}.
+#'
+#' @param githubPath            The path for the GitHub repo containing the package (e.g. 'OHDSI/StudyProtocols/AlendronateVsRaloxifene').
+#' @param pathToCsv             The path for the snapshot inside the package.
+#' @param stopOnWrongRVersion   Should the function stop when the wrong version of R is installed? Else
+#'                              just a warning will be thrown when the version doesn't match.
+#' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
+#'                              package will only be installed if (a) a newer version is required than
+#'                              currently installed, or (b) the major version number is different.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
+#'                              to be installed manualy.
+#'
+#' @examples
+#' \dontrun{
+#' restoreEnvironmentFromPackageOnGithub("OHDSI/StudyProtocols/AlendronateVsRaloxifene")
+#' }
+#'
+#' @export
+restoreEnvironmentFromPackageOnGithub <- function(githubPath, 
+                                                  pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
+                                                  stopOnWrongRVersion = FALSE, 
+                                                  strict = FALSE,
+                                                  skipLast = TRUE) {
+  parts <- strsplit(githubPath, "/")[[1]]
+  if (length(parts) > 2) {
+    githubPath <- paste(c(parts[1:2], "master", parts[3:length(parts)]), collapse = "/")
+  } else {
+    githubPath <- paste(c(parts[1:2], "master"), collapse = "/")
+  }
+  url <- paste(c("https://raw.githubusercontent.com", githubPath, pathToCsv), collapse = "/")
+  snapshot <- read.csv(url)
+  restoreEnvironment(snapshot = snapshot,
+                     stopOnWrongRVersion = stopOnWrongRVersion,
+                     strict = strict,
+                     skipLast = skipLast)
+}
+

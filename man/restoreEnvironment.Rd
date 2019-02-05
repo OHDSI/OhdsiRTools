@@ -4,7 +4,8 @@
 \alias{restoreEnvironment}
 \title{Restore the R environment to a snapshot}
 \usage{
-restoreEnvironment(snapshot, stopOnWrongRVersion = FALSE)
+restoreEnvironment(snapshot, stopOnWrongRVersion = FALSE,
+  strict = FALSE, skipLast = TRUE)
 }
 \arguments{
 \item{snapshot}{The snapshot data frame as generated using the
@@ -12,6 +13,13 @@ restoreEnvironment(snapshot, stopOnWrongRVersion = FALSE)
 
 \item{stopOnWrongRVersion}{Should the function stop when the wrong version of R is installed? Else
 just a warning will be thrown when the version doesn't match.}
+
+\item{strict}{If TRUE, the exact version of each package will installed. If FALSE, a
+package will only be installed if (a) a newer version is required than
+currently installed, or (b) the major version number is different.}
+
+\item{skipLast}{Skip last entry in snapshot? This is usually the study package that needs
+to be installed manualy.}
 }
 \description{
 Restore the R environment to a snapshot
