@@ -16,6 +16,71 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#' Get a concept set expression
+#' 
+#' @details 
+#' Obtain the JSON expression from WebAPI for a given concept set
+#' 
+#' @param setId           The concept set id in Atlas.
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://server.org:80/WebAPI".
+#' @return 
+#' A JSON list object representing the concept set
+#' 
+#' @examples
+#' \dontrun{
+#' # This will obtain a concept set's JSON expression:
+#'
+#' getConceptSetExpression(setId = 282, 
+#'                         baseUrl = "http://server.org:80/WebAPI")
+#' }
+#'                        
+#' @export
+getConceptSetExpression <- function(baseUrl, 
+                                    setId) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
+  }
+  
+  url <- sprintf("%1s/conceptset/%2s/expression", baseUrl, setId)
+  json <- httr::GET(url)
+  httr::content(json)
+}
+
+
+#' Get a cohort definition expression
+#' 
+#' @details 
+#' Obtain the JSON expression from WebAPI for a given cohort id
+#' 
+#' @param definitionId    The number indicating which cohort definition to fetch.
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://server.org:80/WebAPI".
+#' @return 
+#' A JSON list object representing the cohort definition
+#' 
+#' @examples
+#' \dontrun{
+#' # This will obtain a cohort definition's JSON expression:
+#'
+#' getCohortDefinitionExpression(definitionId = 282, 
+#'                               baseUrl = "http://server.org:80/WebAPI")
+#' }
+#'                        
+#' @export
+getCohortDefinitionExpression <- function(definitionId, 
+                                          baseUrl) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
+  }
+  
+  url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
+  json <- httr::GET(url)
+  httr::content(json)
+}
+
+
+
 #' Load a cohort definition and insert it into this package
 #'
 #' @details
@@ -56,9 +121,8 @@ insertCohortDefinitionInPackage <- function(definitionId,
   }
 
   ### Fetch JSON object ###
-  url <- paste(baseUrl, "cohortdefinition", definitionId, sep = "/")
-  json <- httr::GET(url)
-  json <- httr::content(json)
+  json <- OhdsiRTools::getCohortDefinitionExpression(definitionId = definitionId, baseUrl = baseUrl)
+  
   # expression <- RJSONIO::fromJSON(json$expression)
   if (is.null(name)) {
     name <- json$name
@@ -265,11 +329,8 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
-  url <- gsub("@baseUrl",
-              baseUrl,
-              gsub("@definitionId", definitionId, "@baseUrl/cohortdefinition/@definitionId"))
-  json <- httr::GET(url)
-  json <- httr::content(json)
+  
+  json <- OhdsiRTools::getCohortDefinitionExpression(definitionId = definitionId, baseUrl = baseUrl)
 
   if (formatName) {
     return(.formatName(json$name))
@@ -278,6 +339,36 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
   }
 }
 
+
+#' Get a cohort definition's SQL from WebAPI
+#'
+#' @details
+#' Obtains the template SQL of a cohort.
+#'
+#' @param baseUrl                 The base URL for the WebApi instance, for example:
+#'                                "http://server.org:80/WebAPI".
+#' @param definitionId            The cohort definition id in Atlas.
+#'
+#' @return
+#' The templated SQL to generate the cohort
+#'
+#' @export
+getCohortDefinitionSql <- function(baseUrl, 
+                                   definitionId) {
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
+  }
+  
+  url <- sprintf("%1s/cohortdefinition/sql", baseUrl)
+  httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
+  
+  json <- OhdsiRTools::getCohortDefinitionExpression(definitionId = definitionId, baseUrl = baseUrl)
+  body <- RJSONIO::toJSON(list(expression = RJSONIO::fromJSON(json$expression), 
+                               options = list(generateStats = TRUE)), digits = 23)
+  
+  req <- httr::POST(url, body = body, config = httr::add_headers(httpheader))
+  (httr::content(req))$templateSql
+}
 
 #' Get a concept set's name from WebAPI
 #'
@@ -331,6 +422,47 @@ getPriorityVocabKey <- function(baseUrl) {
   return(json$sourceKey)
 }
 
+#' Get Concepts from a Concept Set Expression
+#' 
+#' @details 
+#' 
+#' @param baseUrl          The base URL for the WebApi instance, for example:
+#'                         "http://server.org:80/WebAPI".
+#' @param expression       A JSON string that represents the concept set expression
+#' @param vocabSourceKey   The source key of the Vocabulary. By default, the priority Vocabulary is
+#'                         used.
+#' @return 
+#' A list of concept ids
+#' 
+#' @examples
+#' \dontrun{
+#' # This will obtain the concept ids from a concept set expression:
+#'
+#' getSetExpressionConceptIds(baseUrl = "http://server.org:80/WebAPI",
+#'                            expression = someJsonExpression)
+#' }
+#' 
+#' @export
+getSetExpressionConceptIds <- function(baseUrl,
+                                       expression,
+                                       vocabSourceKey = NULL) {
+  
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
+  }
+  
+  if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
+    vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
+  }
+  
+  url <- sprintf("%1s/vocabulary/%2s/resolveConceptSetExpression", baseUrl, vocabSourceKey)
+  
+  httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
+  req <- httr::POST(url, body = expression, config = httr::add_headers(httpheader))
+  req <- httr::content(req)
+  unlist(req)
+}
+
 
 #' Get Concept Set Concept Ids
 #'
@@ -355,20 +487,63 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
   if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
     vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
   }
-
-  url <- gsub("@baseUrl", baseUrl, gsub("@setId", setId, "@baseUrl/conceptset/@setId/expression"))
-  json <- httr::GET(url)
-  json <- httr::content(json)
-
-  url <- sprintf("%1s/vocabulary/%2s/resolveConceptSetExpression", baseUrl, vocabSourceKey)
-
-  httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
-  body <- as.character(RJSONIO::toJSON(x = json, digits = 50))  # disables scientific notation
-  req <- httr::POST(url, body = body, config = httr::add_headers(httpheader))
-  req <- httr::content(req)
-  concepts <- unlist(req)
-  return(concepts)
+  
+  expression <- RJSONIO::toJSON(OhdsiRTools::getConceptSetExpression(baseUrl = baseUrl, setId = setId), digits = 23)
+  OhdsiRTools::getSetExpressionConceptIds(baseUrl = baseUrl, expression = expression, vocabSourceKey = vocabSourceKey)
 }
+
+#' Get a list of concept sets and concepts from a cohort definition
+#' 
+#' @details 
+#' For a given cohort definition id, get all concept sets and resolve all concepts from each
+#' 
+#' @param baseUrl         The base URL for the WebApi instance, for example:
+#'                        "http://server.org:80/WebAPI".
+#' @param definitionId    The cohort id to fetch concept sets and concepts from
+#' 
+#' @return 
+#' A list of concept sets, set names, and concepts
+#' 
+#' @examples
+#' \dontrun{
+#' # This will obtain a list of concept sets and concepts from a cohort id:
+#'
+#' getConceptsFromCohortId(baseUrl = "http://server.org:80/WebAPI",
+#'                         definitionId = 123)
+#' }
+#' 
+#' @export
+getConceptSetsAndConceptsFromCohort <- function(baseUrl,
+                                                definitionId, 
+                                                vocabSourceKey = NULL) {
+  
+  if (!.checkBaseUrl(baseUrl)) {
+    stop("Base URL not valid, should be like http://server.org:80/WebAPI")
+  }
+  
+  if (missing(vocabSourceKey) || is.null(vocabSourceKey)) {
+    vocabSourceKey <- OhdsiRTools::getPriorityVocabKey(baseUrl = baseUrl)
+  }
+  
+  json <- OhdsiRTools::getCohortDefinitionExpression(definitionId = definitionId, baseUrl = baseUrl)
+  json <- RJSONIO::fromJSON(json$expression)
+  url <- sprintf("%1s/vocabulary/%2s/resolveConceptSetExpression", baseUrl, vocabSourceKey)
+  httpheader <- c(Accept = "application/json; charset=UTF-8", `Content-Type` = "application/json")
+  
+  lapply(json$ConceptSets, function(j) {
+    body <- RJSONIO::toJSON(j$expression, digits = 23)
+    req <- httr::POST(url, body = body, config = httr::add_headers(httpheader))
+    req <- httr::content(req)
+    concepts <- unlist(req)  
+    list(
+      id = j$id,
+      name = j$name,
+      concepts = concepts
+    )
+  })
+}
+
+
 
 #' Get Cohort Generation Statuses
 #'
