@@ -15,5 +15,10 @@ test_that("Invalid base Url", {
     expect_error(object = insertCohortDefinitionSetInPackage(baseUrl = baseUrl, fileName = "conceptsetids.csv"))
     expect_error(object = getCohortGenerationStatuses(baseUrl = baseUrl, definitionIds = c(1234), sourceKeys = c("CDM")))
     expect_error(object = invokeCohortSetGeneration(baseUrl = baseUrl, definitionIds = c(1234), sourceKeys = c("CDM")))
+    expect_error(object = getConceptSetExpression(baseUrl = baseUrl, setId = 1234))
+    expect_error(object = getCohortDefinitionExpression(baseUrl = baseUrl, definitionId = 1234))
+    expect_error(object = getSetExpressionConceptIds(baseUrl = baseUrl, expression = '{"items": []}'))
+    expect_error(object = getCohortDefinitionSql(baseUrl = baseUrl, definitionId = 1234))
+    expect_error(object = getConceptSetsAndConceptsFromCohort(baseUrl = baseUrl, definitionId = 1234))
   }
 })
