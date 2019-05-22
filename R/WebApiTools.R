@@ -151,7 +151,7 @@ insertCohortDefinitionInPackage <- function(definitionId,
     dir.create("inst/sql/sql_server", recursive = TRUE)
   }
 
-  fileConn <- file(file.path("inst/sql/sql_server", paste(name, "sql", sep = ".")))
+  fileConn <- file(file.path("inst/sql/sql_server", paste(name, "sql", sep = ".")), open="wb")
   writeLines(sql, fileConn)
   close(fileConn)
 }
