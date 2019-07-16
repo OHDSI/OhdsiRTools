@@ -72,10 +72,10 @@
   
   # Fetch cohort counts:
   sql <- "SELECT cohort_definition_id, COUNT(*) AS count FROM @cohort_database_schema.@cohort_table GROUP BY cohort_definition_id"
-  sql <- SqlRender::renderSql(sql,
-                              cohort_database_schema = cohortDatabaseSchema,
-                              cohort_table = cohortTable)$sql
-  sql <- SqlRender::translateSql(sql, targetDialect = attr(connection, "dbms"))$sql
+  sql <- SqlRender::render(sql,
+                           cohort_database_schema = cohortDatabaseSchema,
+                           cohort_table = cohortTable)
+  sql <- SqlRender::translate(sql, targetDialect = attr(connection, "dbms"))
   counts <- DatabaseConnector::querySql(connection, sql)
   names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
   counts <- merge(counts, data.frame(cohortDefinitionId = cohortsToCreate$cohortId,
@@ -86,20 +86,20 @@
   # Fetch inclusion rule stats and drop tables:
   fetchStats <- function(tableName) {
     sql <- "SELECT * FROM #@table_name"
-    sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
-    sql <- SqlRender::translateSql(sql = sql, 
-                                   targetDialect = attr(connection, "dbms"),
-                                   oracleTempSchema = oracleTempSchema)$sql
+    sql <- SqlRender::render(sql, table_name = tableName)
+    sql <- SqlRender::translate(sql = sql, 
+                                targetDialect = attr(connection, "dbms"),
+                                oracleTempSchema = oracleTempSchema)
     stats <- DatabaseConnector::querySql(connection, sql)
     names(stats) <- SqlRender::snakeCaseToCamelCase(names(stats))
     fileName <- file.path(outputFolder, paste0(SqlRender::snakeCaseToCamelCase(tableName), ".csv"))
     write.csv(stats, fileName, row.names = FALSE)
     
     sql <- "TRUNCATE TABLE #@table_name; DROP TABLE #@table_name;"
-    sql <- SqlRender::renderSql(sql, table_name = tableName)$sql
-    sql <- SqlRender::translateSql(sql = sql, 
-                                   targetDialect = attr(connection, "dbms"),
-                                   oracleTempSchema = oracleTempSchema)$sql
+    sql <- SqlRender::render(sql, table_name = tableName)
+    sql <- SqlRender::translate(sql = sql, 
+                                targetDialect = attr(connection, "dbms"),
+                                oracleTempSchema = oracleTempSchema)
     DatabaseConnector::executeSql(connection, sql)
   }
   fetchStats("cohort_inclusion")
