@@ -1,3 +1,13 @@
+OhdsiRTools v1.8.0
+==================
+
+Changes: 
+
+1. Deprecating WebAPI functions, which have been moved to ROhdsiWebApi
+
+2. Deleting deprecated logging and parallel computation functions, which have been moved to ParallelLogger.
+
+
 OhdsiRTools v1.7.0
 ==================
 

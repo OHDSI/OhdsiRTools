@@ -4,8 +4,10 @@
 \alias{insertEnvironmentSnapshotInPackage}
 \title{Store snapshot of the R environment in the package}
 \usage{
-insertEnvironmentSnapshotInPackage(rootPackage,
-  pathToCsv = "inst/settings/rEnvironmentSnapshot.csv")
+insertEnvironmentSnapshotInPackage(
+  rootPackage,
+  pathToCsv = "inst/settings/rEnvironmentSnapshot.csv"
+)
 }
 \arguments{
 \item{rootPackage}{The name of the root package}

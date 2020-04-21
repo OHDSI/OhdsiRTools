@@ -4,9 +4,13 @@
 \alias{restoreEnvironmentFromPackageOnGithub}
 \title{Restore environment stored in package}
 \usage{
-restoreEnvironmentFromPackageOnGithub(githubPath,
+restoreEnvironmentFromPackageOnGithub(
+  githubPath,
   pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
-  stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE)
+  stopOnWrongRVersion = FALSE,
+  strict = FALSE,
+  skipLast = TRUE
+)
 }
 \arguments{
 \item{githubPath}{The path for the GitHub repo containing the package (e.g. 'OHDSI/StudyProtocols/AlendronateVsRaloxifene').}

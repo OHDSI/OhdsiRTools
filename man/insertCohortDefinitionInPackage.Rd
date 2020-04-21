@@ -4,8 +4,12 @@
 \alias{insertCohortDefinitionInPackage}
 \title{Load a cohort definition and insert it into this package}
 \usage{
-insertCohortDefinitionInPackage(definitionId, name = NULL, baseUrl,
-  generateStats = FALSE)
+insertCohortDefinitionInPackage(
+  definitionId,
+  name = NULL,
+  baseUrl,
+  generateStats = FALSE
+)
 }
 \arguments{
 \item{definitionId}{The number indicating which cohort definition to fetch.}

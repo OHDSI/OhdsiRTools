@@ -4,8 +4,12 @@
 \alias{restoreEnvironment}
 \title{Restore the R environment to a snapshot}
 \usage{
-restoreEnvironment(snapshot, stopOnWrongRVersion = FALSE,
-  strict = FALSE, skipLast = TRUE)
+restoreEnvironment(
+  snapshot,
+  stopOnWrongRVersion = FALSE,
+  strict = FALSE,
+  skipLast = TRUE
+)
 }
 \arguments{
 \item{snapshot}{The snapshot data frame as generated using the

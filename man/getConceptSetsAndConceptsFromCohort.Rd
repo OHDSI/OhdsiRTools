@@ -4,14 +4,19 @@
 \alias{getConceptSetsAndConceptsFromCohort}
 \title{Get a list of concept sets and concepts from a cohort definition}
 \usage{
-getConceptSetsAndConceptsFromCohort(baseUrl, definitionId,
-  vocabSourceKey = NULL)
+getConceptSetsAndConceptsFromCohort(
+  baseUrl,
+  definitionId,
+  vocabSourceKey = NULL
+)
 }
 \arguments{
 \item{baseUrl}{The base URL for the WebApi instance, for example:
 "http://server.org:80/WebAPI".}
 
 \item{definitionId}{The cohort id to fetch concept sets and concepts from}
+
+\item{vocabSourceKey}{A mysterious parameter.}
 }
 \value{
 A list of concept sets, set names, and concepts

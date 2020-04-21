@@ -1,6 +1,6 @@
 # @file Notification.R
 #
-# Copyright 2019 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 # 
@@ -46,6 +46,7 @@
 #'
 #' @export
 runAndNotify <- function(expression, mailSettings, label = "R", stopOnWarning = FALSE) {
+  .Deprecated("ParallelLogger::addDefaultEmailLogger")
   ev <- new.env()
   start <- Sys.time()
   if (stopOnWarning) {

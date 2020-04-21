@@ -1,6 +1,6 @@
 # @file PackageMaintentance.R
 #
-# Copyright 2019 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -20,7 +20,11 @@
 OhdsiRTools::formatRFolder("R")
 OhdsiRTools::checkUsagePackage("OhdsiRTools")
 OhdsiRTools::updateCopyrightYearFolder()
+devtools::spell_check()
 
 # Create manual and vignette ------------------------------------------
-shell("rm extras/OhdsiRTools.pdf")
+unlink("extras/OhdsiRTools.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/OhdsiRTools.pdf")
+
+
+pkgdown::build_site()

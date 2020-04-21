@@ -4,9 +4,11 @@
 \alias{checkUsagePackage}
 \title{Check all code in a package}
 \usage{
-checkUsagePackage(package, ignoreHiddenFunctions = TRUE,
-  suppressBindingKeywords = c("ggplot2", "ffwhich", "subset.ffdf",
-  "glm"))
+checkUsagePackage(
+  package,
+  ignoreHiddenFunctions = TRUE,
+  suppressBindingKeywords = c("ggplot2", "ffwhich", "subset.ffdf", "glm")
+)
 }
 \arguments{
 \item{package}{The name of the package to check.}

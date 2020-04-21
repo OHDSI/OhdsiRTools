@@ -4,9 +4,12 @@
 \alias{restoreEnvironmentFromPackage}
 \title{Restore environment stored in package}
 \usage{
-
-  restoreEnvironmentFromPackage(pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
-  stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE)
+restoreEnvironmentFromPackage(
+  pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
+  stopOnWrongRVersion = FALSE,
+  strict = FALSE,
+  skipLast = TRUE
+)
 }
 \arguments{
 \item{pathToCsv}{The path for saving the snapshot (as CSV file).}

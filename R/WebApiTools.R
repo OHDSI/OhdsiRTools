@@ -1,6 +1,6 @@
 # @file WebApiTools.R
 #
-# Copyright 2019 Observational Health Data Sciences and Informatics
+# Copyright 2020 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 # 
@@ -38,6 +38,7 @@
 #' @export
 getConceptSetExpression <- function(baseUrl, 
                                     setId) {
+  .Deprecated("ROhdsiWebApi::getConceptSetExpression")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -70,6 +71,7 @@ getConceptSetExpression <- function(baseUrl,
 #' @export
 getCohortDefinitionExpression <- function(definitionId, 
                                           baseUrl) {
+  .Deprecated("ROhdsiWebApi::getCohortDefinitionExpression")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -116,6 +118,7 @@ insertCohortDefinitionInPackage <- function(definitionId,
                                             name = NULL,
                                             baseUrl,
                                             generateStats = FALSE) {
+  .Deprecated("ROhdsiWebApi::insertCohortDefinitionInPackage")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -186,6 +189,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
                                                insertCohortCreationR = TRUE,
                                                generateStats = FALSE,
                                                packageName) {
+  .Deprecated("ROhdsiWebApi::insertCohortDefinitionSetInPackage")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -239,6 +243,7 @@ insertCohortDefinitionSetInPackage <- function(fileName,
 #'
 #' @export
 insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
+  .Deprecated("ROhdsiWebApi::insertConceptSetConceptIdsInPackage")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -326,6 +331,7 @@ insertConceptSetConceptIdsInPackage <- function(fileName, baseUrl) {
 #'
 #' @export
 getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
+  .Deprecated("ROhdsiWebApi::getCohortDefinition")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -355,6 +361,7 @@ getCohortDefinitionName <- function(baseUrl, definitionId, formatName = FALSE) {
 #' @export
 getCohortDefinitionSql <- function(baseUrl, 
                                    definitionId) {
+  .Deprecated("ROhdsiWebApi::getCohortDefinitionSql")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -385,6 +392,7 @@ getCohortDefinitionSql <- function(baseUrl,
 #'
 #' @export
 getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
+  .Deprecated("ROhdsiWebApi::getConceptSetName")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -413,6 +421,7 @@ getConceptSetName <- function(baseUrl, setId, formatName = FALSE) {
 #'
 #' @export
 getPriorityVocabKey <- function(baseUrl) {
+  .Deprecated("ROhdsiWebApi::getPriorityVocabKey")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -423,8 +432,6 @@ getPriorityVocabKey <- function(baseUrl) {
 }
 
 #' Get Concepts from a Concept Set Expression
-#' 
-#' @details 
 #' 
 #' @param baseUrl          The base URL for the WebApi instance, for example:
 #'                         "http://server.org:80/WebAPI".
@@ -446,6 +453,7 @@ getPriorityVocabKey <- function(baseUrl) {
 getSetExpressionConceptIds <- function(baseUrl,
                                        expression,
                                        vocabSourceKey = NULL) {
+  .Deprecated("ROhdsiWebApi::getConceptSet")
   
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
@@ -480,6 +488,7 @@ getSetExpressionConceptIds <- function(baseUrl,
 #'
 #' @export
 getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
+  .Deprecated("ROhdsiWebApi::getConceptSet")
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
   }
@@ -500,6 +509,7 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
 #' @param baseUrl         The base URL for the WebApi instance, for example:
 #'                        "http://server.org:80/WebAPI".
 #' @param definitionId    The cohort id to fetch concept sets and concepts from
+#' @param vocabSourceKey  A mysterious parameter.
 #' 
 #' @return 
 #' A list of concept sets, set names, and concepts
@@ -516,6 +526,7 @@ getConceptSetConceptIds <- function(baseUrl, setId, vocabSourceKey = NULL) {
 getConceptSetsAndConceptsFromCohort <- function(baseUrl,
                                                 definitionId, 
                                                 vocabSourceKey = NULL) {
+  .Deprecated("ROhdsiWebApi::getConceptSet")
   
   if (!.checkBaseUrl(baseUrl)) {
     stop("Base URL not valid, should be like http://server.org:80/WebAPI")
@@ -562,6 +573,7 @@ getConceptSetsAndConceptsFromCohort <- function(baseUrl,
 #'
 #' @export
 getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
+  .Deprecated("ROhdsiWebApi::getCohortGenerationStatuses")
   checkSourceKeys <- function(baseUrl, sourceKeys) {
     sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
     return(!(-1 %in% sourceIds))
@@ -671,6 +683,7 @@ getCohortGenerationStatuses <- function(baseUrl, definitionIds, sourceKeys) {
 #'
 #' @export
 invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
+  .Deprecated("ROhdsiWebApi::invokeCohortSetGeneration")
   checkSourceKeys <- function(baseUrl, sourceKeys) {
     sourceIds <- lapply(X = sourceKeys, .getSourceIdFromKey, baseUrl = baseUrl)
     return(!(-1 %in% sourceIds))
@@ -721,6 +734,7 @@ createConceptSetWorkbook <- function(conceptSetIds,
                                      baseUrl, 
                                      included = FALSE,
                                      mapped = FALSE) {
+  .Deprecated("ROhdsiWebApi")
   
   if (is.null(workFolder))
     workFolder <- getwd()
