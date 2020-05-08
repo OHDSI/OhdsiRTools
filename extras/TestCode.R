@@ -26,3 +26,4 @@ getConceptSetConceptIds(baseUrl = Sys.getenv("baseUrl"), setId = 12)
 restoreEnvironmentFromPackageOnGithub("OHDSI/Legend")
 
 
+createRenvLockFile("Covid19CohortEvaluation")

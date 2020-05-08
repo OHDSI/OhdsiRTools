@@ -35,7 +35,7 @@
 #'
 #' @export
 takeEnvironmentSnapshot <- function(rootPackage) {
-
+  
   splitPackageList <- function(packageList) {
     if (is.null(packageList)) {
       return(c())
@@ -44,7 +44,7 @@ takeEnvironmentSnapshot <- function(rootPackage) {
                       ",")[[1]])
     }
   }
-
+  
   fetchDependencies <- function(package, recursive = TRUE, level = 0) {
     description <- packageDescription(package)
     packages <- splitPackageList(description$Depends)
@@ -64,17 +64,20 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     }
     return(packages)
   }
-
+  
   packages <- fetchDependencies(rootPackage, recursive = TRUE)
   packages <- packages[order(-packages$level), ]
   getVersion <- function(package) {
     return(packageDescription(package)$Version)
   }
   versions <- sapply(c(packages$name, rootPackage), getVersion)
-  snapshot <- data.frame(package = names(versions), version = as.vector(versions))
+  snapshot <- data.frame(package = names(versions), 
+                         version = as.vector(versions),
+                         stringsAsFactors = FALSE)
   s <- sessionInfo()
   rVersion <- data.frame(package = "R",
-                         version = paste(s$R.version$major, s$R.version$minor, sep = "."))
+                         version = paste(s$R.version$major, s$R.version$minor, sep = "."),
+                         stringsAsFactors = FALSE)
   snapshot <- rbind(rVersion, snapshot)
   return(snapshot)
 }
@@ -97,6 +100,136 @@ comparable <- function(installedVersion, requiredVersion) {
   return(FALSE)
 }
 
+#' Create a renv lock file
+#' 
+#' @details 
+#' Create a lock file that allows recontruction of the R environment using the \code[renv] package. This function will include the
+#' root file and all of its dependencies in the lock file, requiring the same package versions as currently installed on this 
+#' computer.
+#'
+#' @param rootPackage                The name of the root package, the package that we'd like to be able to run in the end.
+#' @param ohdsiGitHubPackages        Names of R packages that need to be installed from the OHDSI GitHub.
+#' @param ohdsiStudiesGitHubPackages Names of R packages that need to be installed from the OHDSI-Studies GitHub.
+#' @param fileName                   Name of the lock file to be generated.
+#'
+#' @return
+#' Does not return a value. Is executed for the side-effect of creating the lock file.
+#' 
+#' @export
+createRenvLockFile <- function(rootPackage,
+                               ohdsiGitHubPackages = getOhdsiGitHubPackages(),
+                               ohdsiStudiesGitHubPackages = rootPackage,
+                               fileName = "renv.lock") {
+  if (is.na(tryCatch(utils::packageVersion("renv"), error = function(e) NA))) {
+    stop("The renv package must be installed to use this function")
+  }
+  
+  snapShot <- takeEnvironmentSnapshot(rootPackage)
+  rVersion <- snapShot[snapShot$package == "R", ]
+  snapShot <- snapShot[!snapShot$package %in% c("R", getCorePackages()), ]
+  cranPackages <- snapShot[!snapShot$package %in% c(ohdsiGitHubPackages, ohdsiStudiesGitHubPackages), ]
+  cranPackages <- rbind(cranPackages, 
+                        data.frame(package = "renv",
+                                   version = packageDescription("renv")$Version,
+                                   stringsAsFactors = FALSE))
+  ohdsiGitHubPackages <- snapShot[snapShot$package %in% ohdsiGitHubPackages, ]
+  ohdsiStudiesGitHubPackages <- snapShot[snapShot$package %in% ohdsiStudiesGitHubPackages, ]
+  
+  
+  createRNode <- function() {
+    list(Version = rVersion$version,
+         Repositories = list(list(Name = "CRAN",
+                             URL = "https://cloud.r-project.org")))
+  }
+  
+  createCranNode <- function(i) {
+    list(Package = cranPackages$package[i],
+         Version = cranPackages$version[i],
+         Source = "Repository",
+         Repository =  "CRAN")
+  }
+  
+  createOhdsiGitHubNode <- function(i) {
+    list(Package = ohdsiGitHubPackages$package[i],
+         Version = ohdsiGitHubPackages$version[i],
+         Source =  "GitHub",
+         RemoteType =  "github",
+         RemoteHost = "api.github.com",
+         RemoteRepo = ohdsiGitHubPackages$package[i],
+         RemoteUsername = "ohdsi",
+         RemoteRef = sprintf("v%s", ohdsiGitHubPackages$version[i]))
+    
+  }
+  
+  createOhdsiStudiesGitHubNode <- function(i) {
+    list(Package = ohdsiStudiesGitHubPackages$package[i],
+         Version = ohdsiStudiesGitHubPackages$version[i],
+         Source =  "GitHub",
+         RemoteType =  "github",
+         RemoteHost = "api.github.com",
+         RemoteRepo = ohdsiStudiesGitHubPackages$package[i],
+         RemoteUsername = "ohdsi-studies",
+         RemoteRef = "master")
+  }
+  
+  createPackagesNode <- function() {
+    if (nrow(cranPackages) == 0) {
+      cranNodes <- list()
+    } else {
+      cranNodes <- lapply(1:nrow(cranPackages), createCranNode)
+      names(cranNodes) <- cranPackages$package
+    }
+    
+    if (nrow(ohdsiGitHubPackages) == 0) {
+      ohdsiGitHubNodes <- list()
+    } else {
+      ohdsiGitHubNodes <- lapply(1:nrow(ohdsiGitHubPackages), createOhdsiGitHubNode)
+      names(ohdsiGitHubNodes) <- ohdsiGitHubPackages$package
+    }
+    
+    if (nrow(ohdsiStudiesGitHubPackages) == 0) {
+      ohdsiStudiesGitHubNodes <- list()
+    } else {
+      ohdsiStudiesGitHubNodes <- lapply(1:nrow(ohdsiStudiesGitHubPackages), createOhdsiStudiesGitHubNode)
+      names(ohdsiStudiesGitHubNodes) <- ohdsiStudiesGitHubPackages$package
+    }
+    return(append(append(cranNodes, ohdsiGitHubNodes), ohdsiStudiesGitHubNodes))
+  }
+  
+  lock <- list(R = createRNode(),
+               Packages = createPackagesNode())
+  json <- jsonlite::toJSON(lock, pretty = TRUE, auto_unbox = TRUE)
+  write(json, fileName)
+}
+
+#' Get a list of packages in the OHDSI GitHub.
+#' 
+#' @details
+#' Returns names of packages that need to be installed from https://github.com/ohdsi.
+#'
+#' @return
+#' A character vector.
+#' 
+#' @export
+getOhdsiGitHubPackages <- function() {
+  c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CohortDiagnostics", "CohortMethod", 
+    "EvidenceSynthesis", "FeatureExtraction", "IcTemporalPatternDiscovery", 
+    "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
+    "PheValuator", "ROhdsiWebApi", "SelfControlledCaseSeries", "SelfControlledCohort")
+}
+
+#' Get a list of R core packages
+#' 
+#' @details 
+#' Returns names of packages that are part of the R code, and can therefore not be installed.
+#'
+#' @return
+#' A character vector.
+#' 
+#' @export
+getCorePackages <- function() {
+  c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets")
+}
 
 #' Restore the R environment to a snapshot
 #'
@@ -130,13 +263,10 @@ comparable <- function(installedVersion, requiredVersion) {
 restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE) {
   start <- Sys.time()
   # R core packages that cannot be installed:
-  corePackages <- c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets", "rlang", "devtools")
+  corePackages <- c("devtools", getCorePackages())
   
   # OHDSI packages not in CRAN:
-  ohdsiPackages <- c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CohortMethod", 
-                     "EvidenceSynthesis", "FeatureExtraction", "IcTemporalPatternDiscovery", 
-                     "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
-                     "PheValuator", "SelfControlledCaseSeries", "SelfControlledCohort")
+  ohdsiPackages <- getOhdsiGitHubPackages()
   
   s <- sessionInfo()
   rVersion <- paste(s$R.version$major, s$R.version$minor, sep = ".")
