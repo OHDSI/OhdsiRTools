@@ -40,8 +40,8 @@
 #' @param package                   The name of the package to check.
 #' @param ignoreHiddenFunctions     Ignore functions for which the definition cannot be retrieved?
 #' @param suppressBindingKeywords   A set of keywords that are indicative of non-standard evaluation.
-#' 
-#' @examples 
+#'
+#' @examples
 #' checkUsagePackage("OhdsiRTools")
 #'
 #' @export
@@ -137,4 +137,31 @@ checkUsagePackage <- function(package,
     }
     invisible(newNotes)
   }
+}
+
+#' Find non-ASCII strings in R files
+#'
+#' @description
+#' Find non-ASCII string in R files.
+#'
+#' @param path        Path to the folder containing the R files.
+#' @param recursive   If TRUE, subfolders will also be searched for R files.
+#'
+#' @return
+#' A table listing the lines per R file containing non-ASCII characters.
+#'
+#' @export
+findNonAsciiStringsInFolder <- function(path = ".", recursive = TRUE) {
+  files <- list.files(path = path, pattern = "*.R$", recursive = recursive, full.names = TRUE)
+  checkFile <- function(file) {
+    lines <- tools::showNonASCIIfile(file)
+    if (length(lines) == 0) {
+      return(NULL)
+    } else {
+      return(data.frame(file = file, line = lines))
+    }
+
+  }
+  results <- lapply(files, checkFile)
+  results <- do.call("rbind", results)
 }

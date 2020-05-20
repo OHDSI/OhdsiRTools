@@ -1,3 +1,14 @@
+OhdsiRTools v1.9.0
+==================
+
+Changes:
+
+1. Added findNonAsciiStringsInFolder, a function for finding non-ASCII strings in a folder.
+
+2. Added createRenvLockFile, a function for creating an renv lock file for OHDSI study packages.
+
+
+
 OhdsiRTools v1.8.0
 ==================
 
