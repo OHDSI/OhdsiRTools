@@ -3,6 +3,7 @@
 export(checkUsagePackage)
 export(createConceptSetWorkbook)
 export(createRenvLockFile)
+export(fixHadesLogo)
 export(formatRFile)
 export(formatRFolder)
 export(formatRText)
