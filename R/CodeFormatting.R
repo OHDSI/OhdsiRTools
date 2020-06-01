@@ -531,7 +531,7 @@ fixHadesLogo <- function(path = ".") {
     text <- readChar(file, file.info(file)$size)
     text <- gsub("hadesLogo", "<img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'>", text)
     sink(file)
-    cat(text)
+    cat(gsub("\r", "", text))
     sink()
   }
 }
