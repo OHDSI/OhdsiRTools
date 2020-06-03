@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Update the package name in a R or SQL file — updatePackageName • OhdsiRTools</title>
+<title>Create a renv lock file — createRenvLockFile • OhdsiRTools</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Update the package name in a R or SQL file — updatePackageName" />
-<meta property="og:description" content="Update the package name in a R or SQL file" />
+<meta property="og:title" content="Create a renv lock file — createRenvLockFile" />
+<meta property="og:description" content="Create a renv lock file" />
 
 
 
@@ -111,30 +111,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Update the package name in a R or SQL file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/OHDSI/OhdsiRTools/blob/master/R/CopyrightYearUpdate.R'><code>R/CopyrightYearUpdate.R</code></a></small>
-    <div class="hidden name"><code>updatePackageName.Rd</code></div>
+    <h1>Create a renv lock file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/OHDSI/OhdsiRTools/blob/master/R/EnvironmentSnapshot.R'><code>R/EnvironmentSnapshot.R</code></a></small>
+    <div class="hidden name"><code>createRenvLockFile.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Update the package name in a R or SQL file</p>
+    <p>Create a renv lock file</p>
     </div>
 
-    <pre class="usage"><span class='fu'>updatePackageName</span>(<span class='no'>file</span>, <span class='no'>packageName</span>)</pre>
+    <pre class="usage"><span class='fu'>createRenvLockFile</span>(
+  <span class='no'>rootPackage</span>,
+  <span class='kw'>ohdsiGitHubPackages</span> <span class='kw'>=</span> <span class='fu'><a href='getOhdsiGitHubPackages.html'>getOhdsiGitHubPackages</a></span>(),
+  <span class='kw'>ohdsiStudiesGitHubPackages</span> <span class='kw'>=</span> <span class='no'>rootPackage</span>,
+  <span class='kw'>fileName</span> <span class='kw'>=</span> <span class='st'>"renv.lock"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>file</th>
-      <td><p>The path to the file.</p></td>
+      <th>rootPackage</th>
+      <td><p>The name of the root package, the package that we'd like to be able to run in the end.</p></td>
     </tr>
     <tr>
-      <th>packageName</th>
-      <td><p>The replacement package name</p></td>
+      <th>ohdsiGitHubPackages</th>
+      <td><p>Names of R packages that need to be installed from the OHDSI GitHub.</p></td>
+    </tr>
+    <tr>
+      <th>ohdsiStudiesGitHubPackages</th>
+      <td><p>Names of R packages that need to be installed from the OHDSI-Studies GitHub.</p></td>
+    </tr>
+    <tr>
+      <th>fileName</th>
+      <td><p>Name of the lock file to be generated.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Does not return a value. Is executed for the side-effect of creating the lock file.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Create a lock file that allows recontruction of the R environment using the <code>renv</code> package. This function will include the
+root file and all of its dependencies in the lock file, requiring the same package versions as currently installed on this 
+computer.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

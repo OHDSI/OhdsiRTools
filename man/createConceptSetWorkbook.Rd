@@ -28,7 +28,7 @@ directory.}
 \value{
 A xlsx workbook (conceptSetExpressions.xlsx) that includes a list of all concept set IDs and names
 and a worksheet for the concepts in each set. Options to include an included concepts and mapped
-concepts worksheet for each concept set are avaialble.
+concepts worksheet for each concept set are available.
 }
 \description{
 Save a set of concept sets expressions, included concepts, and mapped concepts into a workbook

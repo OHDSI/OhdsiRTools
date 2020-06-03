@@ -246,7 +246,7 @@ getCorePackages <- function() {
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #'
 #' @examples
@@ -365,7 +365,7 @@ insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/se
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #' @examples
 #' \dontrun{
@@ -400,7 +400,7 @@ restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmen
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #' @examples
 #' \dontrun{

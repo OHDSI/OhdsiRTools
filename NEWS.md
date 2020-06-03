@@ -7,6 +7,8 @@ Changes:
 
 2. Added createRenvLockFile, a function for creating an renv lock file for OHDSI study packages.
 
+3. Added fixHadesLogo function, needed when generating the documentation websites for HADES packages.
+
 
 
 OhdsiRTools v1.8.0

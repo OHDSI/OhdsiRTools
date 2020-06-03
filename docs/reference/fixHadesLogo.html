@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Update the package name in a R or SQL file — updatePackageName • OhdsiRTools</title>
+<title>Fix HADES logo in pkgdown output — fixHadesLogo • OhdsiRTools</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Update the package name in a R or SQL file — updatePackageName" />
-<meta property="og:description" content="Update the package name in a R or SQL file" />
+<meta property="og:title" content="Fix HADES logo in pkgdown output — fixHadesLogo" />
+<meta property="og:description" content="In all HTML files in the docs folder, each occurrence of 'hadesLogo' is replaced with an
+HTML image tag referring to the HADES logo." />
 
 
 
@@ -111,30 +112,30 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Update the package name in a R or SQL file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/OHDSI/OhdsiRTools/blob/master/R/CopyrightYearUpdate.R'><code>R/CopyrightYearUpdate.R</code></a></small>
-    <div class="hidden name"><code>updatePackageName.Rd</code></div>
+    <h1>Fix HADES logo in pkgdown output</h1>
+    <small class="dont-index">Source: <a href='https://github.com/OHDSI/OhdsiRTools/blob/master/R/CodeFormatting.R'><code>R/CodeFormatting.R</code></a></small>
+    <div class="hidden name"><code>fixHadesLogo.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Update the package name in a R or SQL file</p>
+    <p>In all HTML files in the docs folder, each occurrence of 'hadesLogo' is replaced with an
+HTML image tag referring to the HADES logo.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>updatePackageName</span>(<span class='no'>file</span>, <span class='no'>packageName</span>)</pre>
+    <pre class="usage"><span class='fu'>fixHadesLogo</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>file</th>
-      <td><p>The path to the file.</p></td>
-    </tr>
-    <tr>
-      <th>packageName</th>
-      <td><p>The replacement package name</p></td>
+      <th>path</th>
+      <td><p>Path to the root of the package for which the pkgdown output needs to be fixed.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>This function returns nothing.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
