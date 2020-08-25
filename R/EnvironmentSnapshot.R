@@ -49,6 +49,7 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     description <- packageDescription(package)
     packages <- splitPackageList(description$Depends)
     packages <- c(packages, splitPackageList(description$Imports))
+    packages <- c(packages, splitPackageList(description$LinkingTo))
     # Note: if we want to include suggests, we'll need to consider circular references packages <-
     # c(packages, splitPackageList(description$Suggests))
     packages <- packages[packages != "R"]
