@@ -6,7 +6,7 @@ OhdsiRTools
 
 Introduction
 ============
-An R package with tools to be used in the other OHDSI R packages
+An R package with tools to be used in the other OHDSI R packages. Mainly contains functions to help develop R packages.
 
 Features
 ========
@@ -32,9 +32,6 @@ System Requirements
 ============
 Requires R.
 
-Dependencies
-============
-None
 
 Installation
 =============

@@ -726,7 +726,7 @@ invokeCohortSetGeneration <- function(baseUrl, sourceKeys, definitionIds) {
 #' @return
 #' A xlsx workbook (conceptSetExpressions.xlsx) that includes a list of all concept set IDs and names
 #' and a worksheet for the concepts in each set. Options to include an included concepts and mapped
-#' concepts worksheet for each concept set are avaialble.
+#' concepts worksheet for each concept set are available.
 #'
 #' @export
 createConceptSetWorkbook <- function(conceptSetIds, 

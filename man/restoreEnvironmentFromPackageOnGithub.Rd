@@ -25,7 +25,7 @@ package will only be installed if (a) a newer version is required than
 currently installed, or (b) the major version number is different.}
 
 \item{skipLast}{Skip last entry in snapshot? This is usually the study package that needs
-to be installed manualy.}
+to be installed manually.}
 }
 \description{
 Restore environment stored in package

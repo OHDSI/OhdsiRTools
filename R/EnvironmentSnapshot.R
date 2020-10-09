@@ -49,6 +49,7 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     description <- packageDescription(package)
     packages <- splitPackageList(description$Depends)
     packages <- c(packages, splitPackageList(description$Imports))
+    packages <- c(packages, splitPackageList(description$LinkingTo))
     # Note: if we want to include suggests, we'll need to consider circular references packages <-
     # c(packages, splitPackageList(description$Suggests))
     packages <- packages[packages != "R"]
@@ -246,7 +247,7 @@ getCorePackages <- function() {
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #'
 #' @examples
@@ -365,7 +366,7 @@ insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/se
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #' @examples
 #' \dontrun{
@@ -400,7 +401,7 @@ restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmen
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
 #' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manualy.
+#'                              to be installed manually.
 #'
 #' @examples
 #' \dontrun{

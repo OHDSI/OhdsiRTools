@@ -1,3 +1,11 @@
+OhdsiRTools v1.9.1
+==================
+
+Bugfixes:
+
+1. `takeEnvironmentSnapshot()` and `createRenvLockFile()` now include dependencies in 'LinkingTo' section.
+
+
 OhdsiRTools v1.9.0
 ==================
 
@@ -7,6 +15,7 @@ Changes:
 
 2. Added createRenvLockFile, a function for creating an renv lock file for OHDSI study packages.
 
+3. Added fixHadesLogo function, needed when generating the documentation websites for HADES packages.
 
 
 OhdsiRTools v1.8.0
