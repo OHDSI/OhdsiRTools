@@ -228,7 +228,7 @@ getOhdsiGitHubPackages <- function() {
 #' 
 #' @export
 getCorePackages <- function() {
-  c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets")
+  c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets", "splines")
 }
 
 #' Restore the R environment to a snapshot
