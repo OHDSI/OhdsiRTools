@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.1</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
     <p>Format R code</p>
     </div>
 
-    <pre class="usage"><span class='fu'>formatRText</span>(<span class='no'>text</span>, <span class='kw'>width.cutoff</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>formatRText</span><span class='op'>(</span><span class='va'>text</span>, width.cutoff <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,34 +140,12 @@
     <p>A character vector with formatted R code.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>code</span> <span class='kw'>&lt;-</span> <span class='st'>"
-#' Example functon
-#' 
-#' @param x One argument.
-#' @param fooBar Another argument.
-#'
-#' @examples 
-#' example(x=1,fooBar='abc')
-#'
-#'@export
-example &lt;- function(x,foobar){paste(x,foobar)}
-"</span>
-
-<span class='no'>formatted</span> <span class='kw'>&lt;-</span> <span class='fu'>formatRText</span>(<span class='no'>code</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span>(<span class='no'>formatted</span>)</div><div class='output co'>#&gt; 
-#&gt; #' Example functon
-#&gt; #'
-#&gt; #' @param x        One argument.
-#&gt; #' @param fooBar   Another argument.
-#&gt; #'
-#&gt; #' @examples
-#&gt; #' example(x = 1, fooBar = "abc")
-#&gt; #'
-#&gt; #' @export
-#&gt; example &lt;- function(x, foobar) {
+    <pre class="examples"><div class='input'><span class='va'>code</span> <span class='op'>&lt;-</span> <span class='st'>"example &lt;- function(x,foobar){paste(x,foobar)}"</span>
+<span class='va'>formatted</span> <span class='op'>&lt;-</span> <span class='fu'>formatRText</span><span class='op'>(</span><span class='va'>code</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='op'>(</span><span class='va'>formatted</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; example &lt;- function(x, foobar) {
 #&gt;   paste(x, foobar)
-#&gt; }
-#&gt; </div><div class='input'>
+#&gt; }</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -184,7 +162,7 @@ example &lt;- function(x,foobar){paste(x,foobar)}
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

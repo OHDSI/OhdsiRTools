@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.1</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
     <p>Get Concepts from a Concept Set Expression</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getSetExpressionConceptIds</span>(<span class='no'>baseUrl</span>, <span class='no'>expression</span>, <span class='kw'>vocabSourceKey</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>getSetExpressionConceptIds</span><span class='op'>(</span><span class='va'>baseUrl</span>, <span class='va'>expression</span>, vocabSourceKey <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,12 +146,14 @@ used.</p></td>
     <p>A list of concept ids</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># This will obtain the concept ids from a concept set expression:</span>
 
-<span class='fu'>getSetExpressionConceptIds</span>(<span class='kw'>baseUrl</span> <span class='kw'>=</span> <span class='st'>"http://server.org:80/WebAPI"</span>,
-                           <span class='kw'>expression</span> <span class='kw'>=</span> <span class='no'>someJsonExpression</span>)
-}</div></pre>
+<span class='fu'>getSetExpressionConceptIds</span><span class='op'>(</span>baseUrl <span class='op'>=</span> <span class='st'>"http://server.org:80/WebAPI"</span>,
+                           expression <span class='op'>=</span> <span class='va'>someJsonExpression</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -167,7 +169,7 @@ used.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -13,8 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Tools Used by Observational Health Data Science and Informatics (OHDSI)">
 <meta property="og:description" content="Includes functions to format and check syntax of R code and packages following the OHDSI
-    R style guidelines. Support for parallel computation, logging, and function automation. Functionality
-    for interacting with instances of the open source OHDSI WebApi, which can be found at &lt;https://github.com/OHDSI/WebAPI&gt;. ">
+    R style guidelines. Generate renv lock files for OHDSI study packages.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.1</span>
       </span>
     </div>
 
@@ -80,24 +79,26 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>An R package with tools to be used in the other OHDSI R packages. Mainly contains functions to help develop R packages.</p>
+<p>An R package with tools to help write and maintain other OHDSI R packages. Other OHDSI R packages should not depend on or import OhdsiRTools.</p>
 </div>
 <div id="features" class="section level1">
 <h1 class="hasAnchor">
 <a href="#features" class="anchor"></a>Features</h1>
 <ul>
-<li>Auto code formatting</li>
-<li>Auto checking of R code</li>
+<li>Auto code formatting.</li>
+<li>Auto checking of R code.</li>
+<li>Generate renv lock files with correct references to OHDSI repos.</li>
 </ul>
 </div>
 <div id="examples" class="section level1">
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># Auto-format all R files in a package:</span>
-<span class="fu"><a href="reference/formatRFolder.html">formatRFolder</a></span>()
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># Auto-format all R files in a package:</span>
+<span class="fu"><a href="reference/formatRFolder.html">formatRFolder</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># Identify problems in R code in a package:</span>
-<span class="fu"><a href="reference/checkUsagePackage.html">checkUsagePackage</a></span>(<span class="st">"OhdsiRTools"</span>)</pre></div>
+<span class="fu"><a href="reference/checkUsagePackage.html">checkUsagePackage</a></span><span class="op">(</span><span class="st">"OhdsiRTools"</span><span class="op">)</span></pre></div>
 </div>
 <div id="technology" class="section level1">
 <h1 class="hasAnchor">
@@ -115,9 +116,10 @@
 <ol>
 <li>In R, use the following commands to download and install OhdsiRTools:</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"drat"</span>)
-<span class="kw pkg">drat</span><span class="kw ns">::</span><span class="fu">addRepo</span>(<span class="st">"OHDSI"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"OhdsiRTools"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org">remotes</a></span><span class="op">)</span>
+<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/OhdsiRTools"</span><span class="op">)</span></pre></div>
 </div>
 <div id="user-documentation" class="section level1">
 <h1 class="hasAnchor">
@@ -211,7 +213,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

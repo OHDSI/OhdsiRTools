@@ -104,7 +104,7 @@ comparable <- function(installedVersion, requiredVersion) {
 #' Create a renv lock file
 #'
 #' @details
-#' Create a lock file that allows recontruction of the R environment using the \code{renv} package.
+#' Create a lock file that allows reconstruction of the R environment using the \code{renv} package.
 #' This function will include the root file and all of its dependencies in the lock file, requiring
 #' the same package versions as currently installed on this computer.
 #'
