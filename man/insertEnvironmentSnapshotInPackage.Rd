@@ -19,8 +19,8 @@ Store snapshot of the R environment in the package
 }
 \details{
 This function records all versions used in the R environment that are used by one root package, and
-stores them in a CSV file in the R package that is currently being developed. The default location is
-\code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
+stores them in a CSV file in the R package that is currently being developed. The default location
+is \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
 environment to the state it was when a particular study package was run using the
 \code{\link{restoreEnvironment}} function.
 }

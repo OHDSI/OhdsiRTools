@@ -40,7 +40,7 @@ executing the cohort definition SQL.
 \dontrun{
 # This will create 'inst/cohorts/Angioedema.json' and 'inst/sql/sql_server/Angioedema.sql':
 
-insertCohortDefinitionInPackage(definitionId = 282, 
+insertCohortDefinitionInPackage(definitionId = 282,
                                 name = "Angioedema",
                                 baseUrl = "http://server.org:80/WebAPI")
 }

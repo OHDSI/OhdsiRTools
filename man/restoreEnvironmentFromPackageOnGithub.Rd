@@ -13,7 +13,8 @@ restoreEnvironmentFromPackageOnGithub(
 )
 }
 \arguments{
-\item{githubPath}{The path for the GitHub repo containing the package (e.g. 'OHDSI/StudyProtocols/AlendronateVsRaloxifene').}
+\item{githubPath}{The path for the GitHub repo containing the package (e.g.
+'OHDSI/StudyProtocols/AlendronateVsRaloxifene').}
 
 \item{pathToCsv}{The path for the snapshot inside the package.}
 
@@ -24,15 +25,15 @@ just a warning will be thrown when the version doesn't match.}
 package will only be installed if (a) a newer version is required than
 currently installed, or (b) the major version number is different.}
 
-\item{skipLast}{Skip last entry in snapshot? This is usually the study package that needs
-to be installed manually.}
+\item{skipLast}{Skip last entry in snapshot? This is usually the study package that
+needs to be installed manually.}
 }
 \description{
 Restore environment stored in package
 }
 \details{
-This function restores all packages (and package versions) described in the environment snapshot stored
-in the package currently being developed. The default location is
+This function restores all packages (and package versions) described in the environment snapshot
+stored in the package currently being developed. The default location is
 \code{inst/settings/rEnvironmentSnapshot.csv}.
 }
 \examples{

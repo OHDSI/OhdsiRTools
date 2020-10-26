@@ -35,7 +35,7 @@
 #'
 #' @export
 takeEnvironmentSnapshot <- function(rootPackage) {
-  
+
   splitPackageList <- function(packageList) {
     if (is.null(packageList)) {
       return(c())
@@ -44,7 +44,7 @@ takeEnvironmentSnapshot <- function(rootPackage) {
                       ",")[[1]])
     }
   }
-  
+
   fetchDependencies <- function(package, recursive = TRUE, level = 0) {
     description <- packageDescription(package)
     packages <- splitPackageList(description$Depends)
@@ -65,14 +65,14 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     }
     return(packages)
   }
-  
+
   packages <- fetchDependencies(rootPackage, recursive = TRUE)
   packages <- packages[order(-packages$level), ]
   getVersion <- function(package) {
     return(packageDescription(package)$Version)
   }
   versions <- sapply(c(packages$name, rootPackage), getVersion)
-  snapshot <- data.frame(package = names(versions), 
+  snapshot <- data.frame(package = names(versions),
                          version = as.vector(versions),
                          stringsAsFactors = FALSE)
   s <- sessionInfo()
@@ -88,7 +88,7 @@ comparable <- function(installedVersion, requiredVersion) {
   parts2 <- strsplit(as.character(requiredVersion), "[^0-9]")[[1]]
   if (parts1[1] != parts2[1]) {
     return(FALSE)
-  } 
+  }
   parts1 <- as.numeric(parts1)
   parts2 <- as.numeric(parts2)
   if (length(parts1) > 1 && parts1[2] > parts2[2]) {
@@ -102,20 +102,23 @@ comparable <- function(installedVersion, requiredVersion) {
 }
 
 #' Create a renv lock file
-#' 
-#' @details 
-#' Create a lock file that allows recontruction of the R environment using the \code{renv} package. This function will include the
-#' root file and all of its dependencies in the lock file, requiring the same package versions as currently installed on this 
-#' computer.
 #'
-#' @param rootPackage                The name of the root package, the package that we'd like to be able to run in the end.
-#' @param ohdsiGitHubPackages        Names of R packages that need to be installed from the OHDSI GitHub.
-#' @param ohdsiStudiesGitHubPackages Names of R packages that need to be installed from the OHDSI-Studies GitHub.
-#' @param fileName                   Name of the lock file to be generated.
+#' @details
+#' Create a lock file that allows recontruction of the R environment using the \code{renv} package.
+#' This function will include the root file and all of its dependencies in the lock file, requiring
+#' the same package versions as currently installed on this computer.
+#'
+#' @param rootPackage                  The name of the root package, the package that we'd like to be
+#'                                     able to run in the end.
+#' @param ohdsiGitHubPackages          Names of R packages that need to be installed from the OHDSI
+#'                                     GitHub.
+#' @param ohdsiStudiesGitHubPackages   Names of R packages that need to be installed from the
+#'                                     OHDSI-Studies GitHub.
+#' @param fileName                     Name of the lock file to be generated.
 #'
 #' @return
 #' Does not return a value. Is executed for the side-effect of creating the lock file.
-#' 
+#'
 #' @export
 createRenvLockFile <- function(rootPackage,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
@@ -124,55 +127,54 @@ createRenvLockFile <- function(rootPackage,
   if (is.na(tryCatch(utils::packageVersion("renv"), error = function(e) NA))) {
     stop("The renv package must be installed to use this function")
   }
-  
+
   snapShot <- takeEnvironmentSnapshot(rootPackage)
   rVersion <- snapShot[snapShot$package == "R", ]
   snapShot <- snapShot[!snapShot$package %in% c("R", getCorePackages()), ]
-  cranPackages <- snapShot[!snapShot$package %in% c(ohdsiGitHubPackages, ohdsiStudiesGitHubPackages), ]
-  cranPackages <- rbind(cranPackages, 
-                        data.frame(package = "renv",
-                                   version = packageDescription("renv")$Version,
-                                   stringsAsFactors = FALSE))
+  cranPackages <- snapShot[!snapShot$package %in% c(ohdsiGitHubPackages,
+                                                    ohdsiStudiesGitHubPackages), ]
+  cranPackages <- rbind(cranPackages, data.frame(package = "renv",
+                                                 version = packageDescription("renv")$Version,
+                                                 stringsAsFactors = FALSE))
   ohdsiGitHubPackages <- snapShot[snapShot$package %in% ohdsiGitHubPackages, ]
   ohdsiStudiesGitHubPackages <- snapShot[snapShot$package %in% ohdsiStudiesGitHubPackages, ]
-  
-  
+
+
   createRNode <- function() {
     list(Version = rVersion$version,
-         Repositories = list(list(Name = "CRAN",
-                             URL = "https://cloud.r-project.org")))
+         Repositories = list(list(Name = "CRAN", URL = "https://cloud.r-project.org")))
   }
-  
+
   createCranNode <- function(i) {
     list(Package = cranPackages$package[i],
          Version = cranPackages$version[i],
          Source = "Repository",
-         Repository =  "CRAN")
+         Repository = "CRAN")
   }
-  
+
   createOhdsiGitHubNode <- function(i) {
     list(Package = ohdsiGitHubPackages$package[i],
          Version = ohdsiGitHubPackages$version[i],
-         Source =  "GitHub",
-         RemoteType =  "github",
+         Source = "GitHub",
+         RemoteType = "github",
          RemoteHost = "api.github.com",
          RemoteRepo = ohdsiGitHubPackages$package[i],
          RemoteUsername = "ohdsi",
          RemoteRef = sprintf("v%s", ohdsiGitHubPackages$version[i]))
-    
+
   }
-  
+
   createOhdsiStudiesGitHubNode <- function(i) {
     list(Package = ohdsiStudiesGitHubPackages$package[i],
          Version = ohdsiStudiesGitHubPackages$version[i],
-         Source =  "GitHub",
-         RemoteType =  "github",
+         Source = "GitHub",
+         RemoteType = "github",
          RemoteHost = "api.github.com",
          RemoteRepo = ohdsiStudiesGitHubPackages$package[i],
          RemoteUsername = "ohdsi-studies",
          RemoteRef = "master")
   }
-  
+
   createPackagesNode <- function() {
     if (nrow(cranPackages) == 0) {
       cranNodes <- list()
@@ -180,53 +182,71 @@ createRenvLockFile <- function(rootPackage,
       cranNodes <- lapply(1:nrow(cranPackages), createCranNode)
       names(cranNodes) <- cranPackages$package
     }
-    
+
     if (nrow(ohdsiGitHubPackages) == 0) {
       ohdsiGitHubNodes <- list()
     } else {
       ohdsiGitHubNodes <- lapply(1:nrow(ohdsiGitHubPackages), createOhdsiGitHubNode)
       names(ohdsiGitHubNodes) <- ohdsiGitHubPackages$package
     }
-    
+
     if (nrow(ohdsiStudiesGitHubPackages) == 0) {
       ohdsiStudiesGitHubNodes <- list()
     } else {
-      ohdsiStudiesGitHubNodes <- lapply(1:nrow(ohdsiStudiesGitHubPackages), createOhdsiStudiesGitHubNode)
+      ohdsiStudiesGitHubNodes <- lapply(1:nrow(ohdsiStudiesGitHubPackages),
+                                        createOhdsiStudiesGitHubNode)
       names(ohdsiStudiesGitHubNodes) <- ohdsiStudiesGitHubPackages$package
     }
     return(append(append(cranNodes, ohdsiGitHubNodes), ohdsiStudiesGitHubNodes))
   }
-  
-  lock <- list(R = createRNode(),
-               Packages = createPackagesNode())
+
+  lock <- list(R = createRNode(), Packages = createPackagesNode())
   json <- RJSONIO::toJSON(lock, pretty = TRUE)
   write(json, fileName)
 }
 
 #' Get a list of packages in the OHDSI GitHub.
-#' 
+#'
 #' @details
 #' Returns names of packages that need to be installed from https://github.com/ohdsi.
 #'
 #' @return
 #' A character vector.
-#' 
+#'
 #' @export
 getOhdsiGitHubPackages <- function() {
-  c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CirceR", "CohortDiagnostics", "CohortMethod", 
-    "DataQualityDashboard", "EvidenceSynthesis", "Eunomia",  "FeatureExtraction", "Hades", "Hydra", 
-    "IcTemporalPatternDiscovery", "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
-    "PheValuator", "ROhdsiWebApi", "SelfControlledCaseSeries", "SelfControlledCohort")
+  c("Achilles",
+    "BigKnn",
+    "CaseControl",
+    "CaseCrossover",
+    "CirceR",
+    "CohortDiagnostics",
+    "CohortMethod",
+    "DataQualityDashboard",
+    "EvidenceSynthesis",
+    "Eunomia",
+    "FeatureExtraction",
+    "Hades",
+    "Hydra",
+    "IcTemporalPatternDiscovery",
+    "MethodEvaluation",
+    "OhdsiRTools",
+    "OhdsiSharing",
+    "PatientLevelPrediction",
+    "PheValuator",
+    "ROhdsiWebApi",
+    "SelfControlledCaseSeries",
+    "SelfControlledCohort")
 }
 
 #' Get a list of R core packages
-#' 
-#' @details 
+#'
+#' @details
 #' Returns names of packages that are part of the R code, and can therefore not be installed.
 #'
 #' @return
 #' A character vector.
-#' 
+#'
 #' @export
 getCorePackages <- function() {
   c("grDevices", "graphics", "utils", "stats", "methods", "tools", "grid", "datasets", "splines")
@@ -246,8 +266,8 @@ getCorePackages <- function() {
 #' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
-#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manually.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that
+#'                              needs to be installed manually.
 #'
 #'
 #' @examples
@@ -261,27 +281,30 @@ getCorePackages <- function() {
 #' restoreEnvironment(snapshot)
 #' }
 #' @export
-restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE) {
+restoreEnvironment <- function(snapshot,
+                               stopOnWrongRVersion = FALSE,
+                               strict = FALSE,
+                               skipLast = TRUE) {
   start <- Sys.time()
   # R core packages that cannot be installed:
   corePackages <- c("devtools", "remotes", getCorePackages())
-  
+
   # OHDSI packages not in CRAN:
   ohdsiPackages <- getOhdsiGitHubPackages()
-  
+
   s <- sessionInfo()
   rVersion <- paste(s$R.version$major, s$R.version$minor, sep = ".")
   if (rVersion != as.character(snapshot$version[snapshot$package == "R"])) {
     message <- sprintf("Wrong R version: need version %s, found version %s",
-                       as.character(snapshot$version[snapshot$package == "R"]),
-                       rVersion)
+                       as.character(snapshot$version[snapshot$package ==
+      "R"]), rVersion)
     if (stopOnWrongRVersion) {
       stop(message)
     } else {
       warning(message)
     }
   }
-  
+
   snapshot <- snapshot[snapshot$package != "R", ]
   if (skipLast) {
     snapshot <- snapshot[1:(nrow(snapshot) - 1), ]
@@ -296,27 +319,40 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = F
     if (package %in% corePackages) {
       writeLines(sprintf("Skipping %s (%s) because part of R core", package, requiredVersion))
     } else if (isInstalled && requiredVersion == installedVersion) {
-      writeLines(sprintf("Skipping %s (%s) because correct version already installed", package, requiredVersion))
-    } else if (!strict && isInstalled && comparable(installedVersion, requiredVersion)) {  
-      writeLines(sprintf("Skipping %s because installed version (%s) is newer than required version (%s), and major version number is the same", 
+      writeLines(sprintf("Skipping %s (%s) because correct version already installed",
                          package,
-                         installedVersion, 
+                         requiredVersion))
+    } else if (!strict && isInstalled && comparable(installedVersion, requiredVersion)) {
+      writeLines(sprintf("Skipping %s because installed version (%s) is newer than required version (%s), and major version number is the same",
+                         package,
+                         installedVersion,
                          requiredVersion))
     } else if (package %in% ohdsiPackages) {
       if (isInstalled) {
-        writeLines(sprintf("Installing %s because version %s needed but version %s found", package, requiredVersion, installedVersion))
+        writeLines(sprintf("Installing %s because version %s needed but version %s found",
+                           package,
+                           requiredVersion,
+                           installedVersion))
       } else {
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
-      url <- sprintf("https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz", package, requiredVersion)
+      url <- sprintf("https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz",
+                     package,
+                     requiredVersion)
       remotes::install_url(url, dependencies = FALSE)
     } else {
       if (package %in% installed.packages()) {
-        writeLines(sprintf("Installing %s because version %s needed but version %s found", package, requiredVersion, installedVersion))
+        writeLines(sprintf("Installing %s because version %s needed but version %s found",
+                           package,
+                           requiredVersion,
+                           installedVersion))
       } else {
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
-      remotes::install_version(package = package, version = requiredVersion, type = "source", dependencies = FALSE)
+      remotes::install_version(package = package,
+                               version = requiredVersion,
+                               type = "source",
+                               dependencies = FALSE)
     }
   }
   delta <- Sys.time() - start
@@ -329,13 +365,13 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = F
 #'
 #' @details
 #' This function records all versions used in the R environment that are used by one root package, and
-#' stores them in a CSV file in the R package that is currently being developed. The default location is
-#' \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
+#' stores them in a CSV file in the R package that is currently being developed. The default location
+#' is \code{inst/settings/rEnvironmentSnapshot.csv}.This can be used for example to restore the
 #' environment to the state it was when a particular study package was run using the
 #' \code{\link{restoreEnvironment}} function.
 #'
 #' @param rootPackage   The name of the root package
-#' @param pathToCsv    The path for saving the snapshot (as CSV file).
+#' @param pathToCsv     The path for saving the snapshot (as CSV file).
 #'
 #' @examples
 #' \dontrun{
@@ -343,7 +379,8 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = F
 #' }
 #'
 #' @export
-insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/settings/rEnvironmentSnapshot.csv") {
+insertEnvironmentSnapshotInPackage <- function(rootPackage,
+                                               pathToCsv = "inst/settings/rEnvironmentSnapshot.csv") {
   snapshot <- takeEnvironmentSnapshot(rootPackage)
   folder <- dirname(pathToCsv)
   if (!file.exists(folder)) {
@@ -355,8 +392,8 @@ insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/se
 #' Restore environment stored in package
 #'
 #' @details
-#' This function restores all packages (and package versions) described in the environment snapshot stored
-#' in the package currently being developed. The default location is
+#' This function restores all packages (and package versions) described in the environment snapshot
+#' stored in the package currently being developed. The default location is
 #' \code{inst/settings/rEnvironmentSnapshot.csv}.
 #'
 #' @param pathToCsv             The path for saving the snapshot (as CSV file).
@@ -365,8 +402,8 @@ insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/se
 #' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
-#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manually.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that
+#'                              needs to be installed manually.
 #'
 #' @examples
 #' \dontrun{
@@ -374,8 +411,8 @@ insertEnvironmentSnapshotInPackage <- function(rootPackage, pathToCsv = "inst/se
 #' }
 #'
 #' @export
-restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmentSnapshot.csv", 
-                                          stopOnWrongRVersion = FALSE, 
+restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
+                                          stopOnWrongRVersion = FALSE,
                                           strict = FALSE,
                                           skipLast = TRUE) {
   snapshot <- read.csv(pathToCsv)
@@ -383,25 +420,26 @@ restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmen
                      stopOnWrongRVersion = stopOnWrongRVersion,
                      strict = strict,
                      skipLast = skipLast)
-  
+
 }
 
 #' Restore environment stored in package
 #'
 #' @details
-#' This function restores all packages (and package versions) described in the environment snapshot stored
-#' in the package currently being developed. The default location is
+#' This function restores all packages (and package versions) described in the environment snapshot
+#' stored in the package currently being developed. The default location is
 #' \code{inst/settings/rEnvironmentSnapshot.csv}.
 #'
-#' @param githubPath            The path for the GitHub repo containing the package (e.g. 'OHDSI/StudyProtocols/AlendronateVsRaloxifene').
+#' @param githubPath            The path for the GitHub repo containing the package (e.g.
+#'                              'OHDSI/StudyProtocols/AlendronateVsRaloxifene').
 #' @param pathToCsv             The path for the snapshot inside the package.
 #' @param stopOnWrongRVersion   Should the function stop when the wrong version of R is installed? Else
 #'                              just a warning will be thrown when the version doesn't match.
 #' @param strict                If TRUE, the exact version of each package will installed. If FALSE, a
 #'                              package will only be installed if (a) a newer version is required than
 #'                              currently installed, or (b) the major version number is different.
-#' @param skipLast              Skip last entry in snapshot? This is usually the study package that needs
-#'                              to be installed manually.
+#' @param skipLast              Skip last entry in snapshot? This is usually the study package that
+#'                              needs to be installed manually.
 #'
 #' @examples
 #' \dontrun{
@@ -409,9 +447,9 @@ restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmen
 #' }
 #'
 #' @export
-restoreEnvironmentFromPackageOnGithub <- function(githubPath, 
+restoreEnvironmentFromPackageOnGithub <- function(githubPath,
                                                   pathToCsv = "inst/settings/rEnvironmentSnapshot.csv",
-                                                  stopOnWrongRVersion = FALSE, 
+                                                  stopOnWrongRVersion = FALSE,
                                                   strict = FALSE,
                                                   skipLast = TRUE) {
   parts <- strsplit(githubPath, "/")[[1]]

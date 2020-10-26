@@ -18,19 +18,7 @@ A character vector with formatted R code.
 Format R code
 }
 \examples{
-code <- "
-#' Example functon
-#' 
-#' @param x One argument.
-#' @param fooBar Another argument.
-#'
-#' @examples 
-#' example(x=1,fooBar='abc')
-#'
-#'@export
-example <- function(x,foobar){paste(x,foobar)}
-"
-
+code <- "example <- function(x,foobar){paste(x,foobar)}"
 formatted <- formatRText(code)
 writeLines(formatted)
 

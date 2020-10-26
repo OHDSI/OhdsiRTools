@@ -24,5 +24,5 @@
 #' installed.packages packageDescription sessionInfo write.csv read.csv install.packages menu
 #' @importFrom stats aggregate
 #' @importFrom httr GET POST content set_config config add_headers
-#' @import openxlsx 
+#' @import openxlsx
 NULL

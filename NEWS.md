@@ -1,6 +1,10 @@
 OhdsiRTools v1.9.1
 ==================
 
+Changes:
+
+1. Dropped `runAndNotify()` function.
+
 Bugfixes:
 
 1. `takeEnvironmentSnapshot()` and `createRenvLockFile()` now include dependencies in 'LinkingTo' section.

@@ -13,6 +13,6 @@ fixHadesLogo(path = ".")
 This function returns nothing.
 }
 \description{
-In all HTML files in the docs folder, each occurrence of 'hadesLogo' is replaced with an
-HTML image tag referring to the HADES logo.
+In all HTML files in the docs folder, each occurrence of 'hadesLogo' is replaced with an HTML image
+tag referring to the HADES logo.
 }

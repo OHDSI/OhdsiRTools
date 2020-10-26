@@ -12,11 +12,14 @@ createRenvLockFile(
 )
 }
 \arguments{
-\item{rootPackage}{The name of the root package, the package that we'd like to be able to run in the end.}
+\item{rootPackage}{The name of the root package, the package that we'd like to be
+able to run in the end.}
 
-\item{ohdsiGitHubPackages}{Names of R packages that need to be installed from the OHDSI GitHub.}
+\item{ohdsiGitHubPackages}{Names of R packages that need to be installed from the OHDSI
+GitHub.}
 
-\item{ohdsiStudiesGitHubPackages}{Names of R packages that need to be installed from the OHDSI-Studies GitHub.}
+\item{ohdsiStudiesGitHubPackages}{Names of R packages that need to be installed from the
+OHDSI-Studies GitHub.}
 
 \item{fileName}{Name of the lock file to be generated.}
 }
@@ -27,7 +30,7 @@ Does not return a value. Is executed for the side-effect of creating the lock fi
 Create a renv lock file
 }
 \details{
-Create a lock file that allows recontruction of the R environment using the \code{renv} package. This function will include the
-root file and all of its dependencies in the lock file, requiring the same package versions as currently installed on this 
-computer.
+Create a lock file that allows recontruction of the R environment using the \code{renv} package.
+This function will include the root file and all of its dependencies in the lock file, requiring
+the same package versions as currently installed on this computer.
 }

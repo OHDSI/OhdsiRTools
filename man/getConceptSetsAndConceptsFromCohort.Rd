@@ -31,8 +31,7 @@ For a given cohort definition id, get all concept sets and resolve all concepts 
 \dontrun{
 # This will obtain a list of concept sets and concepts from a cohort id:
 
-getConceptsFromCohortId(baseUrl = "http://server.org:80/WebAPI",
-                        definitionId = 123)
+getConceptsFromCohortId(baseUrl = "http://server.org:80/WebAPI", definitionId = 123)
 }
 
 }
