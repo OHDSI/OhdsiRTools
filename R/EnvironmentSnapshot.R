@@ -199,7 +199,7 @@ createRenvLockFile <- function(rootPackage,
   
   lock <- list(R = createRNode(),
                Packages = createPackagesNode())
-  json <- jsonlite::toJSON(lock, pretty = TRUE, auto_unbox = TRUE)
+  json <- RJSONIO::toJSON(lock, pretty = TRUE)
   write(json, fileName)
 }
 
@@ -213,9 +213,9 @@ createRenvLockFile <- function(rootPackage,
 #' 
 #' @export
 getOhdsiGitHubPackages <- function() {
-  c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CohortDiagnostics", "CohortMethod", 
-    "EvidenceSynthesis", "FeatureExtraction", "IcTemporalPatternDiscovery", 
-    "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
+  c("Achilles", "BigKnn", "CaseControl", "CaseCrossover", "CirceR", "CohortDiagnostics", "CohortMethod", 
+    "DataQualityDashboard", "EvidenceSynthesis", "Eunomia",  "FeatureExtraction", "Hades", "Hydra", 
+    "IcTemporalPatternDiscovery", "MethodEvaluation", "OhdsiRTools", "OhdsiSharing", "PatientLevelPrediction",
     "PheValuator", "ROhdsiWebApi", "SelfControlledCaseSeries", "SelfControlledCohort")
 }
 
@@ -264,7 +264,7 @@ getCorePackages <- function() {
 restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = FALSE, skipLast = TRUE) {
   start <- Sys.time()
   # R core packages that cannot be installed:
-  corePackages <- c("devtools", getCorePackages())
+  corePackages <- c("devtools", "remotes", getCorePackages())
   
   # OHDSI packages not in CRAN:
   ohdsiPackages <- getOhdsiGitHubPackages()
@@ -309,14 +309,14 @@ restoreEnvironment <- function(snapshot, stopOnWrongRVersion = FALSE, strict = F
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
       url <- sprintf("https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz", package, requiredVersion)
-      devtools::install_url(url, dependencies = FALSE)
+      remotes::install_url(url, dependencies = FALSE)
     } else {
       if (package %in% installed.packages()) {
         writeLines(sprintf("Installing %s because version %s needed but version %s found", package, requiredVersion, installedVersion))
       } else {
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
-      devtools::install_version(package = package, version = requiredVersion, type = "source", dependencies = FALSE)
+      remotes::install_version(package = package, version = requiredVersion, type = "source", dependencies = FALSE)
     }
   }
   delta <- Sys.time() - start

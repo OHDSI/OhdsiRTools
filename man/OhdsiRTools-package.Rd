@@ -7,12 +7,12 @@
 \title{OhdsiRTools: Tools Used by Observational Health Data Science and Informatics (OHDSI)}
 \description{
 Includes functions to format and check syntax of R code and packages following the 'OHDSI'
-    R style guidelines. Support for parallel computation, logging, and function automation. Functionality
-    for interacting with instances of the open source 'OHDSI' WebApi, which can be found at <https://github.com/OHDSI/WebAPI>.
+    R style guidelines. Generate renv lock files for OHDSI study packages.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{http://ohdsi.github.io/OhdsiRTools/}
   \item \url{https://github.com/OHDSI/OhdsiRTools}
   \item Report bugs at \url{https://github.com/OHDSI/OhdsiRTools/issues}
 }

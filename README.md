@@ -6,12 +6,13 @@ OhdsiRTools
 
 Introduction
 ============
-An R package with tools to be used in the other OHDSI R packages. Mainly contains functions to help develop R packages.
+An R package with tools to help write and maintain other OHDSI R packages. Other OHDSI R packages should not depend on or import OhdsiRTools.
 
 Features
 ========
-- Auto code formatting
-- Auto checking of R code
+- Auto code formatting.
+- Auto checking of R code.
+- Generate renv lock files with correct references to OHDSI repos.
 
 Examples
 ========
@@ -38,9 +39,9 @@ Installation
 1. In R, use the following commands to download and install OhdsiRTools:
 
   ```r
-  install.packages("drat")
-  drat::addRepo("OHDSI")
-  install.packages("OhdsiRTools")
+  install.packages("remotes")
+  library(remotes)
+  install_github("ohdsi/OhdsiRTools")
   ```
 
 User Documentation

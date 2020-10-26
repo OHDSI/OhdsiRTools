@@ -2,7 +2,7 @@ Package: OhdsiRTools
 Type: Package
 Title: Tools Used by Observational Health Data Science and Informatics (OHDSI)
 Version: 1.9.1
-Date: 2020-08-25
+Date: 2020-10-26
 Authors@R: c(
     person("Martijn", "Schuemie", email = "schuemie@ohdsi.org", role = c("aut", "cre")),
     person("Marc", "Suchard", role = c("aut")),
@@ -10,32 +10,23 @@ Authors@R: c(
   )
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Includes functions to format and check syntax of R code and packages following the 'OHDSI'
-    R style guidelines. Support for parallel computation, logging, and function automation. Functionality
-    for interacting with instances of the open source 'OHDSI' WebApi, which can be found at <https://github.com/OHDSI/WebAPI>. 
+    R style guidelines. Generate renv lock files for OHDSI study packages.
 License: Apache License 2.0
-VignetteBuilder: knitr
 Depends:
     R (>= 3.1.0),
 Imports:
-    devtools,
+    remotes,
     codetools,
     formatR,
-    snow,
     RJSONIO,
     httr (>= 1.3.1),
     openxlsx (>= 4.0.17),
-    XML,
-    jsonlite,
     methods,
     utils,
     mailR
 Suggests:
-    testthat,
-    shiny,
-    DT,
-    knitr,
-    rmarkdown
-URL: https://github.com/OHDSI/OhdsiRTools
+    testthat
+URL: http://ohdsi.github.io/OhdsiRTools/, https://github.com/OHDSI/OhdsiRTools
 BugReports: https://github.com/OHDSI/OhdsiRTools/issues    
 NeedsCompilation: no
 RoxygenNote: 7.1.1

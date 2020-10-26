@@ -5,6 +5,9 @@ Bugfixes:
 
 1. `takeEnvironmentSnapshot()` and `createRenvLockFile()` now include dependencies in 'LinkingTo' section.
 
+2. `splines` now also recognized as R core package in `createRenvLockFile()`.
+
+
 
 OhdsiRTools v1.9.0
 ==================
