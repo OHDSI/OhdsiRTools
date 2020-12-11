@@ -223,8 +223,6 @@ getOhdsiGitHubPackages <- function() {
     "CohortDiagnostics",
     "CohortMethod",
     "DataQualityDashboard",
-    "EvidenceSynthesis",
-    "Eunomia",
     "FeatureExtraction",
     "Hades",
     "Hydra",
