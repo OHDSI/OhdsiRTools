@@ -1,3 +1,11 @@
+OhdsiRTools v1.9.2
+==================
+
+Changes:
+
+1. Better detection of R base packages when creating renv lock files.
+
+
 OhdsiRTools v1.9.1
 ==================
 
