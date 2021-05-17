@@ -1,3 +1,11 @@
+OhdsiRTools v1.10.0
+==================
+
+Changes:
+
+1.Adding `includeRootPackage` and `additionalRequiredPackages` arguments to `createRenvLockFile()` function
+
+
 OhdsiRTools v1.9.2
 ==================
 

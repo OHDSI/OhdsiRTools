@@ -6,6 +6,8 @@
 \usage{
 createRenvLockFile(
   rootPackage,
+  includeRootPackage = TRUE,
+  additionalRequiredPackages = NULL,
   ohdsiGitHubPackages = getOhdsiGitHubPackages(),
   ohdsiStudiesGitHubPackages = rootPackage,
   fileName = "renv.lock"
@@ -14,6 +16,11 @@ createRenvLockFile(
 \arguments{
 \item{rootPackage}{The name of the root package, the package that we'd like to be
 able to run in the end.}
+
+\item{includeRootPackage}{Include the root package in the renv file?}
+
+\item{additionalRequiredPackages}{Additional packages we want to have installed (with their 
+dependencies), such as 'keyring'.}
 
 \item{ohdsiGitHubPackages}{Names of R packages that need to be installed from the OHDSI
 GitHub.}

@@ -1,6 +1,6 @@
 # @file OhdsiRTools.R
 #
-# Copyright 2020 Observational Health Data Sciences and Informatics
+# Copyright 2021 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -110,6 +110,9 @@ comparable <- function(installedVersion, requiredVersion) {
 #'
 #' @param rootPackage                  The name of the root package, the package that we'd like to be
 #'                                     able to run in the end.
+#' @param includeRootPackage           Include the root package in the renv file?
+#' @param additionalRequiredPackages   Additional packages we want to have installed (with their 
+#'                                     dependencies), such as 'keyring'.
 #' @param ohdsiGitHubPackages          Names of R packages that need to be installed from the OHDSI
 #'                                     GitHub.
 #' @param ohdsiStudiesGitHubPackages   Names of R packages that need to be installed from the
@@ -121,6 +124,8 @@ comparable <- function(installedVersion, requiredVersion) {
 #'
 #' @export
 createRenvLockFile <- function(rootPackage,
+                               includeRootPackage = TRUE,
+                               additionalRequiredPackages = NULL,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
                                ohdsiStudiesGitHubPackages = rootPackage,
                                fileName = "renv.lock") {
@@ -130,7 +135,19 @@ createRenvLockFile <- function(rootPackage,
 
   snapShot <- takeEnvironmentSnapshot(rootPackage)
   rVersion <- snapShot[snapShot$package == "R", ]
+  
+  if (!is.null(additionalRequiredPackages)) {
+    for (additionalRequiredPackage in additionalRequiredPackages) {
+      snapShot <- rbind(snapShot, takeEnvironmentSnapshot(additionalRequiredPackage)    )
+    }
+    snapShot <- snapShot[!duplicated(snapShot$package), ]
+  }
   snapShot <- snapShot[!snapShot$package %in% c("R", getCorePackages()), ]
+  
+  if (!includeRootPackage) {
+    snapShot <- snapShot[snapShot$package != rootPackage, ]
+  }
+  
   cranPackages <- snapShot[!snapShot$package %in% c(ohdsiGitHubPackages,
                                                     ohdsiStudiesGitHubPackages), ]
   cranPackages <- rbind(cranPackages, data.frame(package = "renv",
