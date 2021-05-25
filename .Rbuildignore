@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .gitattributes
+.github
 extras
 man-roxygen
 .travis.yml
