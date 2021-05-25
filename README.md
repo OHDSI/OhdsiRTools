@@ -1,7 +1,7 @@
 OhdsiRTools
 ===========
 
-[![Build Status](https://travis-ci.org/OHDSI/OhdsiRTools.svg?branch=master)](https://travis-ci.org/OHDSI/OhdsiRTools)
+[![Build Status](https://github.com/OHDSI/OhdsiRTools/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiRTools/actions?query=workflow%3AR-CMD-check)
 [![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
 
 Introduction
