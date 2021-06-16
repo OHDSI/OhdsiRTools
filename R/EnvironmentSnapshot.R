@@ -1,5 +1,3 @@
-# @file OhdsiRTools.R
-#
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
