@@ -139,20 +139,21 @@ checkUsagePackage <- function(package,
   }
 }
 
-#' Find non-ASCII strings in R files
+#' Find non-ASCII strings in files
 #'
 #' @description
-#' Find non-ASCII string in R files.
+#' Find non-ASCII string in files
 #'
-#' @param path        Path to the folder containing the R files.
-#' @param recursive   If TRUE, subfolders will also be searched for R files.
+#' @param path        Path to the folder containing the files matching the pattern parameter.
+#' @param recursive   If TRUE, subfolders will also be searched for files matching the pattern parameter.
+#' @param pattern     The regular expression to use for selecting files. The default is .R files.
 #'
 #' @return
-#' A table listing the lines per R file containing non-ASCII characters.
+#' A table listing the lines per file containing non-ASCII characters.
 #'
 #' @export
-findNonAsciiStringsInFolder <- function(path = ".", recursive = TRUE) {
-  files <- list.files(path = path, pattern = "*.R$", recursive = recursive, full.names = TRUE)
+findNonAsciiStringsInFolder <- function(path = ".", recursive = TRUE, pattern = "*.R$") {
+  files <- list.files(path = path, pattern = pattern, recursive = recursive, full.names = TRUE)
   checkFile <- function(file) {
     lines <- tools::showNonASCIIfile(file)
     if (length(lines) == 0) {
