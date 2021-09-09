@@ -22,6 +22,7 @@
 #' @importFrom methods getFunction is
 #' @importFrom utils capture.output help memory.limit setTxtProgressBar txtProgressBar
 #' installed.packages packageDescription sessionInfo write.csv read.csv install.packages menu
+#' read.table untar
 #' @importFrom stats aggregate
 #' @importFrom httr GET POST content set_config config add_headers
 #' @import openxlsx

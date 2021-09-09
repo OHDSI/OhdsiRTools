@@ -20,7 +20,8 @@ Imports:
     httr (>= 1.3.1),
     openxlsx (>= 4.0.17),
     methods,
-    utils
+    utils,
+    rcmdcheck
 Suggests:
     testthat
 URL: http://ohdsi.github.io/OhdsiRTools/, https://github.com/OHDSI/OhdsiRTools

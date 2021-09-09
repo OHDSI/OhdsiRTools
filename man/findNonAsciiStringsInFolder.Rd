@@ -2,18 +2,20 @@
 % Please edit documentation in R/CodeChecking.R
 \name{findNonAsciiStringsInFolder}
 \alias{findNonAsciiStringsInFolder}
-\title{Find non-ASCII strings in R files}
+\title{Find non-ASCII strings in files}
 \usage{
-findNonAsciiStringsInFolder(path = ".", recursive = TRUE)
+findNonAsciiStringsInFolder(path = ".", recursive = TRUE, pattern = "*.R$")
 }
 \arguments{
-\item{path}{Path to the folder containing the R files.}
+\item{path}{Path to the folder containing the files matching the pattern parameter.}
 
-\item{recursive}{If TRUE, subfolders will also be searched for R files.}
+\item{recursive}{If TRUE, subfolders will also be searched for files matching the pattern parameter.}
+
+\item{pattern}{The regular expression to use for selecting files. The default is .R files.}
 }
 \value{
-A table listing the lines per R file containing non-ASCII characters.
+A table listing the lines per file containing non-ASCII characters.
 }
 \description{
-Find non-ASCII string in R files.
+Find non-ASCII string in files
 }
