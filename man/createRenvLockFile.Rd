@@ -5,6 +5,7 @@
 \title{Create a renv lock file}
 \usage{
 createRenvLockFile(
+  mode = "auto",
   rootPackage,
   includeRootPackage = TRUE,
   additionalRequiredPackages = NULL,
@@ -14,13 +15,15 @@ createRenvLockFile(
 )
 }
 \arguments{
+\item{mode}{Can be "auto" or "description". See details.}
+
 \item{rootPackage}{The name of the root package, the package that we'd like to be
 able to run in the end.}
 
 \item{includeRootPackage}{Include the root package in the renv file?}
 
 \item{additionalRequiredPackages}{Additional packages we want to have installed (with their 
-dependencies), such as 'keyring'.}
+dependencies), such as 'keyring'. Ignored if \code{mode = "auto"}.}
 
 \item{ohdsiGitHubPackages}{Names of R packages that need to be installed from the OHDSI
 GitHub.}
@@ -28,7 +31,7 @@ GitHub.}
 \item{ohdsiStudiesGitHubPackages}{Names of R packages that need to be installed from the
 OHDSI-Studies GitHub.}
 
-\item{fileName}{Name of the lock file to be generated.}
+\item{fileName}{Name of the lock file to be generated. Ignored if \code{mode = "auto"}.}
 }
 \value{
 Does not return a value. Is executed for the side-effect of creating the lock file.
@@ -40,4 +43,14 @@ Create a renv lock file
 Create a lock file that allows reconstruction of the R environment using the \code{renv} package.
 This function will include the root file and all of its dependencies in the lock file, requiring
 the same package versions as currently installed on this computer.
+
+If \code{mode = "auto"}, this function will invoke \code{renv::init()}, which in turn will scan the
+project folders for any dependencies that are referenced. Afterwards, references to OHDSI packages will
+be altered so the correct GitHub tags are used for the installed versions.
+
+If \code{mode = "description"}, this function will assume the project is a full-fledged R package with 
+up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION. 
+
+The second option tends to lead to smaller lock files, but requires all dependencies are accurately listed
+in the DESCRIPTION file of the study package.
 }

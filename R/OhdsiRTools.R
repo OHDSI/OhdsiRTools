@@ -25,5 +25,4 @@
 #' read.table untar
 #' @importFrom stats aggregate
 #' @importFrom httr GET POST content set_config config add_headers
-#' @import openxlsx
 NULL

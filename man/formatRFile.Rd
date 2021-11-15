@@ -14,3 +14,6 @@ formatRFile(file, width.cutoff = 100)
 \description{
 Format an R file
 }
+\details{
+DEPRECRATED. Please use \code{styler::style_file} instead.
+}

@@ -19,3 +19,6 @@ extension will be formatted.}
 \description{
 Format all R files in a folder
 }
+\details{
+DEPRECRATED. Please use \code{styler::style_dir} instead.
+}

@@ -1,12 +1,17 @@
-OhdsiRTools v1.10.1
-===================
+OhdsiRTools v2.0.0
+==================
 
 Changes:
 
 1. `takeEnvironmentSnapshot()` and `createRenvLockFile()` now throw informative error message if root package is not found.
 
+2. Added `auto` mode to `createRenvLockFile()` (which is now the default), which relies on `renv::init()`'s ability to scan the project for dependencies, rather than requiring the user has accurately listed all dependencies in the study package DESCRIPTION.
 
-2. `findNonAsciiStringsInFolder()` can now also be used for non-R-script files.
+3. `findNonAsciiStringsInFolder()` can now also be used for non-R-script files.
+
+4. Removing deprecated WebAPI functions, since users should now all be using the [`ROhdsiWebApi` package](https://ohdsi.github.io/ROhdsiWebApi/).
+
+5. Deprecating `formatR...` functions in favor of `styler`.
 
 
 OhdsiRTools v1.10.0

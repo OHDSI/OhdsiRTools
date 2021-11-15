@@ -1,8 +1,8 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools Used by Observational Health Data Science and Informatics (OHDSI)
-Version: 1.10.0
-Date: 2021-05-17
+Version: 2.0.0
+Date: 2021-11-15
 Authors@R: c(
     person("Martijn", "Schuemie", email = "schuemie@ohdsi.org", role = c("aut", "cre")),
     person("Marc", "Suchard", role = c("aut")),
@@ -13,17 +13,15 @@ Description: Includes functions to format and check syntax of R code and package
     R style guidelines. Generate renv lock files for OHDSI study packages.
 License: Apache License 2.0
 Imports:
-    remotes,
-    codetools,
-    formatR,
-    RJSONIO,
-    httr (>= 1.3.1),
-    openxlsx (>= 4.0.17),
-    methods,
-    utils,
-    rcmdcheck
+  remotes,
+  codetools,
+  formatR,
+  RJSONIO,
+  httr (>= 1.3.1),
+  methods,
+  utils
 Suggests:
-    testthat
+  renv
 URL: http://ohdsi.github.io/OhdsiRTools/, https://github.com/OHDSI/OhdsiRTools
 BugReports: https://github.com/OHDSI/OhdsiRTools/issues    
 NeedsCompilation: no
