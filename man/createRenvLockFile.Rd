@@ -5,8 +5,8 @@
 \title{Create a renv lock file}
 \usage{
 createRenvLockFile(
-  mode = "auto",
   rootPackage,
+  mode = "auto",
   includeRootPackage = TRUE,
   additionalRequiredPackages = NULL,
   ohdsiGitHubPackages = getOhdsiGitHubPackages(),
@@ -15,10 +15,10 @@ createRenvLockFile(
 )
 }
 \arguments{
-\item{mode}{Can be "auto" or "description". See details.}
-
 \item{rootPackage}{The name of the root package, the package that we'd like to be
 able to run in the end.}
+
+\item{mode}{Can be "auto" or "description". See details.}
 
 \item{includeRootPackage}{Include the root package in the renv file?}
 

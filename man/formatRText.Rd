@@ -20,9 +20,3 @@ Format R code
 \details{
 DEPRECRATED. Please use \code{styler::style_text} instead.
 }
-\examples{
-code <- "example <- function(x,foobar){paste(x,foobar)}"
-formatted <- formatRText(code)
-writeLines(formatted)
-
-}

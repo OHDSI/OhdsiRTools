@@ -119,9 +119,9 @@ comparable <- function(installedVersion, requiredVersion) {
 #' The second option tends to lead to smaller lock files, but requires all dependencies are accurately listed
 #' in the DESCRIPTION file of the study package.
 #'
-#' @param mode                         Can be "auto" or "description". See details.
 #' @param rootPackage                  The name of the root package, the package that we'd like to be
 #'                                     able to run in the end.
+#' @param mode                         Can be "auto" or "description". See details.
 #' @param includeRootPackage           Include the root package in the renv file?
 #' @param additionalRequiredPackages   Additional packages we want to have installed (with their 
 #'                                     dependencies), such as 'keyring'. Ignored if \code{mode = "auto"}.
@@ -135,8 +135,8 @@ comparable <- function(installedVersion, requiredVersion) {
 #' Does not return a value. Is executed for the side-effect of creating the lock file.
 #'
 #' @export
-createRenvLockFile <- function(mode = "auto", 
-                               rootPackage,
+createRenvLockFile <- function(rootPackage,
+                               mode = "auto", 
                                includeRootPackage = TRUE,
                                additionalRequiredPackages = NULL,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
@@ -173,7 +173,9 @@ createRenvLockFileAuto <- function(rootPackage,
       } else {
         remoteRef <- sprintf("v%s", lock$Packages[[i]]["Version"])
         if (!tagExists(lock$Packages[[i]]["Package"], remoteRef)) {
-          warning(sprintf("Tag '%s' does not exist for package '%'. Did you install a develop version? Please only use released package versions."))
+          warning(sprintf("Tag '%s' does not exist for package '%'. Did you install a develop version? Please only use released package versions.",
+                          remoteRef,
+                          lock$Packages[[i]]["Package"]))
         } else {
           message(sprintf("Settings remote ref for package '%s' to '%s'", lock$Packages[[i]]["Package"], remoteRef))
           toDelete <- which(names(lock$Packages[[i]]) %in% c("RemoteSha", "Hash"))
