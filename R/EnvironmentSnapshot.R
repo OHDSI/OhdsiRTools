@@ -33,6 +33,9 @@
 #'
 #' @export
 takeEnvironmentSnapshot <- function(rootPackage) {
+  if (is.na(packageDescription(rootPackage, fields = "Package")))
+      stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
+  
 
   splitPackageList <- function(packageList) {
     if (is.null(packageList)) {

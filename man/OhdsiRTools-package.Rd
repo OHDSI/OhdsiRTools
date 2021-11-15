@@ -6,8 +6,7 @@
 \alias{OhdsiRTools-package}
 \title{OhdsiRTools: Tools Used by Observational Health Data Science and Informatics (OHDSI)}
 \description{
-Includes functions to format and check syntax of R code and packages following the 'OHDSI'
-    R style guidelines. Generate renv lock files for OHDSI study packages.
+Includes functions to format and check syntax of R code and packages following the 'OHDSI' R style guidelines. Generate renv lock files for OHDSI study packages.
 }
 \seealso{
 Useful links:

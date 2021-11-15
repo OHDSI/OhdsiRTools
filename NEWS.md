@@ -1,5 +1,16 @@
+OhdsiRTools v1.10.1
+===================
+
+Changes:
+
+1. `takeEnvironmentSnapshot()` and `createRenvLockFile()` now throw informative error message if root package is not found.
+
+
+2. `findNonAsciiStringsInFolder()` can now also be used for non-R-script files.
+
+
 OhdsiRTools v1.10.0
-==================
+===================
 
 Changes:
 
