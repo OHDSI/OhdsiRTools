@@ -163,6 +163,9 @@ createRenvLockFile <- function(rootPackage,
 createRenvLockFileAuto <- function(rootPackage,
                                    includeRootPackage = TRUE,
                                    ohdsiGitHubPackages) {
+  if (includeRootPackage && is.na(packageDescription(rootPackage, fields = "Package")))
+    stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
+  
   renv::init(restart = FALSE)
   
   lock <- RJSONIO::fromJSON("renv.lock")
@@ -173,7 +176,7 @@ createRenvLockFileAuto <- function(rootPackage,
       } else {
         remoteRef <- sprintf("v%s", lock$Packages[[i]]["Version"])
         if (!tagExists(lock$Packages[[i]]["Package"], remoteRef)) {
-          warning(sprintf("Tag '%s' does not exist for package '%'. Did you install a develop version? Please only use released package versions.",
+          warning(sprintf("Tag '%s' does not exist for package '%s'. Did you install a develop version? Please only use released package versions.",
                           remoteRef,
                           lock$Packages[[i]]["Package"]))
         } else {
