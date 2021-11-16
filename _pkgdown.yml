@@ -6,3 +6,16 @@ home:
   links:
   - text: Ask a question
     href: http://forums.ohdsi.org
+
+navbar:
+  structure:
+    left:
+    - home
+    - reference
+    - renv
+    - news
+    right: [github]
+  components:
+    renv:
+      text: Using renv for dependencies
+      href: https://ohdsi.github.io/Hades/renv.html

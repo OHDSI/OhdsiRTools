@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -122,6 +125,7 @@
 
     <pre class="usage"><span class='fu'>createRenvLockFile</span><span class='op'>(</span>
   <span class='va'>rootPackage</span>,
+  mode <span class='op'>=</span> <span class='st'>"auto"</span>,
   includeRootPackage <span class='op'>=</span> <span class='cn'>TRUE</span>,
   additionalRequiredPackages <span class='op'>=</span> <span class='cn'>NULL</span>,
   ohdsiGitHubPackages <span class='op'>=</span> <span class='fu'><a href='getOhdsiGitHubPackages.html'>getOhdsiGitHubPackages</a></span><span class='op'>(</span><span class='op'>)</span>,
@@ -138,13 +142,17 @@
 able to run in the end.</p></td>
     </tr>
     <tr>
+      <th>mode</th>
+      <td><p>Can be "auto" or "description". See details.</p></td>
+    </tr>
+    <tr>
       <th>includeRootPackage</th>
       <td><p>Include the root package in the renv file?</p></td>
     </tr>
     <tr>
       <th>additionalRequiredPackages</th>
-      <td><p>Additional packages we want to have installed (with their 
-dependencies), such as 'keyring'.</p></td>
+      <td><p>Additional packages we want to have installed (with their
+dependencies), such as 'keyring'. Ignored if <code>mode = "auto"</code>.</p></td>
     </tr>
     <tr>
       <th>ohdsiGitHubPackages</th>
@@ -158,7 +166,7 @@ OHDSI-Studies GitHub.</p></td>
     </tr>
     <tr>
       <th>fileName</th>
-      <td><p>Name of the lock file to be generated.</p></td>
+      <td><p>Name of the lock file to be generated. Ignored if <code>mode = "auto"</code>.</p></td>
     </tr>
     </table>
 
@@ -170,6 +178,13 @@ OHDSI-Studies GitHub.</p></td>
     <p>Create a lock file that allows reconstruction of the R environment using the <code>renv</code> package.
 This function will include the root file and all of its dependencies in the lock file, requiring
 the same package versions as currently installed on this computer.</p>
+<p>If <code>mode = "auto"</code>, this function will invoke <code><a href='https://rstudio.github.io/renv/reference/init.html'>renv::init()</a></code>, which in turn will scan the
+project folders for any dependencies that are referenced. Afterwards, references to OHDSI packages will
+be altered so the correct GitHub tags are used for the installed versions.</p>
+<p>If <code>mode = "description"</code>, this function will assume the project is a full-fledged R package with
+up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION.</p>
+<p>The second option tends to lead to smaller lock files, but requires all dependencies are accurately listed
+in the DESCRIPTION file of the study package.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

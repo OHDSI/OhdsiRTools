@@ -21,8 +21,11 @@
   func <- substr(note, funcPos, funcPos + attr(funcPos, "match.length") - 3)
   func <- gsub("\\s", "", func)
   funcDef <- capture.output(getFunction(func, mustFind = FALSE))
-  if (funcDef[1] == "NULL")
-    return(NULL) else return(funcDef)
+  if (funcDef[1] == "NULL") {
+    return(NULL)
+  } else {
+    return(funcDef)
+  }
 }
 
 .getVariableName <- function(note) {
@@ -43,25 +46,27 @@
 #'
 #' @examples
 #' checkUsagePackage("OhdsiRTools")
-#'
 #' @export
 checkUsagePackage <- function(package,
                               ignoreHiddenFunctions = TRUE,
-                              suppressBindingKeywords = c("ggplot2",
-                                                          "ffwhich",
-                                                          "subset.ffdf",
-                                                          "glm")) {
+                              suppressBindingKeywords = c(
+                                "ggplot2",
+                                "ffwhich",
+                                "subset.ffdf",
+                                "glm"
+                              )) {
   require(package, character.only = TRUE)
   notes <- capture.output(codetools::checkUsagePackage(package,
-                                                       suppressLocal = FALSE,
-                                                       suppressParamAssigns = TRUE,
-                                                       suppressParamUnused = FALSE,
-                                                       suppressFundefMismatch = FALSE,
-                                                       suppressLocalUnused = FALSE,
-                                                       suppressNoLocalFun = FALSE,
-                                                       skipWith = TRUE,
-                                                       suppressUndefined = FALSE,
-                                                       suppressPartialMatchArgs = FALSE))
+    suppressLocal = FALSE,
+    suppressParamAssigns = TRUE,
+    suppressParamUnused = FALSE,
+    suppressFundefMismatch = FALSE,
+    suppressLocalUnused = FALSE,
+    suppressNoLocalFun = FALSE,
+    skipWith = TRUE,
+    suppressUndefined = FALSE,
+    suppressPartialMatchArgs = FALSE
+  ))
   if (length(notes) == 0) {
     writeLines("No problems found")
     invisible(notes)
@@ -77,9 +82,9 @@ checkUsagePackage <- function(package,
           line <- substr(notes[i], linePos + 3, linePos + attr(linePos, "match.length") - 2)
           line <- strsplit(line, "-")[[1]]
           if (length(line) == 1) {
-          line <- as.integer(line)
+            line <- as.integer(line)
           } else {
-          line <- as.integer(line[1]):as.integer(line[2])
+            line <- as.integer(line[1]):as.integer(line[2])
           }
           text <- readLines(file)[line]
         } else {
@@ -90,41 +95,50 @@ checkUsagePackage <- function(package,
         }
         hasKeyword <- FALSE
         for (keyword in suppressBindingKeywords) {
-          if (length(grep(keyword, text)) != 0)
-          hasKeyword <- TRUE
+          if (length(grep(keyword, text)) != 0) {
+            hasKeyword <- TRUE
+          }
         }
-        if (!hasKeyword)
+        if (!hasKeyword) {
           newNotes <- c(newNotes, notes[i])
+        }
       } else if (regexpr("assigned but may not be used", notes[i]) != -1) {
         funcDef <- .getFunctionDefinitionFromMem(notes[i])
         if (is.null(funcDef)) {
           if (ignoreHiddenFunctions) {
-          warning(paste("Ignoring problem in hidden function '", notes[i], "'", sep = ""))
+            warning(paste("Ignoring problem in hidden function '", notes[i], "'", sep = ""))
           } else {
-          newNotes <- c(newNotes, notes[i])
+            newNotes <- c(newNotes, notes[i])
           }
         } else {
           variableName <- .getVariableName(notes[i])
           text <- funcDef[grep(paste("(^|[^$])", variableName, sep = ""), funcDef)]
           hasKeyword <- FALSE
           for (keyword in suppressBindingKeywords) {
-          if (length(grep(keyword, text)) != 0)
-            hasKeyword <- TRUE
+            if (length(grep(keyword, text)) != 0) {
+              hasKeyword <- TRUE
+            }
           }
-          if (!hasKeyword)
-          newNotes <- c(newNotes, notes[i])
+          if (!hasKeyword) {
+            newNotes <- c(newNotes, notes[i])
+          }
         }
       } else if (regexpr("parameter .* may not be used", notes[i]) != -1) {
         funcDef <- .getFunctionDefinitionFromMem(notes[i])
         if (is.null(funcDef)) {
-          if (ignoreHiddenFunctions)
-          warning(paste("Ignoring problem in hidden function '",
-                        notes[i],
-                        "'",
-                        sep = "")) else newNotes <- c(newNotes, notes[i])
+          if (ignoreHiddenFunctions) {
+            warning(paste("Ignoring problem in hidden function '",
+              notes[i],
+              "'",
+              sep = ""
+            ))
+          } else {
+            newNotes <- c(newNotes, notes[i])
+          }
         } else {
-          if (length(grep("UseMethod\\(", funcDef)) == 0)
-          newNotes <- c(newNotes, notes[i])
+          if (length(grep("UseMethod\\(", funcDef)) == 0) {
+            newNotes <- c(newNotes, notes[i])
+          }
         }
       } else {
         newNotes <- c(newNotes, notes[i])
@@ -161,7 +175,6 @@ findNonAsciiStringsInFolder <- function(path = ".", recursive = TRUE, pattern = 
     } else {
       return(data.frame(file = file, line = lines))
     }
-
   }
   results <- lapply(files, checkFile)
   results <- do.call("rbind", results)

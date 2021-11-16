@@ -22,7 +22,7 @@ able to run in the end.}
 
 \item{includeRootPackage}{Include the root package in the renv file?}
 
-\item{additionalRequiredPackages}{Additional packages we want to have installed (with their 
+\item{additionalRequiredPackages}{Additional packages we want to have installed (with their
 dependencies), such as 'keyring'. Ignored if \code{mode = "auto"}.}
 
 \item{ohdsiGitHubPackages}{Names of R packages that need to be installed from the OHDSI
@@ -48,8 +48,8 @@ If \code{mode = "auto"}, this function will invoke \code{renv::init()}, which in
 project folders for any dependencies that are referenced. Afterwards, references to OHDSI packages will
 be altered so the correct GitHub tags are used for the installed versions.
 
-If \code{mode = "description"}, this function will assume the project is a full-fledged R package with 
-up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION. 
+If \code{mode = "description"}, this function will assume the project is a full-fledged R package with
+up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION.
 
 The second option tends to lead to smaller lock files, but requires all dependencies are accurately listed
 in the DESCRIPTION file of the study package.

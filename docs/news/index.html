@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -114,6 +117,18 @@
       <small>Source: <a href='https://github.com/OHDSI/OhdsiRTools/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="ohdsirtools-v200" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#ohdsirtools-v200" class="anchor"></a>OhdsiRTools v2.0.0</h1>
+<p>Changes:</p>
+<ol>
+<li><p><code><a href="../reference/takeEnvironmentSnapshot.html">takeEnvironmentSnapshot()</a></code> and <code><a href="../reference/createRenvLockFile.html">createRenvLockFile()</a></code> now throw informative error message if root package is not found.</p></li>
+<li><p>Added <code>auto</code> mode to <code><a href="../reference/createRenvLockFile.html">createRenvLockFile()</a></code> (which is now the default), which relies on <code><a href="https://rstudio.github.io/renv/reference/init.html">renv::init()</a></code>’s ability to scan the project for dependencies, rather than requiring the user has accurately listed all dependencies in the study package DESCRIPTION.</p></li>
+<li><p><code><a href="../reference/findNonAsciiStringsInFolder.html">findNonAsciiStringsInFolder()</a></code> can now also be used for non-R-script files.</p></li>
+<li><p>Removing deprecated WebAPI functions, since users should now all be using the <a href="https://ohdsi.github.io/ROhdsiWebApi/"><code>ROhdsiWebApi</code> package</a>.</p></li>
+<li><p>Deprecating <code>formatR...</code> functions in favor of <code>styler</code>.</p></li>
+</ol>
+</div>
     <div id="ohdsirtools-v1100" class="section level1">
 <h1 class="page-header" data-toc-text="1.10.0">
 <a href="#ohdsirtools-v1100" class="anchor"></a>OhdsiRTools v1.10.0</h1>

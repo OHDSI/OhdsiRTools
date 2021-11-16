@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -149,9 +152,10 @@
 eliminate false positives due to non-standard evaluation.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>checkUsagePackage</span><span class='op'>(</span><span class='st'>"OhdsiRTools"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring problem in hidden function '.checkBaseUrl : &lt;anonymous&gt;: local variable 'result' assigned but may not be used (C:/Git/OhdsiRTools/R/WebApiTools.R:305)'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring problem in hidden function 'createRenvLockFile : &lt;anonymous&gt;: parameter 'e' may not be used'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring problem in hidden function 'getCohortGenerationStatuses : &lt;anonymous&gt;: local variable 'status' assigned but may not be used (C:/Git/OhdsiRTools/R/WebApiTools.R:579-587)'</span></div><div class='output co'>#&gt; No problems found</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'>checkUsagePackage</span><span class='op'>(</span><span class='st'>"OhdsiRTools"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Ignoring problem in hidden function 'createRenvLockFile : &lt;anonymous&gt;: parameter 'e' may not be used'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> No problems found</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -24,5 +24,4 @@ package was run using the \code{\link{restoreEnvironment}} function.
 \examples{
 snapshot <- takeEnvironmentSnapshot("OhdsiRTools")
 snapshot
-
 }

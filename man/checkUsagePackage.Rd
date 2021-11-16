@@ -26,5 +26,4 @@ eliminate false positives due to non-standard evaluation.
 }
 \examples{
 checkUsagePackage("OhdsiRTools")
-
 }

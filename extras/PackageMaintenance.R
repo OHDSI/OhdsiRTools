@@ -17,7 +17,7 @@
 # limitations under the License.
 
 # Format and check code -----------------------------------------------
-OhdsiRTools::formatRFolder("R")
+styler::style_pkg()
 OhdsiRTools::checkUsagePackage("OhdsiRTools")
 OhdsiRTools::updateCopyrightYearFolder()
 OhdsiRTools::findNonAsciiStringsInFolder()

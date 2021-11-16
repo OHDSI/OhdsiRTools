@@ -30,22 +30,24 @@
 #' @examples
 #' snapshot <- takeEnvironmentSnapshot("OhdsiRTools")
 #' snapshot
-#'
 #' @export
 takeEnvironmentSnapshot <- function(rootPackage) {
-  if (is.na(packageDescription(rootPackage, fields = "Package")))
+  if (is.na(packageDescription(rootPackage, fields = "Package"))) {
     stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
-  
-  
+  }
+
+
   splitPackageList <- function(packageList) {
     if (is.null(packageList)) {
       return(c())
     } else {
-      return(strsplit(gsub("\\([^)]*\\)", "", gsub(" ", "", gsub("\n", "", packageList))),
-                      ",")[[1]])
+      return(strsplit(
+        gsub("\\([^)]*\\)", "", gsub(" ", "", gsub("\n", "", packageList))),
+        ","
+      )[[1]])
     }
   }
-  
+
   fetchDependencies <- function(package, recursive = TRUE, level = 0) {
     description <- packageDescription(package)
     packages <- splitPackageList(description$Depends)
@@ -54,8 +56,10 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     # Note: if we want to include suggests, we'll need to consider circular references packages <-
     # c(packages, splitPackageList(description$Suggests))
     packages <- packages[packages != "R"]
-    packages <- data.frame(name = packages, level = rep(level,
-                                                        length(packages)), stringsAsFactors = FALSE)
+    packages <- data.frame(name = packages, level = rep(
+      level,
+      length(packages)
+    ), stringsAsFactors = FALSE)
     if (recursive && nrow(packages) > 0) {
       all <- lapply(packages$name, fetchDependencies, recursive = TRUE, level = level + 1)
       dependencies <- do.call("rbind", all)
@@ -66,20 +70,24 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     }
     return(packages)
   }
-  
+
   packages <- fetchDependencies(rootPackage, recursive = TRUE)
   packages <- packages[order(-packages$level), ]
   getVersion <- function(package) {
     return(packageDescription(package)$Version)
   }
   versions <- sapply(c(packages$name, rootPackage), getVersion)
-  snapshot <- data.frame(package = names(versions),
-                         version = as.vector(versions),
-                         stringsAsFactors = FALSE)
+  snapshot <- data.frame(
+    package = names(versions),
+    version = as.vector(versions),
+    stringsAsFactors = FALSE
+  )
   s <- sessionInfo()
-  rVersion <- data.frame(package = "R",
-                         version = paste(s$R.version$major, s$R.version$minor, sep = "."),
-                         stringsAsFactors = FALSE)
+  rVersion <- data.frame(
+    package = "R",
+    version = paste(s$R.version$major, s$R.version$minor, sep = "."),
+    stringsAsFactors = FALSE
+  )
   snapshot <- rbind(rVersion, snapshot)
   return(snapshot)
 }
@@ -108,14 +116,14 @@ comparable <- function(installedVersion, requiredVersion) {
 #' Create a lock file that allows reconstruction of the R environment using the \code{renv} package.
 #' This function will include the root file and all of its dependencies in the lock file, requiring
 #' the same package versions as currently installed on this computer.
-#' 
+#'
 #' If \code{mode = "auto"}, this function will invoke \code{renv::init()}, which in turn will scan the
 #' project folders for any dependencies that are referenced. Afterwards, references to OHDSI packages will
 #' be altered so the correct GitHub tags are used for the installed versions.
-#' 
-#' If \code{mode = "description"}, this function will assume the project is a full-fledged R package with 
-#' up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION. 
-#' 
+#'
+#' If \code{mode = "description"}, this function will assume the project is a full-fledged R package with
+#' up-to-date DESCRIPTION, and will only install the dependencies listed in the DESCRIPION.
+#'
 #' The second option tends to lead to smaller lock files, but requires all dependencies are accurately listed
 #' in the DESCRIPTION file of the study package.
 #'
@@ -123,7 +131,7 @@ comparable <- function(installedVersion, requiredVersion) {
 #'                                     able to run in the end.
 #' @param mode                         Can be "auto" or "description". See details.
 #' @param includeRootPackage           Include the root package in the renv file?
-#' @param additionalRequiredPackages   Additional packages we want to have installed (with their 
+#' @param additionalRequiredPackages   Additional packages we want to have installed (with their
 #'                                     dependencies), such as 'keyring'. Ignored if \code{mode = "auto"}.
 #' @param ohdsiGitHubPackages          Names of R packages that need to be installed from the OHDSI
 #'                                     GitHub.
@@ -136,7 +144,7 @@ comparable <- function(installedVersion, requiredVersion) {
 #'
 #' @export
 createRenvLockFile <- function(rootPackage,
-                               mode = "auto", 
+                               mode = "auto",
                                includeRootPackage = TRUE,
                                additionalRequiredPackages = NULL,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
@@ -146,28 +154,32 @@ createRenvLockFile <- function(rootPackage,
     stop("The renv package must be installed to use this function")
   }
   if (mode == "auto") {
-    createRenvLockFileAuto(rootPackage = rootPackage,
-                           includeRootPackage = includeRootPackage,
-                           ohdsiGitHubPackages = ohdsiGitHubPackages)
+    createRenvLockFileAuto(
+      rootPackage = rootPackage,
+      includeRootPackage = includeRootPackage,
+      ohdsiGitHubPackages = ohdsiGitHubPackages
+    )
   } else {
-    createRenvLockFileManual(rootPackage = rootPackage,
-                             includeRootPackage = includeRootPackage,
-                             additionalRequiredPackages = additionalRequiredPackages,
-                             ohdsiGitHubPackages = ohdsiGitHubPackages,
-                             ohdsiStudiesGitHubPackages = ohdsiStudiesGitHubPackages,
-                             fileName = fileName)
-    
+    createRenvLockFileManual(
+      rootPackage = rootPackage,
+      includeRootPackage = includeRootPackage,
+      additionalRequiredPackages = additionalRequiredPackages,
+      ohdsiGitHubPackages = ohdsiGitHubPackages,
+      ohdsiStudiesGitHubPackages = ohdsiStudiesGitHubPackages,
+      fileName = fileName
+    )
   }
 }
 
 createRenvLockFileAuto <- function(rootPackage,
                                    includeRootPackage = TRUE,
                                    ohdsiGitHubPackages) {
-  if (includeRootPackage && is.na(packageDescription(rootPackage, fields = "Package")))
+  if (includeRootPackage && is.na(packageDescription(rootPackage, fields = "Package"))) {
     stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
-  
+  }
+
   renv::init(restart = FALSE)
-  
+
   lock <- RJSONIO::fromJSON("renv.lock")
   for (i in 1:length(lock$Packages)) {
     if (lock$Packages[[i]]["Source"] == "GitHub") {
@@ -176,9 +188,11 @@ createRenvLockFileAuto <- function(rootPackage,
       } else {
         remoteRef <- sprintf("v%s", lock$Packages[[i]]["Version"])
         if (!tagExists(lock$Packages[[i]]["Package"], remoteRef)) {
-          warning(sprintf("Tag '%s' does not exist for package '%s'. Did you install a develop version? Please only use released package versions.",
-                          remoteRef,
-                          lock$Packages[[i]]["Package"]))
+          warning(sprintf(
+            "Tag '%s' does not exist for package '%s'. Did you install a develop version? Please only use released package versions.",
+            remoteRef,
+            lock$Packages[[i]]["Package"]
+          ))
         } else {
           message(sprintf("Settings remote ref for package '%s' to '%s'", lock$Packages[[i]]["Package"], remoteRef))
           toDelete <- which(names(lock$Packages[[i]]) %in% c("RemoteSha", "Hash"))
@@ -190,21 +204,23 @@ createRenvLockFileAuto <- function(rootPackage,
   }
   if (includeRootPackage) {
     version <- packageDescription(rootPackage)$Version
-    lock$Packages[[length(lock$Packages) + 1]] <- list(Package = rootPackage,
-                                                       Version = version,
-                                                       Source = "GitHub",
-                                                       RemoteType = "github",
-                                                       RemoteHost = "api.github.com",
-                                                       RemoteRepo = rootPackage,
-                                                       RemoteUsername = "ohdsi-studies",
-                                                       RemoteRef = "master")
+    lock$Packages[[length(lock$Packages) + 1]] <- list(
+      Package = rootPackage,
+      Version = version,
+      Source = "GitHub",
+      RemoteType = "github",
+      RemoteHost = "api.github.com",
+      RemoteRepo = rootPackage,
+      RemoteUsername = "ohdsi-studies",
+      RemoteRef = "master"
+    )
     names(lock$Packages)[length(lock$Packages)] <- rootPackage
   }
   json <- RJSONIO::toJSON(lock, pretty = TRUE)
   sink("renv.lock")
   cat(json)
   sink()
-  
+
   renv:::renv_restart_request(project = getwd(), reason = "renv activated")
 }
 
@@ -220,66 +236,76 @@ createRenvLockFileManual <- function(rootPackage,
                                      ohdsiGitHubPackages,
                                      ohdsiStudiesGitHubPackages,
                                      fileName) {
-  
   snapShot <- takeEnvironmentSnapshot(rootPackage)
   rVersion <- snapShot[snapShot$package == "R", ]
-  
+
   if (!is.null(additionalRequiredPackages)) {
     for (additionalRequiredPackage in additionalRequiredPackages) {
-      snapShot <- rbind(snapShot, takeEnvironmentSnapshot(additionalRequiredPackage)    )
+      snapShot <- rbind(snapShot, takeEnvironmentSnapshot(additionalRequiredPackage))
     }
     snapShot <- snapShot[!duplicated(snapShot$package), ]
   }
   snapShot <- snapShot[!snapShot$package %in% c("R", getCorePackages()), ]
-  
+
   if (!includeRootPackage) {
     snapShot <- snapShot[snapShot$package != rootPackage, ]
   }
-  
-  cranPackages <- snapShot[!snapShot$package %in% c(ohdsiGitHubPackages,
-                                                    ohdsiStudiesGitHubPackages), ]
-  cranPackages <- rbind(cranPackages, data.frame(package = "renv",
-                                                 version = packageDescription("renv")$Version,
-                                                 stringsAsFactors = FALSE))
+
+  cranPackages <- snapShot[!snapShot$package %in% c(
+    ohdsiGitHubPackages,
+    ohdsiStudiesGitHubPackages
+  ), ]
+  cranPackages <- rbind(cranPackages, data.frame(
+    package = "renv",
+    version = packageDescription("renv")$Version,
+    stringsAsFactors = FALSE
+  ))
   ohdsiGitHubPackages <- snapShot[snapShot$package %in% ohdsiGitHubPackages, ]
   ohdsiStudiesGitHubPackages <- snapShot[snapShot$package %in% ohdsiStudiesGitHubPackages, ]
-  
-  
+
+
   createRNode <- function() {
-    list(Version = rVersion$version,
-         Repositories = list(list(Name = "CRAN", URL = "https://cloud.r-project.org")))
+    list(
+      Version = rVersion$version,
+      Repositories = list(list(Name = "CRAN", URL = "https://cloud.r-project.org"))
+    )
   }
-  
+
   createCranNode <- function(i) {
-    list(Package = cranPackages$package[i],
-         Version = cranPackages$version[i],
-         Source = "Repository",
-         Repository = "CRAN")
+    list(
+      Package = cranPackages$package[i],
+      Version = cranPackages$version[i],
+      Source = "Repository",
+      Repository = "CRAN"
+    )
   }
-  
+
   createOhdsiGitHubNode <- function(i) {
-    list(Package = ohdsiGitHubPackages$package[i],
-         Version = ohdsiGitHubPackages$version[i],
-         Source = "GitHub",
-         RemoteType = "github",
-         RemoteHost = "api.github.com",
-         RemoteRepo = ohdsiGitHubPackages$package[i],
-         RemoteUsername = "ohdsi",
-         RemoteRef = sprintf("v%s", ohdsiGitHubPackages$version[i]))
-    
+    list(
+      Package = ohdsiGitHubPackages$package[i],
+      Version = ohdsiGitHubPackages$version[i],
+      Source = "GitHub",
+      RemoteType = "github",
+      RemoteHost = "api.github.com",
+      RemoteRepo = ohdsiGitHubPackages$package[i],
+      RemoteUsername = "ohdsi",
+      RemoteRef = sprintf("v%s", ohdsiGitHubPackages$version[i])
+    )
   }
-  
+
   createOhdsiStudiesGitHubNode <- function(i) {
-    list(Package = ohdsiStudiesGitHubPackages$package[i],
-         Version = ohdsiStudiesGitHubPackages$version[i],
-         Source = "GitHub",
-         RemoteType = "github",
-         RemoteHost = "api.github.com",
-         RemoteRepo = ohdsiStudiesGitHubPackages$package[i],
-         RemoteUsername = "ohdsi-studies",
-         RemoteRef = "master")
+    list(
+      Package = ohdsiStudiesGitHubPackages$package[i],
+      Version = ohdsiStudiesGitHubPackages$version[i],
+      Source = "GitHub",
+      RemoteType = "github",
+      RemoteHost = "api.github.com",
+      RemoteRepo = ohdsiStudiesGitHubPackages$package[i],
+      RemoteUsername = "ohdsi-studies",
+      RemoteRef = "master"
+    )
   }
-  
+
   createPackagesNode <- function() {
     if (nrow(cranPackages) == 0) {
       cranNodes <- list()
@@ -287,24 +313,26 @@ createRenvLockFileManual <- function(rootPackage,
       cranNodes <- lapply(1:nrow(cranPackages), createCranNode)
       names(cranNodes) <- cranPackages$package
     }
-    
+
     if (nrow(ohdsiGitHubPackages) == 0) {
       ohdsiGitHubNodes <- list()
     } else {
       ohdsiGitHubNodes <- lapply(1:nrow(ohdsiGitHubPackages), createOhdsiGitHubNode)
       names(ohdsiGitHubNodes) <- ohdsiGitHubPackages$package
     }
-    
+
     if (nrow(ohdsiStudiesGitHubPackages) == 0) {
       ohdsiStudiesGitHubNodes <- list()
     } else {
-      ohdsiStudiesGitHubNodes <- lapply(1:nrow(ohdsiStudiesGitHubPackages),
-                                        createOhdsiStudiesGitHubNode)
+      ohdsiStudiesGitHubNodes <- lapply(
+        1:nrow(ohdsiStudiesGitHubPackages),
+        createOhdsiStudiesGitHubNode
+      )
       names(ohdsiStudiesGitHubNodes) <- ohdsiStudiesGitHubPackages$package
     }
     return(append(append(cranNodes, ohdsiGitHubNodes), ohdsiStudiesGitHubNodes))
   }
-  
+
   lock <- list(R = createRNode(), Packages = createPackagesNode())
   json <- RJSONIO::toJSON(lock, pretty = TRUE)
   write(json, fileName)
@@ -320,7 +348,8 @@ createRenvLockFileManual <- function(rootPackage,
 #'
 #' @export
 getOhdsiGitHubPackages <- function() {
-  c("Achilles",
+  c(
+    "Achilles",
     "BigKnn",
     "CaseControl",
     "CaseCrossover",
@@ -339,7 +368,8 @@ getOhdsiGitHubPackages <- function() {
     "PheValuator",
     "ROhdsiWebApi",
     "SelfControlledCaseSeries",
-    "SelfControlledCohort")
+    "SelfControlledCohort"
+  )
 }
 
 #' Get a list of R core packages
@@ -353,7 +383,6 @@ getOhdsiGitHubPackages <- function() {
 #' @export
 getCorePackages <- function() {
   return(rownames(installed.packages(priority = "base")))
-  
 }
 
 #' Restore the R environment to a snapshot
@@ -392,23 +421,25 @@ restoreEnvironment <- function(snapshot,
   start <- Sys.time()
   # R core packages that cannot be installed:
   corePackages <- c("devtools", "remotes", getCorePackages())
-  
+
   # OHDSI packages not in CRAN:
   ohdsiPackages <- getOhdsiGitHubPackages()
-  
+
   s <- sessionInfo()
   rVersion <- paste(s$R.version$major, s$R.version$minor, sep = ".")
   if (rVersion != as.character(snapshot$version[snapshot$package == "R"])) {
-    message <- sprintf("Wrong R version: need version %s, found version %s",
-                       as.character(snapshot$version[snapshot$package ==
-                                                       "R"]), rVersion)
+    message <- sprintf(
+      "Wrong R version: need version %s, found version %s",
+      as.character(snapshot$version[snapshot$package ==
+        "R"]), rVersion
+    )
     if (stopOnWrongRVersion) {
       stop(message)
     } else {
       warning(message)
     }
   }
-  
+
   snapshot <- snapshot[snapshot$package != "R", ]
   if (skipLast) {
     snapshot <- snapshot[1:(nrow(snapshot) - 1), ]
@@ -423,40 +454,52 @@ restoreEnvironment <- function(snapshot,
     if (package %in% corePackages) {
       writeLines(sprintf("Skipping %s (%s) because part of R core", package, requiredVersion))
     } else if (isInstalled && requiredVersion == installedVersion) {
-      writeLines(sprintf("Skipping %s (%s) because correct version already installed",
-                         package,
-                         requiredVersion))
+      writeLines(sprintf(
+        "Skipping %s (%s) because correct version already installed",
+        package,
+        requiredVersion
+      ))
     } else if (!strict && isInstalled && comparable(installedVersion, requiredVersion)) {
-      writeLines(sprintf("Skipping %s because installed version (%s) is newer than required version (%s), and major version number is the same",
-                         package,
-                         installedVersion,
-                         requiredVersion))
+      writeLines(sprintf(
+        "Skipping %s because installed version (%s) is newer than required version (%s), and major version number is the same",
+        package,
+        installedVersion,
+        requiredVersion
+      ))
     } else if (package %in% ohdsiPackages) {
       if (isInstalled) {
-        writeLines(sprintf("Installing %s because version %s needed but version %s found",
-                           package,
-                           requiredVersion,
-                           installedVersion))
+        writeLines(sprintf(
+          "Installing %s because version %s needed but version %s found",
+          package,
+          requiredVersion,
+          installedVersion
+        ))
       } else {
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
-      url <- sprintf("https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz",
-                     package,
-                     requiredVersion)
+      url <- sprintf(
+        "https://github.com/OHDSI/drat/raw/gh-pages/src/contrib/%s_%s.tar.gz",
+        package,
+        requiredVersion
+      )
       remotes::install_url(url, dependencies = FALSE)
     } else {
       if (package %in% installed.packages()) {
-        writeLines(sprintf("Installing %s because version %s needed but version %s found",
-                           package,
-                           requiredVersion,
-                           installedVersion))
+        writeLines(sprintf(
+          "Installing %s because version %s needed but version %s found",
+          package,
+          requiredVersion,
+          installedVersion
+        ))
       } else {
         writeLines(sprintf("Installing %s (%s)", package, requiredVersion))
       }
-      remotes::install_version(package = package,
-                               version = requiredVersion,
-                               type = "source",
-                               dependencies = FALSE)
+      remotes::install_version(
+        package = package,
+        version = requiredVersion,
+        type = "source",
+        dependencies = FALSE
+      )
     }
   }
   delta <- Sys.time() - start
@@ -520,11 +563,12 @@ restoreEnvironmentFromPackage <- function(pathToCsv = "inst/settings/rEnvironmen
                                           strict = FALSE,
                                           skipLast = TRUE) {
   snapshot <- read.csv(pathToCsv)
-  restoreEnvironment(snapshot = snapshot,
-                     stopOnWrongRVersion = stopOnWrongRVersion,
-                     strict = strict,
-                     skipLast = skipLast)
-  
+  restoreEnvironment(
+    snapshot = snapshot,
+    stopOnWrongRVersion = stopOnWrongRVersion,
+    strict = strict,
+    skipLast = skipLast
+  )
 }
 
 #' Restore environment stored in package
@@ -564,9 +608,10 @@ restoreEnvironmentFromPackageOnGithub <- function(githubPath,
   }
   url <- paste(c("https://raw.githubusercontent.com", githubPath, pathToCsv), collapse = "/")
   snapshot <- read.csv(url)
-  restoreEnvironment(snapshot = snapshot,
-                     stopOnWrongRVersion = stopOnWrongRVersion,
-                     strict = strict,
-                     skipLast = skipLast)
+  restoreEnvironment(
+    snapshot = snapshot,
+    stopOnWrongRVersion = stopOnWrongRVersion,
+    strict = strict,
+    skipLast = skipLast
+  )
 }
-

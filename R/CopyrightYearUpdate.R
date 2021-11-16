@@ -57,9 +57,10 @@ updatePackageName <- function(file, packageName) {
 #' @export
 updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
   flist <- list.files(path,
-                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
-                      full.names = TRUE,
-                      recursive = recursive)
+    pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
+    full.names = TRUE,
+    recursive = recursive
+  )
   flist <- flist[!grepl("/packrat/", flist)]
   for (f in flist) {
     message("Checking copyright year in ", f)
@@ -77,9 +78,10 @@ updateCopyrightYearFolder <- function(path = ".", recursive = TRUE) {
 #' @export
 updatePackageNameFolder <- function(path = ".", packageName, recursive = TRUE) {
   flist <- list.files(path,
-                      pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
-                      full.names = TRUE,
-                      recursive = recursive)
+    pattern = "\\.[Rr]$|\\.[Ss][Qq][Ll]$|\\.[Jj][Aa][Vv][Aa]$|\\.[Cc][Pp][Pp]$|\\.[Hh]$",
+    full.names = TRUE,
+    recursive = recursive
+  )
   flist <- flist[!grepl("/packrat/", flist)]
   for (f in flist) {
     message("Checking package name in ", f)

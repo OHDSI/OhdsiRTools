@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -46,6 +46,9 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -85,7 +88,6 @@
 <h1 class="hasAnchor">
 <a href="#features" class="anchor"></a>Features</h1>
 <ul>
-<li>Auto code formatting.</li>
 <li>Auto checking of R code.</li>
 <li>Generate renv lock files with correct references to OHDSI repos.</li>
 </ul>
@@ -94,8 +96,9 @@
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Auto-format all R files in a package:</span>
-<span class="fu"><a href="reference/formatRFolder.html">formatRFolder</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># Create renv lock file</span>
+<span class="fu">OhdsiRTools</span><span class="fu">::</span><span class="fu"><a href="reference/createRenvLockFile.html">createRenvLockFile</a></span><span class="op">(</span>rootPackage <span class="op">=</span> <span class="st">"MyStudyPackage"</span>,
+                                includeRootPackage <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># Identify problems in R code in a package:</span>
 <span class="fu"><a href="reference/checkUsagePackage.html">checkUsagePackage</a></span><span class="op">(</span><span class="st">"OhdsiRTools"</span><span class="op">)</span></code></pre></div>
@@ -118,8 +121,7 @@
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org">remotes</a></span><span class="op">)</span>
-<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/OhdsiRTools"</span><span class="op">)</span></code></pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/OhdsiRTools"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="user-documentation" class="section level1">
 <h1 class="hasAnchor">

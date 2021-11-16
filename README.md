@@ -10,7 +10,6 @@ An R package with tools to help write and maintain other OHDSI R packages. Other
 
 Features
 ========
-- Auto code formatting.
 - Auto checking of R code.
 - Generate renv lock files with correct references to OHDSI repos.
 
@@ -18,8 +17,9 @@ Examples
 ========
 
 ```r
-# Auto-format all R files in a package:
-formatRFolder()
+# Create renv lock file
+OhdsiRTools::createRenvLockFile(rootPackage = "MyStudyPackage",
+                                includeRootPackage = TRUE)
 
 # Identify problems in R code in a package:
 checkUsagePackage("OhdsiRTools")
@@ -40,8 +40,7 @@ Installation
 
   ```r
   install.packages("remotes")
-  library(remotes)
-  install_github("ohdsi/OhdsiRTools")
+  remotes::install_github("ohdsi/OhdsiRTools")
   ```
 
 User Documentation

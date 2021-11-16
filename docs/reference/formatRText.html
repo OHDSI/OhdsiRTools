@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -138,15 +141,10 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A character vector with formatted R code.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>code</span> <span class='op'>&lt;-</span> <span class='st'>"example &lt;- function(x,foobar){paste(x,foobar)}"</span>
-<span class='va'>formatted</span> <span class='op'>&lt;-</span> <span class='fu'>formatRText</span><span class='op'>(</span><span class='va'>code</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='op'>(</span><span class='va'>formatted</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; example &lt;- function(x, foobar) {
-#&gt;   paste(x, foobar)
-#&gt; }</div><div class='input'>
-</div></pre>
+    <p>DEPRECRATED. Please use <code><a href='https://styler.r-lib.org/reference/style_text.html'>styler::style_text</a></code> instead.</p>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

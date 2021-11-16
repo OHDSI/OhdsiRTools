@@ -40,49 +40,55 @@
           quote <- FALSE
           start <- 1
           for (j in indent:nchar(fullLine)) {
-          char <- substr(fullLine, j, j)
-          if (char == "\"") {
-            quote <- !quote
-          } else if (!quote) {
-            if (char == "(") {
-            depth <- depth + 1
-            } else if (char == ")") {
-            if (depth == 0)
-              break
-            depth <- depth - 1
-            } else if (depth == 0 & char == separator) {
-            part <- substr(fullLine, start, j)
-            if (start != 1) {
-              part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
+            char <- substr(fullLine, j, j)
+            if (char == "\"") {
+              quote <- !quote
+            } else if (!quote) {
+              if (char == "(") {
+                depth <- depth + 1
+              } else if (char == ")") {
+                if (depth == 0) {
+                  break
+                }
+                depth <- depth - 1
+              } else if (depth == 0 & char == separator) {
+                part <- substr(fullLine, start, j)
+                if (start != 1) {
+                  part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
+                }
+                newX <- c(newX, part)
+                start <- j + 1
+              }
             }
-            newX <- c(newX, part)
-            start <- j + 1
-            }
-          }
           }
           part <- substr(fullLine, start, nchar(fullLine))
           if (start != 1) {
-          part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
+            part <- paste(paste(rep(" ", indent + offset), collapse = ""), part)
           }
           newX <- c(newX, part)
           maxLength <- 0
-          for (x in newX) if (nchar(x) > maxLength)
-          maxLength <- nchar(x)
+          for (x in newX) {
+            if (nchar(x) > maxLength) {
+              maxLength <- nchar(x)
+            }
+          }
           lines <- length(newX)
           better <- FALSE
           if (maxLength <= width.cutoff && minLength > width.cutoff) {
-          better <- TRUE
+            better <- TRUE
           } else if (maxLength <= width.cutoff && minLength <= width.cutoff) {
-          if (lines < minLines)
-            better <- TRUE
+            if (lines < minLines) {
+              better <- TRUE
+            }
           } else {
-          if (maxLength < minLength)
-            better <- TRUE
+            if (maxLength < minLength) {
+              better <- TRUE
+            }
           }
           if (better) {
-          bestSolution <- newX
-          minLength <- maxLength
-          minLines <- lines
+            bestSolution <- newX
+            minLength <- maxLength
+            minLines <- lines
           }
         }
       }
@@ -119,19 +125,21 @@
   while (i <= length(x)) {
     if (nchar(x[i]) > width.cutoff && regexpr("^\\s*#", x[i]) == -1) {
       newSplit <- .mySplit(x[i],
-                           anchors = c("<- ", "\\("),
-                           separators = c("+", ","),
-                           offsets = c(-1, -3),
-                           width.cutoff)
+        anchors = c("<- ", "\\("),
+        separators = c("+", ","),
+        offsets = c(-1, -3),
+        width.cutoff
+      )
       for (j in 1:length(newSplit)) {
         if (nchar(newSplit[j]) <= width.cutoff) {
           newX <- c(newX, newSplit[j])
         } else {
           newerSplit <- .mySplit(newSplit[j],
-                                 anchors = c("\\("),
-                                 separators = c(","),
-                                 offsets = c(-3),
-                                 width.cutoff)
+            anchors = c("\\("),
+            separators = c(","),
+            offsets = c(-3),
+            width.cutoff
+          )
           newX <- c(newX, newerSplit)
         }
       }
@@ -146,8 +154,9 @@
 .findStartOfBody <- function(text) {
   i <- 1
   while (i <= length(text)) {
-    if (regexpr("^ *(#([^']|$)|$)", text[i]) == -1)
+    if (regexpr("^ *(#([^']|$)|$)", text[i]) == -1) {
       return(i)
+    }
     i <- i + 1
   }
   return(-1)
@@ -163,12 +172,14 @@
       if (i > start) {
         dontrun <- regexpr("\\\\dont(run|test) *\\{", text[i])
         snippet <- c(snippet, text[start:(i - 1)])
-        if (dontrun[[1]] > 1)
+        if (dontrun[[1]] > 1) {
           snippet <- c(snippet, substr(text[i], 1, dontrun[[1]] - 1))
+        }
         newText <- c(newText, .myTidy(snippet, width.cutoff))
         snippet <- c(substr(text[i], dontrun[[1]] + attr(dontrun, "match.length"), nchar(text[i])))
-        if (gsub("\\s", "", snippet[1]) == "")
+        if (gsub("\\s", "", snippet[1]) == "") {
           snippet <- c()
+        }
       }
       if (regexpr("\\\\dontrun *\\{", text[i]) != -1) {
         newText <- c(newText, "\\dontrun{")
@@ -184,17 +195,19 @@
         } else if (substr(text[i], j, j) == "}") {
           level <- level - 1
           if (level == -1) {
-          snippet <- c(snippet, text[start:(i - 1)])
-          if (j > 2)
-            snippet <- c(snippet, substr(text[i], 1, j - 1))
-          newText <- c(newText, .myTidy(snippet, width.cutoff), "}")
-          snippet <- c(substr(text[i], j + 1, nchar(text[i])))
-          if (gsub("\\s", "", snippet[1]) == "")
-            snippet <- c()
-          inDontRun <- FALSE
-          start <- i + 1
-          level <- 0
-          break
+            snippet <- c(snippet, text[start:(i - 1)])
+            if (j > 2) {
+              snippet <- c(snippet, substr(text[i], 1, j - 1))
+            }
+            newText <- c(newText, .myTidy(snippet, width.cutoff), "}")
+            snippet <- c(substr(text[i], j + 1, nchar(text[i])))
+            if (gsub("\\s", "", snippet[1]) == "") {
+              snippet <- c()
+            }
+            inDontRun <- FALSE
+            start <- i + 1
+            level <- 0
+            break
           }
         }
       }
@@ -233,8 +246,10 @@
           text <- strwrap(substr(line, start, i - 1), width.cutoff - nchar("  \\item"))
           text[1] <- paste("  \\item", text[1])
           if (length(text) > 1) {
-          text[2:length(text)] <- paste(paste(rep(" ", nchar("  \\item")), collapse = ""),
-                                        text[2:length(text)])
+            text[2:length(text)] <- paste(
+              paste(rep(" ", nchar("  \\item")), collapse = ""),
+              text[2:length(text)]
+            )
           }
           newText <- c(newText, text)
         }
@@ -250,8 +265,10 @@
           text <- strwrap(substr(line, start, i - 1), width.cutoff - nchar("  \\item"))
           text[1] <- paste("  \\item", text[1])
           if (length(text) > 1) {
-          text[2:length(text)] <- paste(paste(rep(" ", nchar("  \\item")), collapse = ""),
-                                        text[2:length(text)])
+            text[2:length(text)] <- paste(
+              paste(rep(" ", nchar("  \\item")), collapse = ""),
+              text[2:length(text)]
+            )
           }
           newText <- c(newText, text)
           newText <- c(newText, "}")
@@ -274,22 +291,25 @@
   line <- ""
   examples <- FALSE
   for (i in 1:length(text)) {
-    chunk <- sub("^\\s*#'\\s*", "", text[i])  # Remove leading spaces and #'
-    chunk <- sub("\\s*$", "", chunk)  # Remove trailing spaces
+    chunk <- sub("^\\s*#'\\s*", "", text[i]) # Remove leading spaces and #'
+    chunk <- sub("\\s*$", "", chunk) # Remove trailing spaces
 
-    if (regexpr("^@|$)", chunk) != -1)
+    if (regexpr("^@|$)", chunk) != -1) {
       examples <- FALSE
+    }
 
     if (chunk == "" || regexpr("^@|$)", chunk) != -1 || examples) {
-      if (!(length(newText) == 0 && line == ""))
+      if (!(length(newText) == 0 && line == "")) {
         newText <- c(newText, line)
+      }
       line <- ""
     }
     if (regexpr("^@examples", chunk) != -1) {
       examples <- TRUE
     }
-    if (chunk != "")
+    if (chunk != "") {
       line <- paste(line, chunk, " ", sep = "")
+    }
   }
   newText <- c(newText, line)
   text <- newText
@@ -297,13 +317,18 @@
   # Put most keywords on their own line:
   newText <- c()
   for (i in 1:length(text)) {
-    if ((regexpr("^@",
-                 text[i]) != -1) && (regexpr("^(@param|@template|@export|@keyword|@docType|@importFrom|@import|@useDynLib|@name)",
-                                             text[i]) == -1)) {
+    if ((regexpr(
+      "^@",
+      text[i]
+    ) != -1) && (regexpr(
+      "^(@param|@template|@export|@keyword|@docType|@importFrom|@import|@useDynLib|@name)",
+      text[i]
+    ) == -1)) {
       keyword <- regexpr("^@[a-zA-Z0-9]*", text[i])
       newText <- c(newText, substr(text[i], 1, attr(keyword, "match.length")))
-      if (attr(keyword, "match.length") + 2 < nchar(text[i]))
+      if (attr(keyword, "match.length") + 2 < nchar(text[i])) {
         newText <- c(newText, substr(text[i], attr(keyword, "match.length") + 2, nchar(text[i])))
+      }
     } else {
       newText <- c(newText, text[i])
     }
@@ -314,8 +339,9 @@
   maxParamLength <- 0
   for (i in 1:length(text)) {
     keyword <- regexpr("^@param\\s+[a-zA-Z0-9.]+", text[i])
-    if (attr(keyword, "match.length") > maxParamLength)
+    if (attr(keyword, "match.length") > maxParamLength) {
       maxParamLength <- attr(keyword, "match.length")
+    }
   }
   examples <- FALSE
   example <- c()
@@ -343,11 +369,14 @@
         part2 <- substr(text[i], attr(definition, "match.length") + 1, nchar(text[i]))
         part2Wrapped <- .wrapRoxygenLine(part2, width.cutoff = width.cutoff - maxParamLength - 2)
         line1 <- paste(part1, paste(rep(" ", 3 + maxParamLength - attr(param, "match.length")),
-                                    collapse = ""), part2Wrapped[1], sep = "")
+          collapse = ""
+        ), part2Wrapped[1], sep = "")
         newText <- c(newText, line1)
         if (length(part2Wrapped) > 1) {
-          otherLines <- paste(paste(rep(" ", 2 + maxParamLength), collapse = ""),
-                              part2Wrapped[2:length(part2Wrapped)])
+          otherLines <- paste(
+            paste(rep(" ", 2 + maxParamLength), collapse = ""),
+            part2Wrapped[2:length(part2Wrapped)]
+          )
           newText <- c(newText, otherLines)
         }
       }
@@ -371,12 +400,14 @@
   i <- 1
   while (i <= length(text)) {
     if (regexpr("^ *#'", text[i]) != -1) {
-      if (start == -1)
+      if (start == -1) {
         start <- i
+      }
     } else {
       if (start != -1) {
-        if (start > toAdd)
+        if (start > toAdd) {
           newText <- c(newText, text[toAdd:(start - 1)])
+        }
         newText <- c(newText, .tidyRoxygenBlock(text[start:(i - 1)], width.cutoff = width.cutoff))
         toAdd <- i
       }
@@ -386,8 +417,10 @@
   }
   if (length(text) >= toAdd) {
     if (start != -1) {
-      newText <- c(newText,
-                   .tidyRoxygenBlock(text[start:length(text)], width.cutoff = width.cutoff))
+      newText <- c(
+        newText,
+        .tidyRoxygenBlock(text[start:length(text)], width.cutoff = width.cutoff)
+      )
     } else {
       newText <- c(newText, text[toAdd:length(text)])
     }
@@ -401,11 +434,13 @@
 }
 
 .formatRblock <- function(text, width.cutoff) {
-  formatROutput <- capture.output(formatR::tidy_source(text = text,
-                                                       width.cutoff = width.cutoff,
-                                                       arrow = TRUE,
-                                                       indent = 2,
-                                                       output = TRUE))
+  formatROutput <- capture.output(formatR::tidy_source(
+    text = text,
+    width.cutoff = width.cutoff,
+    arrow = TRUE,
+    indent = 2,
+    output = TRUE
+  ))
   if (length(grep("^\\$text.tidy$", formatROutput)) == 0) {
     return(formatROutput)
   } else {
@@ -434,7 +469,7 @@
 }
 
 .myTidy <- function(text, width.cutoff) {
-  text <- gsub("\\t", "", text)  # Remove all tabs
+  text <- gsub("\\t", "", text) # Remove all tabs
   text <- .applyFormatR(text, width.cutoff = width.cutoff)
   text <- .reWrapLines(text, width.cutoff = width.cutoff)
   text <- .roxygenTidy(text, width.cutoff = width.cutoff)
@@ -445,8 +480,8 @@
 #'
 #' @param text           A character vector with the R code to be formatted.
 #' @param width.cutoff   Number of characters that each line should be limited to.
-#' 
-#' @details 
+#'
+#' @details
 #' DEPRECRATED. Please use \code{styler::style_text} instead.
 #'
 #' @return
@@ -471,8 +506,8 @@ formatRText <- function(text, width.cutoff = 100) {
 #'
 #' @param file           The path to the file.
 #' @param width.cutoff   Number of characters that each line should be limited to.
-#' 
-#' @details 
+#'
+#' @details
 #' DEPRECRATED. Please use \code{styler::style_file} instead.
 #'
 #' @export
@@ -491,8 +526,8 @@ formatRFile <- function(file, width.cutoff = 100) {
 #' @param recursive           Include all subfolders?
 #' @param skipAutogenerated   Skip auto-generated files such as RcppExports.R?
 #' @param ...                 Parameters to be passed on the the formatRFile function
-#' 
-#' @details 
+#'
+#' @details
 #' DEPRECRATED. Please use \code{styler::style_dir} instead.
 #'
 #' @export
@@ -524,9 +559,11 @@ formatRFolder <- function(path = ".", recursive = TRUE, skipAutogenerated = TRUE
 fixHadesLogo <- function(path = ".") {
   for (file in list.files(file.path(path, "docs"), ".html", recursive = TRUE, full.names = TRUE)) {
     text <- readChar(file, file.info(file)$size)
-    text <- gsub("hadesLogo",
-                 "<img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'>",
-                 text)
+    text <- gsub(
+      "hadesLogo",
+      "<img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'>",
+      text
+    )
     sink(file)
     cat(gsub("\r", "", text))
     sink()
