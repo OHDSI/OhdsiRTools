@@ -2,7 +2,7 @@ OhdsiRTools
 ===========
 
 [![Build Status](https://github.com/OHDSI/OhdsiRTools/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiRTools/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=master)
+[![codecov.io](https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=main)](https://codecov.io/github/OHDSI/OhdsiRTools?branch=main)
 
 Introduction
 ============
@@ -48,7 +48,7 @@ User Documentation
 Documentation can be found on the [package website](https://ohdsi.github.io/OhdsiRTools).
 
 PDF versions of the documentation are also available:
-* Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/extras/OhdsiRTools.pdf)
+* Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/main/extras/OhdsiRTools.pdf)
 
 Support
 =======
