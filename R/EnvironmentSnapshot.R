@@ -1,4 +1,4 @@
-# Copyright 2021 Observational Health Data Sciences and Informatics
+# Copyright 2022 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiRTools
 #
@@ -350,7 +350,7 @@ createRenvLockFileManual <- function(rootPackage,
 #' @export
 getOhdsiGitHubPackages <- function() {
   packageListUrl <- "https://raw.githubusercontent.com/OHDSI/Hades/main/extras/packages.csv"
-  hadesPackageList <- read.table(packageListUrl, sep = ",", header = TRUE) 
+  hadesPackageList <- read.table(packageListUrl, sep = ",", header = TRUE)
   hadesPackages <- hadesPackageList$name[!hadesPackageList$inCran]
   return(hadesPackages)
 }
