@@ -341,35 +341,18 @@ createRenvLockFileManual <- function(rootPackage,
 #' Get a list of packages in the OHDSI GitHub.
 #'
 #' @details
-#' Returns names of packages that need to be installed from https://github.com/ohdsi.
+#' Returns names of packages that need to be installed from https://github.com/ohdsi. Connects to
+#' GitHub to get the latest list.
 #'
 #' @return
 #' A character vector.
 #'
 #' @export
 getOhdsiGitHubPackages <- function() {
-  c(
-    "Achilles",
-    "BigKnn",
-    "CaseControl",
-    "CaseCrossover",
-    "CirceR",
-    "CohortDiagnostics",
-    "CohortMethod",
-    "DataQualityDashboard",
-    "FeatureExtraction",
-    "Hades",
-    "Hydra",
-    "IcTemporalPatternDiscovery",
-    "MethodEvaluation",
-    "OhdsiRTools",
-    "OhdsiSharing",
-    "PatientLevelPrediction",
-    "PheValuator",
-    "ROhdsiWebApi",
-    "SelfControlledCaseSeries",
-    "SelfControlledCohort"
-  )
+  packageListUrl <- "https://raw.githubusercontent.com/OHDSI/Hades/main/extras/packages.csv"
+  hadesPackageList <- read.table(packageListUrl, sep = ",", header = TRUE) 
+  hadesPackages <- hadesPackageList$name[!hadesPackageList$inCran]
+  return(hadesPackages)
 }
 
 #' Get a list of R core packages

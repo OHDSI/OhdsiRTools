@@ -1,3 +1,11 @@
+OhdsiRTools v2.0.1
+==================
+
+Changes:
+
+1. When creating a renv lock file, the list of OHDSI GitHub packages is fetched from GitHub, so it is always up to date.
+
+
 OhdsiRTools v2.0.0
 ==================
 

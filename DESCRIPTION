@@ -1,8 +1,8 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools Used by Observational Health Data Science and Informatics (OHDSI)
-Version: 2.0.0
-Date: 2021-11-16
+Version: 2.0.1
+Date: 2022-02-01
 Authors@R: c(
     person("Martijn", "Schuemie", email = "schuemie@ohdsi.org", role = c("aut", "cre")),
     person("Marc", "Suchard", role = c("aut")),
