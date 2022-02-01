@@ -355,6 +355,7 @@ getOhdsiGitHubPackages <- function() {
     "CaseCrossover",
     "CirceR",
     "CohortDiagnostics",
+    "CohortGenerator",
     "CohortMethod",
     "DataQualityDashboard",
     "FeatureExtraction",
