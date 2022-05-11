@@ -13,5 +13,6 @@ A character vector.
 Get a list of packages in the OHDSI GitHub.
 }
 \details{
-Returns names of packages that need to be installed from https://github.com/ohdsi.
+Returns names of packages that need to be installed from https://github.com/ohdsi. Connects to
+GitHub to get the latest list.
 }

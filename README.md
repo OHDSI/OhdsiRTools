@@ -45,7 +45,7 @@ Installation
 
 User Documentation
 ==================
-Documentation can be found on the [package website](https://ohdsi.github.io/OhdsiRTools).
+Documentation can be found on the [package website](https://ohdsi.github.io/OhdsiRTools/).
 
 PDF versions of the documentation are also available:
 * Package manual: [OhdsiRTools.pdf](https://raw.githubusercontent.com/OHDSI/OhdsiRTools/main/extras/OhdsiRTools.pdf)

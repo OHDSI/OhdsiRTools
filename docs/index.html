@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,23 +34,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="https://ohdsi.github.io/Hades/renv.html">Using renv for dependencies</a>
+  <a href="https://ohdsi.github.io/Hades/renv.html" class="external-link">Using renv for dependencies</a>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -56,7 +52,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/OHDSI/OhdsiRTools/">
+  <a href="https://github.com/OHDSI/OhdsiRTools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -74,27 +70,27 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="ohdsirtools" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#ohdsirtools" class="anchor"></a>OhdsiRTools</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="ohdsirtools">OhdsiRTools<a class="anchor" aria-label="anchor" href="#ohdsirtools"></a>
+</h1></div>
 
 </div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>An R package with tools to help write and maintain other OHDSI R packages. Other OHDSI R packages should not depend on or import OhdsiRTools.</p>
 </div>
-<div id="features" class="section level1">
-<h1 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h1>
+<div class="section level1">
+<h1 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h1>
 <ul>
 <li>Auto checking of R code.</li>
 <li>Generate renv lock files with correct references to OHDSI repos.</li>
 </ul>
 </div>
-<div id="examples" class="section level1">
-<h1 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h1>
+<div class="section level1">
+<h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h1>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Create renv lock file</span>
 <span class="fu">OhdsiRTools</span><span class="fu">::</span><span class="fu"><a href="reference/createRenvLockFile.html">createRenvLockFile</a></span><span class="op">(</span>rootPackage <span class="op">=</span> <span class="st">"MyStudyPackage"</span>,
@@ -103,68 +99,64 @@
 <span class="co"># Identify problems in R code in a package:</span>
 <span class="fu"><a href="reference/checkUsagePackage.html">checkUsagePackage</a></span><span class="op">(</span><span class="st">"OhdsiRTools"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="technology" class="section level1">
-<h1 class="hasAnchor">
-<a href="#technology" class="anchor"></a>Technology</h1>
+<div class="section level1">
+<h1 id="technology">Technology<a class="anchor" aria-label="anchor" href="#technology"></a>
+</h1>
 <p>OhdsiRTools is an R package.</p>
 </div>
-<div id="system-requirements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#system-requirements" class="anchor"></a>System Requirements</h1>
+<div class="section level1">
+<h1 id="system-requirements">System Requirements<a class="anchor" aria-label="anchor" href="#system-requirements"></a>
+</h1>
 <p>Requires R.</p>
 </div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<ol>
+<div class="section level1">
+<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h1>
+<ol style="list-style-type: decimal">
 <li>In R, use the following commands to download and install OhdsiRTools:</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/OhdsiRTools"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/OhdsiRTools"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="user-documentation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#user-documentation" class="anchor"></a>User Documentation</h1>
-<p>Documentation can be found on the <a href="https://ohdsi.github.io/OhdsiRTools">package website</a>.</p>
-<p>PDF versions of the documentation are also available:</p>
+<div class="section level1">
+<h1 id="user-documentation">User Documentation<a class="anchor" aria-label="anchor" href="#user-documentation"></a>
+</h1>
+<p>Documentation can be found on the <a href="https://ohdsi.github.io/OhdsiRTools/" class="external-link">package website</a>.</p>
+<p>PDF versions of the documentation are also available: * Package manual: <a href="https://raw.githubusercontent.com/OHDSI/OhdsiRTools/main/extras/OhdsiRTools.pdf" class="external-link">OhdsiRTools.pdf</a></p>
+</div>
+<div class="section level1">
+<h1 id="support">Support<a class="anchor" aria-label="anchor" href="#support"></a>
+</h1>
 <ul>
-<li>Package manual: <a href="https://raw.githubusercontent.com/OHDSI/OhdsiRTools/master/extras/OhdsiRTools.pdf">OhdsiRTools.pdf</a>
+<li>Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers" class="external-link">OHDSI Forum</a>
 </li>
+<li>We use the <a href="https://github.com/OHDSI/OhdsiRTools/issues" class="external-link">GitHub issue tracker</a> for all bugs/issues/enhancements</li>
 </ul>
 </div>
-<div id="support" class="section level1">
-<h1 class="hasAnchor">
-<a href="#support" class="anchor"></a>Support</h1>
-<ul>
-<li>Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-</li>
-<li>We use the <a href="https://github.com/OHDSI/OhdsiRTools/issues">GitHub issue tracker</a> for all bugs/issues/enhancements</li>
-</ul>
+<div class="section level1">
+<h1 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h1>
+<p>Read <a href="https://ohdsi.github.io/MethodsLibrary/contribute.html" class="external-link">here</a> how you can contribute to this package.</p>
 </div>
-<div id="contributing" class="section level1">
-<h1 class="hasAnchor">
-<a href="#contributing" class="anchor"></a>Contributing</h1>
-<p>Read <a href="https://ohdsi.github.io/MethodsLibrary/contribute.html">here</a> how you can contribute to this package.</p>
-</div>
-<div id="license" class="section level1">
-<h1 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h1>
+<div class="section level1">
+<h1 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h1>
 <p>OhdsiRTools is licensed under Apache License 2.0</p>
 </div>
-<div id="development" class="section level1">
-<h1 class="hasAnchor">
-<a href="#development" class="anchor"></a>Development</h1>
+<div class="section level1">
+<h1 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+</h1>
 <p>OhdsiRTools is being developed in R Studio.</p>
-<div id="development-status" class="section level3">
-<h3 class="hasAnchor">
-<a href="#development-status" class="anchor"></a>Development status</h3>
+<div class="section level3">
+<h3 id="development-status">Development status<a class="anchor" aria-label="anchor" href="#development-status"></a>
+</h3>
 <p>Ready for use</p>
 </div>
 </div>
-<div id="acknowledgements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h1>
+<div class="section level1">
+<h1 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h1>
 <ul>
 <li>This project is supported in part through the National Science Foundation grant IIS 1251151.</li>
 </ul>
@@ -174,48 +166,58 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/OHDSI/OhdsiRTools/">https://​github.com/​OHDSI/​OhdsiRTools/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/OHDSI/OhdsiRTools/issues%20%20%20%20">https://​github.com/​OHDSI/​OhdsiRTools/​issues    </a>
-</li>
-<li>Ask a question at <br><a href="http://forums.ohdsi.org">http://​forums.ohdsi.org</a>
-</li>
+<li><a href="https://github.com/OHDSI/OhdsiRTools/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/OHDSI/OhdsiRTools/issues" class="external-link">Report a bug</a></li>
+<li><a href="http://forums.ohdsi.org" class="external-link">Ask a question</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>Apache License 2.0</li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Martijn Schuemie <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Marc Suchard <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing OhdsiRTools</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/OHDSI/OhdsiRTools/actions?query=workflow%3AR-CMD-check"><img src="https://github.com/OHDSI/OhdsiRTools/workflows/R-CMD-check/badge.svg" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/github/OHDSI/OhdsiRTools?branch=master"><img src="https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=master" alt="codecov.io"></a></li>
+<li>Martijn Schuemie <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Marc Suchard <br><small class="roles"> Author </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/OHDSI/OhdsiRTools/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/OHDSI/OhdsiRTools/workflows/R-CMD-check/badge.svg" alt="Build Status"></a></li>
+<li><a href="https://codecov.io/github/OHDSI/OhdsiRTools?branch=main" class="external-link"><img src="https://codecov.io/github/OHDSI/OhdsiRTools/coverage.svg?branch=main" alt="codecov.io"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Martijn Schuemie, Marc Suchard.</p>
+  <p></p>
+<p>Developed by Martijn Schuemie, Marc Suchard.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -223,6 +225,8 @@
 
   
 
+
+  
 
   </body>
 </html>
