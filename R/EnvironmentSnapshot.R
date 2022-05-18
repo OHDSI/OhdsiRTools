@@ -36,7 +36,6 @@ takeEnvironmentSnapshot <- function(rootPackage) {
     stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
   }
 
-
   splitPackageList <- function(packageList) {
     if (is.null(packageList)) {
       return(c())
@@ -76,7 +75,12 @@ takeEnvironmentSnapshot <- function(rootPackage) {
   getVersion <- function(package) {
     return(packageDescription(package)$Version)
   }
-  versions <- sapply(c(packages$name, rootPackage), getVersion)
+  if (length(packages) > 0) {
+    packageNames <- c(packages$name, rootPackage)
+  } else {
+    packageNames <- rootPackage
+  }
+  versions <- sapply(packageNames, getVersion)
   snapshot <- data.frame(
     package = names(versions),
     version = as.vector(versions),

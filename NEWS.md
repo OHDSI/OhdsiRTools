@@ -1,3 +1,11 @@
+OhdsiRTools v2.0.2
+==================
+
+Bugfixes:
+
+1. Handling edge case when package has no dependencies in `takeEnvironmentSnapshot()` and `createRenvLockFile()` functions.
+
+
 OhdsiRTools v2.0.1
 ==================
 
