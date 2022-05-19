@@ -216,7 +216,7 @@ createRenvLockFileAuto <- function(rootPackage,
       RemoteHost = "api.github.com",
       RemoteRepo = rootPackage,
       RemoteUsername = "ohdsi-studies",
-      RemoteRef = "master"
+      RemoteRef = "main"
     )
     names(lock$Packages)[length(lock$Packages)] <- rootPackage
   }
@@ -306,7 +306,7 @@ createRenvLockFileManual <- function(rootPackage,
       RemoteHost = "api.github.com",
       RemoteRepo = ohdsiStudiesGitHubPackages$package[i],
       RemoteUsername = "ohdsi-studies",
-      RemoteRef = "master"
+      RemoteRef = "main"
     )
   }
 
@@ -589,9 +589,9 @@ restoreEnvironmentFromPackageOnGithub <- function(githubPath,
                                                   skipLast = TRUE) {
   parts <- strsplit(githubPath, "/")[[1]]
   if (length(parts) > 2) {
-    githubPath <- paste(c(parts[1:2], "master", parts[3:length(parts)]), collapse = "/")
+    githubPath <- paste(c(parts[1:2], "main", parts[3:length(parts)]), collapse = "/")
   } else {
-    githubPath <- paste(c(parts[1:2], "master"), collapse = "/")
+    githubPath <- paste(c(parts[1:2], "main"), collapse = "/")
   }
   url <- paste(c("https://raw.githubusercontent.com", githubPath, pathToCsv), collapse = "/")
   snapshot <- read.csv(url)

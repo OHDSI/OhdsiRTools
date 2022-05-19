@@ -5,6 +5,8 @@ Bugfixes:
 
 1. Handling edge case when package has no dependencies in `takeEnvironmentSnapshot()` and `createRenvLockFile()` functions.
 
+2. Using 'main' instead of 'master' as default branch for OHDSI study packages in `takeEnvironmentSnapshot()` and `createRenvLockFile()` functions.
+
 
 OhdsiRTools v2.0.1
 ==================
