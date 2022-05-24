@@ -11,7 +11,8 @@ createRenvLockFile(
   additionalRequiredPackages = NULL,
   ohdsiGitHubPackages = getOhdsiGitHubPackages(),
   ohdsiStudiesGitHubPackages = rootPackage,
-  fileName = "renv.lock"
+  fileName = "renv.lock",
+  restart = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ GitHub.}
 OHDSI-Studies GitHub.}
 
 \item{fileName}{Name of the lock file to be generated. Ignored if \code{mode = "auto"}.}
+
+\item{restart}{Boolean; attempt to restart the R session after initializing the project?}
 }
 \value{
 Does not return a value. Is executed for the side-effect of creating the lock file.

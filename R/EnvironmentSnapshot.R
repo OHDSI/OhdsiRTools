@@ -142,6 +142,7 @@ comparable <- function(installedVersion, requiredVersion) {
 #' @param ohdsiStudiesGitHubPackages   Names of R packages that need to be installed from the
 #'                                     OHDSI-Studies GitHub.
 #' @param fileName                     Name of the lock file to be generated. Ignored if \code{mode = "auto"}.
+#' @param restart                      Boolean; attempt to restart the R session after initializing the project? 
 #'
 #' @return
 #' Does not return a value. Is executed for the side-effect of creating the lock file.
@@ -153,7 +154,8 @@ createRenvLockFile <- function(rootPackage,
                                additionalRequiredPackages = NULL,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
                                ohdsiStudiesGitHubPackages = rootPackage,
-                               fileName = "renv.lock") {
+                               fileName = "renv.lock",
+                               restart = TRUE) {
   if (is.na(tryCatch(utils::packageVersion("renv"), error = function(e) NA))) {
     stop("The renv package must be installed to use this function")
   }
@@ -173,18 +175,26 @@ createRenvLockFile <- function(rootPackage,
       fileName = fileName
     )
   }
+  if (restart) {
+    renv:::renv_restart_request(project = getwd(), reason = "renv activated")
+  }
 }
 
-createRenvLockFileAuto <- function(rootPackage,
-                                   includeRootPackage = TRUE,
-                                   ohdsiGitHubPackages) {
-  if (includeRootPackage && is.na(packageDescription(rootPackage, fields = "Package"))) {
-    stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
-  }
-
-  renv::init(restart = FALSE)
-
-  lock <- RJSONIO::fromJSON("renv.lock")
+#' Fix HADES packages in lock file
+#'
+#' @description 
+#' For all HADES packages that must be installed from GitHub, ensures the lock file points to the 
+#' git tag corresponding to the installed version. If no corresponding tag exists, a warning is raised.
+#' 
+#' @param lockFile             The name of the lock file to fix.
+#' @param ohdsiGitHubPackages  Names of R packages that need to be installed from the OHDSI GitHub.
+#'
+#' @return
+#' Returns nothing. Fixes the lock file.
+#' 
+#' @export
+fixHadesPackagesInLockFile <- function(lockFile = "renv.lock", ohdsiGitHubPackages = getOhdsiGitHubPackages()) {
+  lock <- RJSONIO::fromJSON(lockFile)
   for (i in 1:length(lock$Packages)) {
     if (lock$Packages[[i]]["Source"] == "GitHub") {
       if (!lock$Packages[[i]]["Package"] %in% ohdsiGitHubPackages) {
@@ -206,6 +216,24 @@ createRenvLockFileAuto <- function(rootPackage,
       }
     }
   }
+  json <- RJSONIO::toJSON(lock, pretty = TRUE)
+  sink(lockFile)
+  cat(json)
+  sink()
+  invisible(NULL)
+}
+
+createRenvLockFileAuto <- function(rootPackage,
+                                   includeRootPackage = TRUE,
+                                   ohdsiGitHubPackages) {
+  if (includeRootPackage && is.na(packageDescription(rootPackage, fields = "Package"))) {
+    stop(sprintf("Root package %s not found. Did you forget to build it?", rootPackage))
+  }
+
+  renv::init(restart = FALSE)
+  fixHadesPackagesInLockFile(lockFile = "renv.lock", ohdsiGitHubPackages = ohdsiGitHubPackages)
+  
+  lock <- RJSONIO::fromJSON("renv.lock")
   if (includeRootPackage) {
     version <- packageDescription(rootPackage)$Version
     lock$Packages[[length(lock$Packages) + 1]] <- list(
@@ -224,8 +252,6 @@ createRenvLockFileAuto <- function(rootPackage,
   sink("renv.lock")
   cat(json)
   sink()
-
-  renv:::renv_restart_request(project = getwd(), reason = "renv activated")
 }
 
 tagExists <- function(repo, tag) {

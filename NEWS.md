@@ -7,6 +7,10 @@ Bugfixes:
 
 2. Using 'main' instead of 'master' as default branch for OHDSI study packages in `takeEnvironmentSnapshot()` and `createRenvLockFile()` functions.
 
+3. Adding `restart` argument to `createRenvLockFile()` function.
+
+4. Exporting `fixHadesPackagesInLockFile()` function.
+
 
 OhdsiRTools v2.0.1
 ==================
