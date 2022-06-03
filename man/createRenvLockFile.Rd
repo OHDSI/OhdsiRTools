@@ -12,7 +12,7 @@ createRenvLockFile(
   ohdsiGitHubPackages = getOhdsiGitHubPackages(),
   ohdsiStudiesGitHubPackages = rootPackage,
   fileName = "renv.lock",
-  restart = TRUE
+  restart = (mode == "auto")
 )
 }
 \arguments{
