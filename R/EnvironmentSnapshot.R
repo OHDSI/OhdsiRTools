@@ -155,7 +155,7 @@ createRenvLockFile <- function(rootPackage,
                                ohdsiGitHubPackages = getOhdsiGitHubPackages(),
                                ohdsiStudiesGitHubPackages = rootPackage,
                                fileName = "renv.lock",
-                               restart = TRUE) {
+                               restart = (mode == "auto")) {
   if (is.na(tryCatch(utils::packageVersion("renv"), error = function(e) NA))) {
     stop("The renv package must be installed to use this function")
   }

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">OhdsiRTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.2</span>
       </span>
     </div>
 
@@ -63,7 +63,8 @@
   additionalRequiredPackages <span class="op">=</span> <span class="cn">NULL</span>,
   ohdsiGitHubPackages <span class="op">=</span> <span class="fu"><a href="getOhdsiGitHubPackages.html">getOhdsiGitHubPackages</a></span><span class="op">(</span><span class="op">)</span>,
   ohdsiStudiesGitHubPackages <span class="op">=</span> <span class="va">rootPackage</span>,
-  fileName <span class="op">=</span> <span class="st">"renv.lock"</span>
+  fileName <span class="op">=</span> <span class="st">"renv.lock"</span>,
+  restart <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -87,6 +88,8 @@ GitHub.</p></dd>
 OHDSI-Studies GitHub.</p></dd>
 <dt>fileName</dt>
 <dd><p>Name of the lock file to be generated. Ignored if <code>mode = "auto"</code>.</p></dd>
+<dt>restart</dt>
+<dd><p>Boolean; attempt to restart the R session after initializing the project?</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

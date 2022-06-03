@@ -27,5 +27,4 @@ devtools::spell_check()
 unlink("extras/OhdsiRTools.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/OhdsiRTools.pdf")
 
-
 pkgdown::build_site()

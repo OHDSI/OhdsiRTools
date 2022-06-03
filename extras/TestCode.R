@@ -26,6 +26,7 @@ getConceptSetConceptIds(baseUrl = Sys.getenv("baseUrl"), setId = 12)
 restoreEnvironmentFromPackageOnGithub("OHDSI/Legend")
 
 
-createRenvLockFile(rootPackage = "Eumaeus",
-                   includeRootPackage = FALSE,
-                   additionalRequiredPackages = "keyring")
+createRenvLockFile(rootPackage = "CohortDiagnostics",
+                   includeRootPackage = TRUE,
+                   mode = "description",
+                   additionalRequiredPackages = c("keyring"))
