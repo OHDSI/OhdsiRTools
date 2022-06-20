@@ -1,3 +1,11 @@
+OhdsiRTools v2.0.3
+==================
+
+Changes:
+
+1. Added `createResultsSchemaStub()` function.
+
+
 OhdsiRTools v2.0.2
 ==================
 
