@@ -28,5 +28,5 @@ Suggests:
 URL: http://ohdsi.github.io/OhdsiRTools/, https://github.com/OHDSI/OhdsiRTools
 BugReports: https://github.com/OHDSI/OhdsiRTools/issues    
 NeedsCompilation: no
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Encoding: UTF-8

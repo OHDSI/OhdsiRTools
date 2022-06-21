@@ -42,7 +42,7 @@ createResultsSchemaStub <- function(folder, outputFile = file.path(folder, "resu
   invisible(stub)
 }
 
-# csvFile <- 'exposure_comparator_outcome.csv' 
+# csvFile <- 'target_comparator_outcome.csv' 
 createTableStub <- function(csvFile, folder) {
   data <- readr::read_csv(file.path(folder, csvFile), show_col_types = FALSE)
   tableName <- gsub("\\.csv$", "", csvFile)
@@ -56,6 +56,7 @@ createTableStub <- function(csvFile, folder) {
                             isRequired = guessRequired(data[, i]),
                             primaryKey = "No",
                             emptyIsNa = "No",
+                            minCellCount = guessMinCellCount(data[, i]),
                             description = "")
   }
   rows <- do.call(rbind, rows)
@@ -102,7 +103,15 @@ guessRequired <- function(column) {
   }
 }
 
-
+guessMinCellCount <- function(column) {
+  columnName <- names(column)
+  column <- as.vector(column)[[1]]
+  if (is.numeric(column) && grepl("(_subjects)|(_count)|(_outcomes)", columnName)) {
+    return("Yes")
+  } else {
+    return("No")
+  }
+}
 
 # Borrowed from devtools:
 # https://github.com/hadley/devtools/blob/ba7a5a4abd8258c52cb156e7b26bb4bf47a79f0b/R/utils.r#L44

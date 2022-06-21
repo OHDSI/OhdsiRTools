@@ -2,6 +2,7 @@
 
 export(checkUsagePackage)
 export(createRenvLockFile)
+export(createResultsSchemaStub)
 export(findNonAsciiStringsInFolder)
 export(fixHadesLogo)
 export(fixHadesPackagesInLockFile)
