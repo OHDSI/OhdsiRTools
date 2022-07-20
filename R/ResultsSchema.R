@@ -32,6 +32,7 @@
 createResultsSchemaStub <- function(folder, outputFile = file.path(folder, "resultsDataModelSpecification.csv")) {
   ensure_installed("readr")
   ensure_installed("SqlRender")
+  ensure_installed("DatabaseConnector")
   
   csvFiles <- list.files(folder, ".*\\.csv")
   csvFiles <- csvFiles[csvFiles != basename(outputFile)]
@@ -42,7 +43,7 @@ createResultsSchemaStub <- function(folder, outputFile = file.path(folder, "resu
   invisible(stub)
 }
 
-# csvFile <- 'target_comparator_outcome.csv' 
+# csvFile <- 'cm_follow_up_dist.csv' 
 createTableStub <- function(csvFile, folder) {
   data <- readr::read_csv(file.path(folder, csvFile), show_col_types = FALSE)
   tableName <- gsub("\\.csv$", "", csvFile)
@@ -50,6 +51,9 @@ createTableStub <- function(csvFile, folder) {
   rows <- vector("list", ncol(data))
   for (i in seq_len(ncol(data))) {
     message(sprintf("- Column '%s'", colnames(data)[i]))
+    if (DatabaseConnector::isSqlReservedWord(colnames(data)[i])) {
+      warning(sprintf("Column name '%s' in the '%s' table is a SQL reserved word", colnames(data)[i], tableName))
+    }
     rows[[i]] <- data.frame(tableName = tableName,
                             columnName = colnames(data)[i],
                             dataType = guessDataType(data[, i]),
@@ -63,12 +67,16 @@ createTableStub <- function(csvFile, folder) {
   return(rows)
 }
 
-# column = data[, 3]
+# column = data[, 1]
 guessDataType <- function(column) {
   columnName <- names(column)
   column <- as.vector(column)[[1]]
   if (is.character(column)) {
-    maxWidth <- max(nchar(column))
+    if (length(column) == 0) {
+      maxWidth <- Inf
+    } else {
+      maxWidth <- max(nchar(column))
+    }
     if (maxWidth > 25) {
       return("varchar")
     } else {

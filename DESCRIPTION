@@ -1,8 +1,8 @@
 Package: OhdsiRTools
 Type: Package
 Title: Tools Used by Observational Health Data Science and Informatics (OHDSI)
-Version: 2.0.3
-Date: 2022-06-20
+Version: 2.0.4
+Date: 2022-07-20
 Authors@R: c(
     person("Martijn", "Schuemie", email = "schuemie@ohdsi.org", role = c("aut", "cre")),
     person("Marc", "Suchard", role = c("aut")),
@@ -24,7 +24,8 @@ Suggests:
   renv,
   testthat,
   readr,
-  SqlRender
+  SqlRender,
+  DatabaseConnector
 URL: http://ohdsi.github.io/OhdsiRTools/, https://github.com/OHDSI/OhdsiRTools
 BugReports: https://github.com/OHDSI/OhdsiRTools/issues    
 NeedsCompilation: no

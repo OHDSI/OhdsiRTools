@@ -1,3 +1,11 @@
+OhdsiRTools v2.0.4
+==================
+
+Changes:
+
+1. Throwing warning in `createResultsSchemaStub()` function if column name is SQL reserved word.
+
+
 OhdsiRTools v2.0.3
 ==================
 
